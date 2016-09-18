@@ -55,12 +55,19 @@ public class MenuScreen extends DefaultScreen implements InputProcessor {
 
         if (nextScreen == ScreenOption.SKIRMISH) {
             game.setScreen(new SkirmishScreen(game));
+            this.dispose();
         }
     }
 
     @Override
     public void hide() {
 
+    }
+
+    @Override
+    public void dispose() {
+        title.getTexture().dispose();
+        titleBatch.dispose();
     }
 
     @Override
@@ -83,8 +90,6 @@ public class MenuScreen extends DefaultScreen implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.print("x: " + screenX + "\ny: " + screenY + "\npointer: " + pointer + "\nbutton: " + button);
-
         Ray collisionRay = cam.getPickRay(screenX, screenY);
 
         if ((Gdx.graphics.getWidth() / 4 < screenX) && (screenX < 3 * Gdx.graphics.getWidth() / 4) &&

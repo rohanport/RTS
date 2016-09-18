@@ -1,11 +1,11 @@
-package com.mygdx.game.skirmish;
+package com.mygdx.game.skirmish.map;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
 /**
  * Created by paddlefish on 18-Sep-16.
  */
-class SkirmishCamera extends OrthographicCamera {
+public class MapCamera extends OrthographicCamera {
     private static final float MAX_X_SPEED = 200f;
     private static final float MAX_Y_SPEED = 200f;
     private static final float X_ACCELERATION = 400f;
@@ -44,11 +44,11 @@ class SkirmishCamera extends OrthographicCamera {
         isMovingDown = movingDown;
     }
 
-    public SkirmishCamera() {
+    public MapCamera() {
         super();
     }
 
-    public SkirmishCamera(float viewportWidth, float viewportHeight) {
+    public MapCamera(float viewportWidth, float viewportHeight) {
         super(viewportWidth, viewportHeight);
     }
 

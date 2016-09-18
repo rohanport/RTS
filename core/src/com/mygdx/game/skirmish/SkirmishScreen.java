@@ -2,13 +2,16 @@ package com.mygdx.game.skirmish;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.DefaultScreen;
 import com.mygdx.game.Resources;
+import com.mygdx.game.skirmish.map.MapCamera;
+import com.mygdx.game.skirmish.map.SelectorRenderer;
 
 /**
  * Created by paddlefish on 17-Sep-16.
@@ -20,6 +23,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
     //--------- Managers -------
     private UnitManager unitManager;
+    private SelectorRenderer selectorRenderer;
 
     //-------- Sprites --------
     private Sprite background;
@@ -27,13 +31,14 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     private SpriteBatch backgroundBatch;
 
     //-------- Camera ---------
-    private SkirmishCamera cam = new SkirmishCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    private MapCamera cam = new MapCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
     public SkirmishScreen(Game game) {
         super(game);
         Gdx.input.setInputProcessor(this);
 
         unitManager = new UnitManager();
+        selectorRenderer = new SelectorRenderer();
     }
 
     @Override
@@ -41,6 +46,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         background = Resources.getInstance().bgGrass01;
         background.setPosition(0, 0);
         background.setSize(MAP_WIDTH, MAP_HEIGHT);
+        background.getTexture().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
         backgroundBatch = new SpriteBatch();
     }
@@ -55,6 +61,8 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         backgroundBatch.begin();
         background.draw(backgroundBatch);
         backgroundBatch.end();
+
+        selectorRenderer.render();
     }
 
     @Override
@@ -71,6 +79,24 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        if (keycode == Input.Keys.Q) {
+            cam.rotate(1, 0, 0.1f , 0);
+        } else if (keycode == Input.Keys.W) {
+            cam.rotate(1, 0, -0.1f, 0);
+        }
+
+        if (keycode == Input.Keys.A) {
+            cam.rotate(1, 0.1f, 0 , 0);
+        } else if (keycode == Input.Keys.S) {
+            cam.rotate(1, -0.1f, 0 , 0);
+        }
+
+        if (keycode == Input.Keys.Z) {
+            cam.rotate(1, 0, 0 , 0.1f);
+        } else if (keycode == Input.Keys.X) {
+            cam.rotate(1, 0, 0 , -0.1f);
+        }
+
         return false;
     }
 
@@ -86,21 +112,37 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        selectorRenderer.handleMouseDown(screenX, screenY);
+
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        selectorRenderer.handleMouseUp();
+
         return false;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        selectorRenderer.handleMouseMove(screenX, screenY);
+
         return false;
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        handleCameraScrolling(screenX, screenY);
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
+    }
+
+    private void handleCameraScrolling(int screenX, int screenY) {
         int distFromScreenRight = Gdx.graphics.getWidth() - screenX;
         int distFromScreenBottom = Gdx.graphics.getHeight() - screenY;
 
@@ -131,12 +173,5 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         if (distFromScreenBottom > 2 && cam.isMovingDown()) {
             cam.setMovingDown(false);
         }
-
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(int amount) {
-        return false;
     }
 }

@@ -1,9 +1,6 @@
 package com.mygdx.game.skirmish;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -12,18 +9,22 @@ import com.mygdx.game.DefaultScreen;
 import com.mygdx.game.Resources;
 import com.mygdx.game.skirmish.map.MapCamera;
 import com.mygdx.game.skirmish.map.SelectorRenderer;
+import com.mygdx.game.skirmish.ui.SelectionManager;
+import com.mygdx.game.skirmish.units.Soldier1;
 
 /**
  * Created by paddlefish on 17-Sep-16.
  */
 public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
-    private static final int MAP_HEIGHT = 5000;
-    private static final int MAP_WIDTH  = 5000;
+    private static final int MAP_HEIGHT = 1000;
+    private static final int MAP_WIDTH  = 1000;
 
     //--------- Managers -------
-    private UnitManager unitManager;
-    private SelectorRenderer selectorRenderer;
+    private final InputMultiplexer inputHandler;
+    private final UnitManager unitManager;
+    private final SelectionManager selectionManager;
+    private final SelectorRenderer selectorRenderer;
 
     //-------- Sprites --------
     private Sprite background;
@@ -31,14 +32,34 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     private SpriteBatch backgroundBatch;
 
     //-------- Camera ---------
-    private MapCamera cam = new MapCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    private MapCamera cam = new MapCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), MAP_WIDTH, MAP_HEIGHT);
 
+
+    //------- Getters and Setters --------
+    public UnitManager getUnitManager() {
+        return unitManager;
+    }
+
+    public SelectionManager getSelectionManager() {
+        return selectionManager;
+    }
+
+    public MapCamera getCam() {
+        return cam;
+    }
+
+    //---------------------------------------------------------------------
     public SkirmishScreen(Game game) {
         super(game);
-        Gdx.input.setInputProcessor(this);
 
-        unitManager = new UnitManager();
+        unitManager = new UnitManager(this);
+        selectionManager = new SelectionManager();
         selectorRenderer = new SelectorRenderer();
+        inputHandler = new InputMultiplexer();
+
+        Gdx.input.setInputProcessor(inputHandler);
+        inputHandler.addProcessor(this);
+        inputHandler.addProcessor(selectionManager);
     }
 
     @Override
@@ -63,6 +84,9 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         backgroundBatch.end();
 
         selectorRenderer.render();
+
+        unitManager.update(delta);
+        unitManager.renderUnits();
     }
 
     @Override
@@ -95,6 +119,12 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
             cam.rotate(1, 0, 0 , 0.1f);
         } else if (keycode == Input.Keys.X) {
             cam.rotate(1, 0, 0 , -0.1f);
+        }
+
+        if (keycode == Input.Keys.ENTER) {
+            Soldier1 test = new Soldier1(100, 100);
+            unitManager.addUnit(test);
+            selectionManager.addToSelection(test);
         }
 
         return false;

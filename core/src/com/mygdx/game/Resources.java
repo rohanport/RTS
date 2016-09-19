@@ -11,9 +11,16 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
  */
 public class Resources {
 
+    //--------- Menu -----------------------
     public Sprite title = new Sprite(new Texture(Gdx.files.internal("sprites/menu/title.png")));
 
+
+    //--------- Map ------------------------
     public Sprite bgGrass01 = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/terrain/grass01.jpg")));
+
+
+    //--------- Units ----------------------
+    public Sprite soldier1 = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/units/soldier1.png")));
 
     private static Resources instance;
 

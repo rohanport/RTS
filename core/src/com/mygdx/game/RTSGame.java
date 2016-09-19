@@ -3,7 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.mygdx.game.menu.MenuScreen;
 
-public class TestGame extends Game {
+public class RTSGame extends Game {
 	
 	@Override
 	public void create () {

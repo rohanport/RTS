@@ -59,7 +59,7 @@ public class SelectorRenderer {
     public void render() {
         if (isDrawing()) {
             renderer.begin(ShapeRenderer.ShapeType.Line);
-            renderer.setColor(Color.CORAL);
+            renderer.setColor(Color.WHITE);
             renderer.rect(x, y, width, height);
             renderer.end();
         }

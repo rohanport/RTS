@@ -1,5 +1,6 @@
 package com.mygdx.game.skirmish.units;
 
+import com.badlogic.gdx.math.Circle;
 import com.mygdx.game.Resources;
 
 /**
@@ -7,9 +8,9 @@ import com.mygdx.game.Resources;
  */
 public class Soldier1 extends UnitBase {
 
-    public Soldier1(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Soldier1(float x, float y) {
+        size = 10;
+        circle = new Circle(x, y, size);
 
         hp = 10;
         baseSpeed = 100;

@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.DefaultScreen;
 import com.mygdx.game.Resources;
 import com.mygdx.game.skirmish.map.MapCamera;
@@ -19,6 +22,10 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
     private static final int MAP_HEIGHT = 1000;
     private static final int MAP_WIDTH  = 1000;
+    
+    //--------- Box2D ----------
+    private final World world;
+    private final Box2DDebugRenderer debugRenderer;
 
     //--------- Managers -------
     private final InputMultiplexer inputHandler;
@@ -36,6 +43,11 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
 
     //------- Getters and Setters --------
+
+    public World getWorld() {
+        return world;
+    }
+
     public UnitManager getUnitManager() {
         return unitManager;
     }
@@ -53,13 +65,16 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         super(game);
 
         unitManager = new UnitManager(this);
-        selectionManager = new SelectionManager();
+        selectionManager = new SelectionManager(this);
         selectorRenderer = new SelectorRenderer();
         inputHandler = new InputMultiplexer();
 
         Gdx.input.setInputProcessor(inputHandler);
         inputHandler.addProcessor(this);
         inputHandler.addProcessor(selectionManager);
+
+        world = new World(new Vector2(0, 0), false);
+        debugRenderer = new Box2DDebugRenderer();
     }
 
     @Override
@@ -83,10 +98,24 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         background.draw(backgroundBatch);
         backgroundBatch.end();
 
-        selectorRenderer.render();
 
+//        debugRenderer.render(world, cam.combined);
+//        doPhysicsStep(delta);
+        unitManager.renderUnitsDebug();
+
+        selectorRenderer.render();
         unitManager.update(delta);
-        unitManager.renderUnits();
+    }
+
+    private float accumulator = 0;
+
+    private void doPhysicsStep(float delta) {
+        float frameTime = Math.min(delta, 0.25f);
+        accumulator += frameTime;
+        while (accumulator >= 1/60f) {
+            world.step(1/60f, 6, 2);
+            accumulator -= 1/60f;
+        }
     }
 
     @Override
@@ -122,7 +151,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         }
 
         if (keycode == Input.Keys.ENTER) {
-            Soldier1 test = new Soldier1(100, 100);
+            Soldier1 test = new Soldier1(0, 0);
             unitManager.addUnit(test);
             selectionManager.addToSelection(test);
         }
@@ -142,14 +171,18 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        selectorRenderer.handleMouseDown(screenX, screenY);
+        if (button == 0) {
+            selectorRenderer.handleMouseDown(screenX, screenY);
+        }
 
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        selectorRenderer.handleMouseUp();
+        if (button == 0) {
+            selectorRenderer.handleMouseUp();
+        }
 
         return false;
     }

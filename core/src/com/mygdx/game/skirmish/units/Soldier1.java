@@ -1,16 +1,17 @@
 package com.mygdx.game.skirmish.units;
 
-import com.badlogic.gdx.math.Circle;
 import com.mygdx.game.Resources;
+import com.mygdx.game.skirmish.util.MapUtils;
 
 /**
  * Created by paddlefish on 18-Sep-16.
  */
 public class Soldier1 extends UnitBase {
 
-    public Soldier1(float x, float y) {
-        size = 10;
-        circle = new Circle(x, y, size);
+    public Soldier1(int x, int y) {
+        super(x, y);
+        size = 1;
+        circle.setRadius(size * MapUtils.NODE_WIDTH_PX / 2f);
 
         hp = 10;
         baseSpeed = 100;
@@ -25,8 +26,8 @@ public class Soldier1 extends UnitBase {
 
     @Override
     public boolean processRightClick(int screenX, int screenY) {
-        destX = screenX;
-        destY = screenY;
+        destNodeX = screenX;
+        destNodeY = screenY;
         isMoving = true;
 
         return false;

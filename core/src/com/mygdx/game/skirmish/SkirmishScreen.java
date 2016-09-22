@@ -6,14 +6,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.DefaultScreen;
 import com.mygdx.game.Resources;
 import com.mygdx.game.skirmish.map.MapCamera;
 import com.mygdx.game.skirmish.map.SelectorRenderer;
 import com.mygdx.game.skirmish.ui.SelectionManager;
 import com.mygdx.game.skirmish.units.Soldier1;
+import com.mygdx.game.skirmish.util.MapUtils;
 
 /**
  * Created by paddlefish on 17-Sep-16.
@@ -22,12 +21,9 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
     private static final int MAP_HEIGHT = 1000;
     private static final int MAP_WIDTH  = 1000;
-    
-    //--------- Box2D ----------
-    private final World world;
-    private final Box2DDebugRenderer debugRenderer;
 
     //--------- Managers -------
+    private final World world;
     private final InputMultiplexer inputHandler;
     private final UnitManager unitManager;
     private final SelectionManager selectionManager;
@@ -43,11 +39,6 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
 
     //------- Getters and Setters --------
-
-    public World getWorld() {
-        return world;
-    }
-
     public UnitManager getUnitManager() {
         return unitManager;
     }
@@ -72,9 +63,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         Gdx.input.setInputProcessor(inputHandler);
         inputHandler.addProcessor(this);
         inputHandler.addProcessor(selectionManager);
-
-        world = new World(new Vector2(0, 0), false);
-        debugRenderer = new Box2DDebugRenderer();
+        world = new World(this, 500, 500);
     }
 
     @Override
@@ -98,24 +87,11 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         background.draw(backgroundBatch);
         backgroundBatch.end();
 
-
-//        debugRenderer.render(world, cam.combined);
-//        doPhysicsStep(delta);
         unitManager.renderUnitsDebug();
 
         selectorRenderer.render();
-        unitManager.update(delta);
-    }
 
-    private float accumulator = 0;
-
-    private void doPhysicsStep(float delta) {
-        float frameTime = Math.min(delta, 0.25f);
-        accumulator += frameTime;
-        while (accumulator >= 1/60f) {
-            world.step(1/60f, 6, 2);
-            accumulator -= 1/60f;
-        }
+        world.update(delta);
     }
 
     @Override
@@ -151,7 +127,8 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         }
 
         if (keycode == Input.Keys.ENTER) {
-            Soldier1 test = new Soldier1(0, 0);
+            Vector2 middleOfScreen = MapUtils.screenCoords2MapCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
+            Soldier1 test = new Soldier1(Math.round(middleOfScreen.x), Math.round(middleOfScreen.y));
             unitManager.addUnit(test);
             selectionManager.addToSelection(test);
         }

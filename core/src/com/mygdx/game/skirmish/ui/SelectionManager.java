@@ -3,10 +3,12 @@ package com.mygdx.game.skirmish.ui;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.skirmish.SkirmishScreen;
 import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.units.UnitBase;
+import com.mygdx.game.skirmish.util.MapUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,12 +54,10 @@ public class SelectionManager implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Vector3 mapCords = screen.getCam().unproject(new Vector3(screenX, screenY, 0));
-
         if (button == 0) {
             handleSelectionStart(screenX, screenY);
         } else if (button == 1) {
-            handleRightClick(mapCords);
+            handleRightClick(screenX, screenY);
         }
 
         return false;
@@ -126,9 +126,12 @@ public class SelectionManager implements InputProcessor {
         }
     }
 
-    private void handleRightClick(Vector3 mapCords) {
+    private void handleRightClick(float screenX, float screenY) {
+        Vector2 mapCords = MapUtils.screenCoords2MapCoords(screen.getCam(), screenX, screenY);
+        int mapX = Math.round(mapCords.x);
+        int mapY = Math.round(mapCords.y);
         for (Commandable commandable : selection) {
-            commandable.processRightClick(Math.round(mapCords.x), Math.round(mapCords.y));
+            commandable.processRightClick(mapX, mapY);
         }
     }
 }

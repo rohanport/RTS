@@ -19,8 +19,8 @@ import com.mygdx.game.skirmish.util.MapUtils;
  */
 public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
-    private static final int MAP_HEIGHT = 1000;
-    private static final int MAP_WIDTH  = 1000;
+    public static final int MAP_HEIGHT = 1000;
+    public static final int MAP_WIDTH  = 1000;
 
     //--------- Managers -------
     private final World world;
@@ -63,7 +63,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         Gdx.input.setInputProcessor(inputHandler);
         inputHandler.addProcessor(this);
         inputHandler.addProcessor(selectionManager);
-        world = new World(this, 500, 500);
+        world = new World(this, MAP_WIDTH, MAP_HEIGHT);
     }
 
     @Override
@@ -88,6 +88,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         backgroundBatch.end();
 
         unitManager.renderUnitsDebug();
+        selectionManager.renderSelection(cam);
 
         selectorRenderer.render();
 

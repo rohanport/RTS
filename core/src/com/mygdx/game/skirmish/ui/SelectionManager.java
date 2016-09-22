@@ -1,6 +1,9 @@
 package com.mygdx.game.skirmish.ui;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -22,6 +25,7 @@ public class SelectionManager implements InputProcessor {
     private List<Commandable> selection;
     private List<Commandable> newSelection;
     private Rectangle selector;
+    private ShapeRenderer selectionRenderer;
 
     private boolean isSelecting;
 
@@ -31,6 +35,7 @@ public class SelectionManager implements InputProcessor {
         selection = new ArrayList<Commandable>();
         newSelection = new ArrayList<Commandable>();
         selector = new Rectangle();
+        selectionRenderer = new ShapeRenderer();
     }
 
     public void addToSelection(Commandable commandable) {
@@ -130,8 +135,60 @@ public class SelectionManager implements InputProcessor {
         Vector2 mapCords = MapUtils.screenCoords2MapCoords(screen.getCam(), screenX, screenY);
         int mapX = Math.round(mapCords.x);
         int mapY = Math.round(mapCords.y);
+
+        List<Commandable> moveables = new ArrayList<Commandable>();
         for (Commandable commandable : selection) {
-            commandable.processRightClick(mapX, mapY);
+            if (commandable.isMoveable()) {
+                moveables.add(commandable);
+            }
         }
+
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
+        for (Commandable moveable : moveables) {
+            if (moveable.getMapCenterX() < minX) {
+                minX = moveable.getMapCenterX();
+            }
+
+            if (moveable.getMapCenterX() > maxX) {
+                maxX = moveable.getMapCenterX();
+            }
+
+            if (moveable.getMapCenterY() < minY) {
+                minY = moveable.getMapCenterY();
+            }
+
+            if (moveable.getMapCenterY() > maxY) {
+                maxY = moveable.getMapCenterY();
+            }
+        }
+
+        if (minX <= mapX && mapX <= maxX &&
+                minY <= mapY && mapY <= maxY) {
+            for (Commandable moveable : moveables) {
+                moveable.processRightClick(mapX, mapY);
+            }
+        } else {
+            int centerX = (minX + maxX) / 2;
+            int centerY = (minY + maxY) / 2;
+            int diffX = mapX - centerX;
+            int diffY = mapY - centerY;
+
+            for (Commandable moveable : moveables) {
+                moveable.processRightClick(moveable.getMapCenterX() + diffX, moveable.getMapCenterY() + diffY);
+            }
+        }
+    }
+
+    public void renderSelection(Camera cam) {
+        selectionRenderer.setProjectionMatrix(cam.combined);
+        selectionRenderer.begin(ShapeRenderer.ShapeType.Line);
+        selectionRenderer.setColor(Color.WHITE);
+        for (Commandable unit : selection) {
+            unit.renderSelectionMarker(selectionRenderer);
+        }
+        selectionRenderer.end();
     }
 }

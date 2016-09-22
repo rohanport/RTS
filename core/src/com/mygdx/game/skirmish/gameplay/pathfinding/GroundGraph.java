@@ -13,9 +13,15 @@ import com.mygdx.game.skirmish.util.MapUtils;
  */
 public class GroundGraph implements IndexedGraph<GroundNode> {
     private final GroundNode[][] nodes;
+    private final GroundHeuristic heuristic;
 
     private final int width;
     private final int height;
+
+    //-------- Getters and Setters ------------
+    public GroundHeuristic getHeuristic() {
+        return heuristic;
+    }
 
     public GroundGraph(int width, int height) {
         this.width = width;
@@ -27,6 +33,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
                 nodes[i][j] = new GroundNode(i, j);
             }
         }
+        heuristic = new GroundHeuristic();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.mygdx.game.skirmish.units;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.gameplay.Commandable;
@@ -65,5 +66,25 @@ public abstract class UnitBase implements Commandable {
 
     public void render(SpriteBatch batch) {
         batch.draw(sprite, circle.x - sprite.getWidth()/2, circle.y - sprite.getHeight()/2);
+    }
+
+    @Override
+    public void renderSelectionMarker(ShapeRenderer shapeRenderer) {
+        shapeRenderer.circle(circle.x, circle.y, circle.radius);
+    }
+
+    @Override
+    public boolean isMoveable() {
+        return true;
+    }
+
+    @Override
+    public int getMapCenterX() {
+        return Math.round(circle.x / MapUtils.NODE_WIDTH_PX);
+    }
+
+    @Override
+    public int getMapCenterY() {
+        return Math.round(circle.y / MapUtils.NODE_HEIGHT_PX);
     }
 }

@@ -81,9 +81,7 @@ public class UnitManager {
     }
 
     public void update(float delta) {
-        for (UnitBase unit: units) {
-            unit.update(delta);
-        }
+        units.stream().forEach(unit -> unit.update(delta));
     }
 
     public void renderUnits() {
@@ -91,9 +89,7 @@ public class UnitManager {
         unitRenderer.setProjectionMatrix(cam.combined);
 
         unitRenderer.begin();
-        for (UnitBase unit : units) {
-            unit.render(unitRenderer);
-        }
+        units.stream().forEach(unit -> unit.render(unitRenderer));
         unitRenderer.end();
     }
 
@@ -102,20 +98,16 @@ public class UnitManager {
 
         unitShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         unitShapeRenderer.setColor(Color.RED);
-        for (UnitBase unit : units) {
-            unitShapeRenderer.circle(unit.circle.x, unit.circle.y, unit.circle.radius);
-        }
+        units.stream().forEach(unit -> unitShapeRenderer.circle(unit.circle.x, unit.circle.y, unit.circle.radius));
         unitShapeRenderer.end();
     }
 
     public List<UnitBase> getIntersectingUnits(final Polygon box) {
         List<UnitBase> intersectingUnits = new ArrayList<UnitBase>();
 
-        for (UnitBase unit : units) {
-            if (GameMathUtils.isCircleIntersectQuadrilateral(unit.circle, box)) {
-                intersectingUnits.add(unit);
-            }
-        }
+        units.stream()
+                .filter(unit -> GameMathUtils.isCircleIntersectQuadrilateral(unit.circle, box))
+                .forEach(unit -> intersectingUnits.add(unit));
 
         return intersectingUnits;
     }

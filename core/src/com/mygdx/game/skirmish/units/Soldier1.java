@@ -28,7 +28,7 @@ public class Soldier1 extends UnitBase {
     public boolean processRightClick(int screenX, int screenY) {
         destNodeX = screenX;
         destNodeY = screenY;
-        isMoving = true;
+        state = UnitState.MOVING;
 
         return false;
     }

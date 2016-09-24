@@ -15,6 +15,7 @@ import com.mygdx.game.skirmish.util.MapUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by paddlefish on 19-Sep-16.
@@ -32,8 +33,8 @@ public class SelectionManager implements InputProcessor {
     public SelectionManager(SkirmishScreen screen) {
         this.screen = screen;
 
-        selection = new ArrayList<Commandable>();
-        newSelection = new ArrayList<Commandable>();
+        selection = new ArrayList<>();
+        newSelection = new ArrayList<>();
         selector = new Rectangle();
         selectionRenderer = new ShapeRenderer();
     }
@@ -136,12 +137,7 @@ public class SelectionManager implements InputProcessor {
         int mapX = Math.round(mapCords.x);
         int mapY = Math.round(mapCords.y);
 
-        List<Commandable> moveables = new ArrayList<Commandable>();
-        for (Commandable commandable : selection) {
-            if (commandable.isMoveable()) {
-                moveables.add(commandable);
-            }
-        }
+        List<Commandable> moveables = selection.stream().filter(Commandable::isMoveable).collect(Collectors.toList());
 
         int minX = Integer.MAX_VALUE;
         int minY = Integer.MAX_VALUE;

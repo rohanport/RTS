@@ -13,7 +13,7 @@ public class ReroutableGraphPath<N> extends DefaultGraphPath {
 
     public ReroutableGraphPath() {
         super();
-        rerouteNodes = new Array<N>();
+        rerouteNodes = new Array<>();
     }
 
     @Override
@@ -31,7 +31,7 @@ public class ReroutableGraphPath<N> extends DefaultGraphPath {
     }
 
     private Array<N> getAllNodes() {
-        Array<N> allNodes = new Array<N>();
+        Array<N> allNodes = new Array<>();
         allNodes.addAll(nodes);
         allNodes.addAll(rerouteNodes);
         return allNodes;

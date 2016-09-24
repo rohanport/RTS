@@ -30,7 +30,7 @@ public class MovementManager {
 
     public void handleGroundUnitMovement(float delta, List<UnitBase> units,
                                          GroundGraph groundGraph,
-                                         PathFinder groundPathFinder) {
+                                         PathFinder<GroundNode> groundPathFinder) {
         Circle unitCircle;
         GroundNode curNode;
         GroundNode newNode;
@@ -125,7 +125,7 @@ public class MovementManager {
                                        GroundNode startNode,
                                        GroundNode finNode,
                                        GroundGraph groundGraph,
-                                       PathFinder groundPathFinder) {
+                                       PathFinder<GroundNode> groundPathFinder) {
 
         ReroutableGraphPath<GroundNode> graphPath = new ReroutableGraphPath<>();
 

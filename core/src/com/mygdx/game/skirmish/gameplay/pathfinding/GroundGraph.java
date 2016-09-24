@@ -48,7 +48,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
 
     @Override
     public Array<Connection<GroundNode>> getConnections(GroundNode fromNode) {
-        Array<Connection<GroundNode>> connections = new Array<Connection<GroundNode>>();
+        Array<Connection<GroundNode>> connections = new Array<>();
 
         for (int i = fromNode.x - 1; i < fromNode.x + 2; i++) {
             for (int j = fromNode.y - 1; j < fromNode.y + 2; j++) {
@@ -57,7 +57,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
                 }
 
                 if (nodeExists(i, j)) {
-                    connections.add(new DefaultConnection<GroundNode>(fromNode, getNodeByCoords(i, j)));
+                    connections.add(new DefaultConnection<>(fromNode, getNodeByCoords(i, j)));
                 }
             }
         }

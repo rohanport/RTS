@@ -1,12 +1,11 @@
 package com.mygdx.game;
 
-/**
- * Created by paddlefish on 17-Sep-16.
- */
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 
+/**
+ * Created by paddlefish on 17-Sep-16.
+ */
 public abstract class DefaultScreen implements Screen {
     protected Game game;
 

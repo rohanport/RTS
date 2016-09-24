@@ -23,16 +23,10 @@ public class GameMathUtils {
         Vector2 circleCenter = new Vector2(circle.x, circle.y);
         float circleRadSqr = circle.radius * circle.radius;
 
-        if (Intersector.intersectSegmentCircle(quadA, quadB, circleCenter, circleRadSqr)) {
-            return true;
-        } if (Intersector.intersectSegmentCircle(quadB, quadC, circleCenter, circleRadSqr)) {
-            return true;
-        } if (Intersector.intersectSegmentCircle(quadC, quadD, circleCenter, circleRadSqr)) {
-            return true;
-        } if (Intersector.intersectSegmentCircle(quadD, quadA, circleCenter, circleRadSqr)) {
-            return true;
-        }
+        return Intersector.intersectSegmentCircle(quadA, quadB, circleCenter, circleRadSqr) ||
+                Intersector.intersectSegmentCircle(quadB, quadC, circleCenter, circleRadSqr) ||
+                Intersector.intersectSegmentCircle(quadC, quadD, circleCenter, circleRadSqr) ||
+                Intersector.intersectSegmentCircle(quadD, quadA, circleCenter, circleRadSqr);
 
-        return false;
     }
 }

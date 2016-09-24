@@ -8,15 +8,15 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
  */
 public interface Commandable {
 
-    public boolean processKeyStroke(int keycode);
+    boolean processKeyStroke(int keycode);
 
-    public boolean processRightClick(int screenX, int screenY);
+    boolean processRightClick(int screenX, int screenY);
 
-    public void renderSelectionMarker(ShapeRenderer shapeRenderer);
+    void renderSelectionMarker(ShapeRenderer shapeRenderer);
 
-    public boolean isMoveable();
+    boolean isMoveable();
 
-    public int getMapCenterX();
+    int getMapCenterX();
 
-    public int getMapCenterY();
+    int getMapCenterY();
 }

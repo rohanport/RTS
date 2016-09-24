@@ -47,13 +47,6 @@ public class MapCamera extends OrthographicCamera {
         isMovingDown = movingDown;
     }
 
-    public MapCamera() {
-        super();
-
-        mapWidth = 0;
-        mapHeight = 0;
-    }
-
     public MapCamera(float viewportWidth, float viewportHeight, int mapWidth, int mapHeight) {
         super(viewportWidth, viewportHeight);
         this.mapWidth = mapWidth;

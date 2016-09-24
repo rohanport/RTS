@@ -38,7 +38,7 @@ public class World implements Disposable {
 
         this.groundGraph = new GroundGraph(width, height);
         initializeGroundGraph();
-        groundPathFinder = new IndexedAStarPathFinder<GroundNode>(groundGraph);
+        groundPathFinder = new IndexedAStarPathFinder<>(groundGraph);
     }
 
     // Update to be called after rendering

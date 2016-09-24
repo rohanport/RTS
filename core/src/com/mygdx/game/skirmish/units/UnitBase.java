@@ -24,7 +24,7 @@ public abstract class UnitBase implements Commandable {
     public float baseAtkSpeed;
     public float baseAtkSpeedMulti;
 
-    public boolean isMoving;
+    public UnitState state;
     public int destNodeX;
     public int destNodeY;
 
@@ -43,14 +43,14 @@ public abstract class UnitBase implements Commandable {
     }
 
     public void move(float delta) {
-        if (isMoving) {
+        if (state == UnitState.MOVING) {
             float transX = Math.min(Math.abs(baseSpeed * speedMulti * delta), Math.abs(destNodeX * MapUtils.NODE_WIDTH_PX - circle.x)) * Math.signum(destNodeX * MapUtils.NODE_WIDTH_PX - circle.x);
             float transY = Math.min(Math.abs(baseSpeed * speedMulti * delta), Math.abs(destNodeY * MapUtils.NODE_HEIGHT_PX - circle.y)) * Math.signum(destNodeY * MapUtils.NODE_HEIGHT_PX - circle.y);
 
             circle.setX(circle.x + transX);
             circle.setY(circle.y + transY);
             if (destNodeX == circle.x && destNodeY == circle.y) {
-                isMoving = false;
+                state = UnitState.NONE;
             }
         }
     }

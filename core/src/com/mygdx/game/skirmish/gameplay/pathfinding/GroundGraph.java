@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class GroundGraph implements IndexedGraph<GroundNode> {
     private final World world;
+    private final UnitCollisionHandlingGroundGraph unitCollisionHandlingGroundGraph;
 
     private final GroundNode[][] nodes;
     private final GroundHeuristic heuristic;
@@ -46,6 +47,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
             }
         }
         heuristic = new GroundHeuristic();
+        unitCollisionHandlingGroundGraph = new UnitCollisionHandlingGroundGraph(world, this, null);
     }
 
     public void update() {
@@ -260,6 +262,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
     }
 
     public UnitCollisionHandlingGroundGraph getCollisionHandlingGraphFor(GroundNode node) {
-        return new UnitCollisionHandlingGroundGraph(world, this, node);
+        unitCollisionHandlingGroundGraph.setUnitNode(node);
+        return unitCollisionHandlingGroundGraph;
     }
 }

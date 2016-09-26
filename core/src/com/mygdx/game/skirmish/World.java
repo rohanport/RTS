@@ -28,9 +28,11 @@ public class World implements Disposable {
     public UnitManager getUnitManager() {
         return unitManager;
     }
-
     public BuildingManager getBuildingManager() {
         return buildingManager;
+    }
+    public GroundGraph getGroundGraph() {
+        return groundGraph;
     }
     //-------------------------------
 
@@ -41,10 +43,10 @@ public class World implements Disposable {
 
         this.unitManager = this.screen.getUnitManager();
         this.buildingManager = this.screen.getBuildingManager();
-        movementHandler = new MovementHandler(this);
 
         this.groundGraph = new GroundGraph(this);
         groundGraph.update();
+        movementHandler = new MovementHandler(this);
     }
 
     // Update to be called after rendering
@@ -59,9 +61,7 @@ public class World implements Disposable {
 
     private void step(float timeframe) {
 
-        movementHandler.handleGroundUnitMovement(timeframe,
-                unitManager.getUnitsInState(UnitState.MOVING),
-                groundGraph);
+        movementHandler.handleGroundUnitMovement(timeframe, unitManager.getUnitsInState(UnitState.MOVING));
 
     }
 

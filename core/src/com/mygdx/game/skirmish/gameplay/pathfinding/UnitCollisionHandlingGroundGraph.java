@@ -17,6 +17,14 @@ public class UnitCollisionHandlingGroundGraph implements IndexedGraph<GroundNode
 
     private GroundNode unitNode;
 
+    public GroundNode getUnitNode() {
+        return unitNode;
+    }
+
+    public void setUnitNode(GroundNode unitNode) {
+        this.unitNode = unitNode;
+    }
+
     public UnitCollisionHandlingGroundGraph(World world, GroundGraph graph, GroundNode unitNode) {
         this.world = world;
         this.graph = graph;

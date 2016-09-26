@@ -1,6 +1,7 @@
 package com.mygdx.game.skirmish.gameplay.movement;
 
 import com.badlogic.gdx.ai.pfa.PathFinder;
+import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.World;
@@ -9,6 +10,7 @@ import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
 import com.mygdx.game.skirmish.gameplay.pathfinding.NodeOccupant;
 import com.mygdx.game.skirmish.gameplay.pathfinding.ReroutableGraphPath;
 import com.mygdx.game.skirmish.units.UnitBase;
+import com.mygdx.game.skirmish.units.UnitState;
 import com.mygdx.game.skirmish.util.MapUtils;
 
 import java.util.List;
@@ -28,9 +30,7 @@ public class MovementManager {
         this.groundPathCache = new ConcurrentHashMap<>();
     }
 
-    public void handleGroundUnitMovement(float delta, List<UnitBase> units,
-                                         GroundGraph groundGraph,
-                                         PathFinder<GroundNode> groundPathFinder) {
+    public void handleGroundUnitMovement(float delta, List<UnitBase> units, GroundGraph groundGraph) {
         Circle unitCircle;
         GroundNode curNode;
         GroundNode newNode;
@@ -39,18 +39,31 @@ public class MovementManager {
         Vector2 pos = new Vector2();
         Vector2 destPos = new Vector2();
         Vector2 travelVec;
+        groundGraph.update();
         for (UnitBase unit : units) {
+            if (unit.state != UnitState.MOVING) {
+                continue;
+            }
+
             unitCircle =  unit.circle;
             pos.set(unitCircle.x, unitCircle.y);
             curNode = groundGraph.getNodeByMapPixelCoords(pos.x, pos.y);
             finNode = groundGraph.getNodeByCoords(unit.destNodeX, unit.destNodeY);
+            if (groundGraph.getDist(curNode, finNode) <= groundGraph.getDistOfClosestFreeNode(finNode)) {
+                curNode.setOccupant(NodeOccupant.STOPPED_UNIT);
+                unit.state = UnitState.NONE;
+                continue;
+            } else {
+                finNode = groundGraph.getClosestFreeNode(curNode, finNode);
+            }
 
             ReroutableGraphPath<GroundNode> graphPath = groundPathCache.get(unit);
+            IndexedAStarPathFinder<GroundNode> groundPathFinder = new IndexedAStarPathFinder<>(groundGraph.getCollisionHandlingGraphFor(curNode));
 
-            if (graphPath == null || finNode != graphPath.get(graphPath.getCount() -1)) {
+//            if (graphPath == null || finNode != graphPath.get(graphPath.getCount() -1)) {
                 findAndCacheGraphPath(unit, curNode, finNode, groundGraph, groundPathFinder);
                 graphPath = groundPathCache.get(unit);
-            }
+//            }
 
             if (graphPath != null && graphPath.getCount() > 1) {
                 destNode = graphPath.get(1);
@@ -67,7 +80,7 @@ public class MovementManager {
                     }
                     unit.translate(travelVec);
                     curNode.setOccupant(NodeOccupant.NONE);
-                    newNode.setOccupant(NodeOccupant.GROUND_UNIT);
+                    newNode.setOccupant(NodeOccupant.MOVING_UNIT);
                 } else if (newNode == curNode) {
                     unit.translate(travelVec);
                 } else {
@@ -85,7 +98,7 @@ public class MovementManager {
 //                        }
 //                        unit.translate(travelVec);
 //                        curNode.setOccupant(NodeOccupant.NONE);
-//                        newNode.setOccupant(NodeOccupant.GROUND_UNIT);
+//                        newNode.setOccupant(NodeOccupant.MOVING_UNIT);
 //                        findAndCacheGraphPath(unit, newNode, finNode, groundGraph, groundPathFinder);
 //                    } else if (newNode == curNode) {
 //                        unit.translate(travelVec);

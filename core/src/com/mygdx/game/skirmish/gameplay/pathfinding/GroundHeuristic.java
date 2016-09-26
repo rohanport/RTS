@@ -9,8 +9,8 @@ public class GroundHeuristic implements Heuristic<GroundNode> {
     @Override
     public float estimate(GroundNode node, GroundNode endNode) {
         switch (endNode.getOccupant()) {
-            case GROUND_UNIT:
-                return GroundNode.dist(node, endNode);
+            case STOPPED_UNIT:
+            case MOVING_UNIT:
             case NONE:
                 return GroundNode.dist(node, endNode);
             default:

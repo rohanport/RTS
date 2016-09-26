@@ -1,53 +1,54 @@
 package com.mygdx.game.skirmish.gameplay.pathfinding;
 
 import com.badlogic.gdx.ai.pfa.Connection;
-import com.badlogic.gdx.ai.pfa.DefaultConnection;
+import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.skirmish.World;
 
 /**
  * Created by paddlefish on 24-Sep-16.
  */
-public class UnitCollisionHandlingGroundGraph extends GroundGraph {
+public class UnitCollisionHandlingGroundGraph implements IndexedGraph<GroundNode> {
 
-    private final static int COLLISION_HANDLING_RANGE = 5;
+    private static final int COLLISION_HANDLING_RANGE = 10;
 
-    private final int unitX;
-    private final int unitY;
+    private final World world;
+    private final GroundGraph graph;
 
-    public UnitCollisionHandlingGroundGraph(int width, int height, int unitX, int unitY) {
-        super(width, height);
+    private GroundNode unitNode;
 
-        this.unitX = unitX;
-        this.unitY = unitY;
+    public UnitCollisionHandlingGroundGraph(World world, GroundGraph graph, GroundNode unitNode) {
+        this.world = world;
+        this.graph = graph;
+        this.unitNode = unitNode;
     }
 
     @Override
     public Array<Connection<GroundNode>> getConnections(GroundNode fromNode) {
-        if (getManhattanDistanceFromUnit(fromNode) < COLLISION_HANDLING_RANGE) {
-            Array<Connection<GroundNode>> connections = new Array<>();
-
-            for (int i = fromNode.x - 1; i < fromNode.x + 2; i++) {
-                for (int j = fromNode.y - 1; j < fromNode.y + 2; j++) {
-                    if (i == fromNode.x && j == fromNode.y) {
-                        continue;
-                    }
-
-                    if (nodeExists(i, j)) {
-                        GroundNode node = getNodeByCoords(i, j);
-                        if (node.getOccupant() == NodeOccupant.NONE) {
-                            connections.add(new DefaultConnection<>(fromNode, node));
-                        }
-                    }
-                }
-            }
-
-            return connections;
+        if (getManhattanDistance(unitNode, fromNode) < COLLISION_HANDLING_RANGE) {
+            return graph.getConnections(fromNode, true);
+        } else if (getManhattanDistance(unitNode, fromNode) == COLLISION_HANDLING_RANGE) {
+            Array<Connection<GroundNode>> connections = graph.getConnections(fromNode, false);
+            connections.select(connection ->
+                    getManhattanDistance(fromNode, connection.getToNode()) < COLLISION_HANDLING_RANGE &&
+                    !graph.nodeIsOpen(connection.getToNode()))
+                    .forEach(connection -> connections.removeValue(connection, true));
         }
 
-        return super.getConnections(fromNode);
+        return graph.getConnections(fromNode, false);
     }
 
-    private int getManhattanDistanceFromUnit(GroundNode node) {
-        return Math.abs(node.x - unitX) + Math.abs(node.y - unitY);
+    protected int getManhattanDistance(GroundNode node1, GroundNode node2) {
+        return Math.abs(node1.x - node2.x) + Math.abs(node1.y - node2.y);
+    }
+
+    @Override
+    public int getIndex(GroundNode node) {
+        return graph.getIndex(node);
+    }
+
+    @Override
+    public int getNodeCount() {
+        return graph.getNodeCount();
     }
 }

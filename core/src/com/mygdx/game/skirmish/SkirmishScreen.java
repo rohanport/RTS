@@ -13,6 +13,7 @@ import com.mygdx.game.skirmish.map.SelectorRenderer;
 import com.mygdx.game.skirmish.ui.SelectionManager;
 import com.mygdx.game.skirmish.units.Soldier1;
 import com.mygdx.game.skirmish.util.MapUtils;
+import com.mygdx.game.skirmish.util.Settings;
 
 /**
  * Created by paddlefish on 17-Sep-16.
@@ -87,7 +88,12 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         background.draw(backgroundBatch);
         backgroundBatch.end();
 
-        unitManager.renderUnitsDebug();
+        if (Settings.DEBUG_MODE) {
+            unitManager.renderUnitsDebug();
+        } else {
+            unitManager.renderUnits();
+        }
+
         selectionManager.renderSelection(cam);
 
         selectorRenderer.render();
@@ -129,7 +135,8 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
         if (keycode == Input.Keys.ENTER) {
             Vector2 middleOfScreen = MapUtils.screenCoords2MapCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
-            Soldier1 test = new Soldier1(Math.round(middleOfScreen.x), Math.round(middleOfScreen.y));
+            Soldier1 test = new Soldier1(Math.round(middleOfScreen.x + 20 * ((float) Math.random() - 0.5f)),
+                    Math.round(middleOfScreen.y + 20 * ((float) Math.random() - 0.5f)));
             unitManager.addUnit(test);
             selectionManager.addToSelection(test);
         }

@@ -51,6 +51,8 @@ public class MapCamera extends OrthographicCamera {
         super(viewportWidth, viewportHeight);
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
+        translate(mapWidth / 2f, mapHeight / 2f
+        );
     }
 
     public void update(float delta) {

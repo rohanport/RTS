@@ -5,11 +5,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Polygon;
+import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
 import com.mygdx.game.skirmish.units.UnitBase;
+import com.mygdx.game.skirmish.units.UnitState;
 import com.mygdx.game.skirmish.util.GameMathUtils;
+import com.mygdx.game.skirmish.util.MapUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by paddlefish on 18-Sep-16.
@@ -71,6 +75,25 @@ public class UnitManager {
                 .forEach(intersectingUnits::add);
 
         return intersectingUnits;
+    }
+
+    public List<UnitBase> getUnitsInState(UnitState state) {
+        return units.stream()
+                .filter(unit -> unit.state == state)
+                .collect(Collectors.toList());
+    }
+
+    public List<UnitBase> getUnitsAtNode(GroundNode node) {
+        return units.stream()
+                .filter(unit -> isUnitAtNode(unit, node))
+                .collect(Collectors.toList());
+    }
+
+    public boolean isUnitAtNode(UnitBase unit, GroundNode node) {
+        return node.x * MapUtils.NODE_WIDTH_PX < unit.circle.x &&
+                (node.x + 1) * MapUtils.NODE_WIDTH_PX >= unit.circle.x &&
+                node.y * MapUtils.NODE_HEIGHT_PX < unit.circle.y &&
+                (node.y + 1) * MapUtils.NODE_HEIGHT_PX >= unit.circle.y;
     }
 
 }

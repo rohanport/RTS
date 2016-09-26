@@ -1,8 +1,9 @@
 package com.mygdx.game.skirmish;
 
 import com.badlogic.gdx.utils.Disposable;
-import com.mygdx.game.skirmish.gameplay.movement.MovementManager;
+import com.mygdx.game.skirmish.gameplay.movement.MovementHandler;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundGraph;
+import com.mygdx.game.skirmish.units.UnitState;
 import com.mygdx.game.skirmish.util.Settings;
 
 /**
@@ -12,7 +13,7 @@ public class World implements Disposable {
 
     private final SkirmishScreen screen;
     private final UnitManager unitManager;
-    private final MovementManager movementManager;
+    private final MovementHandler movementHandler;
     private final GroundGraph groundGraph;
 
     public final int width;
@@ -33,7 +34,7 @@ public class World implements Disposable {
         this.height = height;
 
         this.unitManager = this.screen.getUnitManager();
-        movementManager = new MovementManager(this);
+        movementHandler = new MovementHandler(this);
 
         this.groundGraph = new GroundGraph(this);
         groundGraph.update();
@@ -51,8 +52,8 @@ public class World implements Disposable {
 
     private void step(float timeframe) {
 
-        movementManager.handleGroundUnitMovement(timeframe,
-                unitManager.getUnits(),
+        movementHandler.handleGroundUnitMovement(timeframe,
+                unitManager.getUnitsInState(UnitState.MOVING),
                 groundGraph);
 
     }

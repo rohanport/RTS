@@ -57,6 +57,20 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
         );
     }
 
+    public void update(GroundNode node) {
+        List<UnitBase> units = world.getUnitManager().getUnitsAtNode(node);
+
+        node.setOccupant(NodeOccupant.NONE);
+        for (UnitBase unit : units) {
+            if (unit.state == UnitState.MOVING) {
+                node.setOccupant(NodeOccupant.MOVING_UNIT);
+            } else {
+                node.setOccupant(NodeOccupant.STOPPED_UNIT);
+                break;
+            }
+        }
+    }
+
     @Override
     public int getIndex(GroundNode node) {
         return node.x + node.y * width;

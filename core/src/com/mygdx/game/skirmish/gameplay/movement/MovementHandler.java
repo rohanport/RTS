@@ -20,12 +20,12 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Created by paddlefish on 22-Sep-16.
  */
-public class MovementManager {
+public class MovementHandler {
 
     private final ConcurrentMap<UnitBase, ReroutableGraphPath<GroundNode>> groundPathCache;
     private final World world;
 
-    public MovementManager(World world) {
+    public MovementHandler(World world) {
         this.world = world;
         this.groundPathCache = new ConcurrentHashMap<>();
     }
@@ -41,17 +41,13 @@ public class MovementManager {
         Vector2 travelVec;
         groundGraph.update();
         for (UnitBase unit : units) {
-            if (unit.state != UnitState.MOVING) {
-                continue;
-            }
-
             unitCircle =  unit.circle;
             pos.set(unitCircle.x, unitCircle.y);
             curNode = groundGraph.getNodeByMapPixelCoords(pos.x, pos.y);
             finNode = groundGraph.getNodeByCoords(unit.destNodeX, unit.destNodeY);
             if (groundGraph.getDist(curNode, finNode) <= groundGraph.getDistOfClosestFreeNode(finNode)) {
-                curNode.setOccupant(NodeOccupant.STOPPED_UNIT);
                 unit.state = UnitState.NONE;
+                groundGraph.update(curNode);
                 continue;
             } else {
                 finNode = groundGraph.getClosestFreeNode(curNode, finNode);
@@ -79,8 +75,8 @@ public class MovementManager {
                         graphPath.remove(0);
                     }
                     unit.translate(travelVec);
-                    curNode.setOccupant(NodeOccupant.NONE);
-                    newNode.setOccupant(NodeOccupant.MOVING_UNIT);
+                    groundGraph.update(curNode);
+                    groundGraph.update(newNode);
                 } else if (newNode == curNode) {
                     unit.translate(travelVec);
                 } else {
@@ -128,10 +124,6 @@ public class MovementManager {
                 }
             }
         }
-    }
-
-    private void handleLocalMovement() {
-
     }
 
     private void findAndCacheGraphPath(UnitBase unit,

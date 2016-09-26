@@ -42,26 +42,9 @@ public abstract class UnitBase implements Commandable {
         circle.setY(mapY * MapUtils.NODE_HEIGHT_PX);
     }
 
-    public void move(float delta) {
-        if (state == UnitState.MOVING) {
-            float transX = Math.min(Math.abs(baseSpeed * speedMulti * delta), Math.abs(destNodeX * MapUtils.NODE_WIDTH_PX - circle.x)) * Math.signum(destNodeX * MapUtils.NODE_WIDTH_PX - circle.x);
-            float transY = Math.min(Math.abs(baseSpeed * speedMulti * delta), Math.abs(destNodeY * MapUtils.NODE_HEIGHT_PX - circle.y)) * Math.signum(destNodeY * MapUtils.NODE_HEIGHT_PX - circle.y);
-
-            circle.setX(circle.x + transX);
-            circle.setY(circle.y + transY);
-            if (destNodeX == circle.x && destNodeY == circle.y) {
-                state = UnitState.NONE;
-            }
-        }
-    }
-
     public void translate(Vector2 translation) {
         circle.setX(circle.x + translation.x);
         circle.setY(circle.y + translation.y);
-    }
-
-    public void update(float delta) {
-        move(delta);
     }
 
     public void render(SpriteBatch batch) {

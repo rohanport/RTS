@@ -12,6 +12,7 @@ import com.mygdx.game.skirmish.map.MapCamera;
 import com.mygdx.game.skirmish.map.SelectorRenderer;
 import com.mygdx.game.skirmish.ui.SelectionManager;
 import com.mygdx.game.skirmish.units.Soldier1;
+import com.mygdx.game.skirmish.units.UnitManager;
 import com.mygdx.game.skirmish.util.MapUtils;
 import com.mygdx.game.skirmish.util.Settings;
 

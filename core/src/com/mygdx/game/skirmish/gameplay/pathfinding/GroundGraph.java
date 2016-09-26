@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.skirmish.World;
+import com.mygdx.game.skirmish.buildings.BuildingBase;
 import com.mygdx.game.skirmish.units.UnitBase;
 import com.mygdx.game.skirmish.units.UnitState;
 import com.mygdx.game.skirmish.util.MapUtils;
@@ -54,6 +55,12 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
         units.forEach(unit ->
                 getNodeByMapPixelCoords(unit.circle.x, unit.circle.y)
                 .setOccupant(unit.state == UnitState.MOVING ? NodeOccupant.MOVING_UNIT : NodeOccupant.STOPPED_UNIT)
+        );
+
+        List<BuildingBase> buildings = world.getBuildingManager().getBuildings();
+        buildings.forEach(building ->
+                getNodesCoveredByBuilding(building.rect.x, building.rect.y, building.size)
+                        .forEach(node -> node.setOccupant(NodeOccupant.BUILDING))
         );
     }
 
@@ -109,7 +116,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
                                 }
                             }
                         }
-                    } else {
+                    } else if (nodeIsAvailable(node)) {
                         connections.add(new DefaultConnection<>(fromNode, node));
                     }
                 }
@@ -133,13 +140,31 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
         return nodes[Math.round(nodeCoords.x)][Math.round(nodeCoords.y)];
     }
 
+    public List<GroundNode> getNodesCoveredByBuilding(float x, float y, int size) {
+        List<GroundNode> coveredNodes = new ArrayList<>();
+
+        GroundNode rootNode = getNodeByMapPixelCoords(x, y);
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                coveredNodes.add(getNodeByCoords(rootNode.x + i, rootNode.y + j));
+            }
+        }
+
+        return coveredNodes;
+    }
+
     public boolean nodeExists(int x, int y) {
         return (0 <= x && x < width && 0 <= y && y < height);
     }
 
     public boolean nodeIsOpen(GroundNode node) {
-        return node.getOccupant() == NodeOccupant.NONE ||
-                node.getOccupant() == NodeOccupant.MOVING_UNIT;
+        return nodeIsAvailable(node) &&
+                (node.getOccupant() == NodeOccupant.NONE ||
+                node.getOccupant() == NodeOccupant.MOVING_UNIT);
+    }
+
+    public boolean nodeIsAvailable(GroundNode node) {
+        return node.getOccupant() != NodeOccupant.BUILDING;
     }
 
     public GroundNode getClosestFreeNode(GroundNode curNode, GroundNode destNode) {

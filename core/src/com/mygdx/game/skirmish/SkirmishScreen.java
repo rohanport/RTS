@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.DefaultScreen;
 import com.mygdx.game.Resources;
+import com.mygdx.game.skirmish.buildings.Building1;
+import com.mygdx.game.skirmish.buildings.BuildingManager;
 import com.mygdx.game.skirmish.map.MapCamera;
 import com.mygdx.game.skirmish.map.SelectorRenderer;
 import com.mygdx.game.skirmish.ui.SelectionManager;
@@ -28,6 +30,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     private final World world;
     private final InputMultiplexer inputHandler;
     private final UnitManager unitManager;
+    private final BuildingManager buildingManager;
     private final SelectionManager selectionManager;
     private final SelectorRenderer selectorRenderer;
 
@@ -45,6 +48,10 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         return unitManager;
     }
 
+    public BuildingManager getBuildingManager() {
+        return buildingManager;
+    }
+
     public SelectionManager getSelectionManager() {
         return selectionManager;
     }
@@ -58,6 +65,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         super(game);
 
         unitManager = new UnitManager(this);
+        buildingManager = new BuildingManager(this);
         selectionManager = new SelectionManager(this);
         selectorRenderer = new SelectorRenderer();
         inputHandler = new InputMultiplexer();
@@ -91,8 +99,10 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
         if (Settings.DEBUG_MODE) {
             unitManager.renderUnitsDebug();
+            buildingManager.renderBuildingsDebug();
         } else {
             unitManager.renderUnits();
+            buildingManager.renderBuildings();
         }
 
         selectionManager.renderSelection(cam);
@@ -139,6 +149,13 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
             Soldier1 test = new Soldier1(Math.round(middleOfScreen.x + 20 * ((float) Math.random() - 0.5f)),
                     Math.round(middleOfScreen.y + 20 * ((float) Math.random() - 0.5f)));
             unitManager.addUnit(test);
+            selectionManager.addToSelection(test);
+        }
+
+        if (keycode == Input.Keys.SPACE) {
+            Vector2 middleOfScreen = MapUtils.screenCoords2MapCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
+            Building1 test = new Building1(Math.round(middleOfScreen.x), Math.round(middleOfScreen.y));
+            buildingManager.addBuilding(test);
             selectionManager.addToSelection(test);
         }
 

@@ -8,13 +8,6 @@ import com.badlogic.gdx.ai.pfa.Heuristic;
 public class GroundHeuristic implements Heuristic<GroundNode> {
     @Override
     public float estimate(GroundNode node, GroundNode endNode) {
-        switch (endNode.getOccupant()) {
-            case STOPPED_UNIT:
-            case MOVING_UNIT:
-            case NONE:
-                return GroundNode.dist(node, endNode);
-            default:
-                throw new RuntimeException("Unknown Node occupant: " + endNode.getOccupant());
-        }
+        return GroundNode.dist(node, endNode);
     }
 }

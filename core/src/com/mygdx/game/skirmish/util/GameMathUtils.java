@@ -1,9 +1,6 @@
 package com.mygdx.game.skirmish.util;
 
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.*;
 
 /**
  * Created by paddlefish on 21-Sep-16.
@@ -27,6 +24,19 @@ public class GameMathUtils {
                 Intersector.intersectSegmentCircle(quadB, quadC, circleCenter, circleRadSqr) ||
                 Intersector.intersectSegmentCircle(quadC, quadD, circleCenter, circleRadSqr) ||
                 Intersector.intersectSegmentCircle(quadD, quadA, circleCenter, circleRadSqr);
+
+    }
+
+    public static boolean isRectangleIntersectQuadrilateral(Rectangle rect, Polygon quadrilateral) {
+        Vector2 rectA = new Vector2(rect.x, rect.y);
+        Vector2 rectB = new Vector2(rect.x + rect.getWidth(), rect.y);
+        Vector2 rectC = new Vector2(rect.x + rect.getWidth(), rect.y + rect.getHeight());
+        Vector2 rectD = new Vector2(rect.x, rect.y + rect.getHeight());
+
+        return Intersector.intersectLinePolygon(rectA, rectB, quadrilateral) ||
+                Intersector.intersectLinePolygon(rectB, rectC, quadrilateral) ||
+                Intersector.intersectLinePolygon(rectC, rectD, quadrilateral) ||
+                Intersector.intersectLinePolygon(rectD, rectA, quadrilateral);
 
     }
 }

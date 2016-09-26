@@ -1,7 +1,6 @@
 package com.mygdx.game.skirmish.units;
 
 import com.mygdx.game.Resources;
-import com.mygdx.game.skirmish.util.MapUtils;
 
 /**
  * Created by paddlefish on 18-Sep-16.
@@ -9,9 +8,7 @@ import com.mygdx.game.skirmish.util.MapUtils;
 public class Soldier1 extends UnitBase {
 
     public Soldier1(int x, int y) {
-        super(x, y);
-        size = 1;
-        circle.setRadius(size * MapUtils.NODE_WIDTH_PX / 2f);
+        super(x, y, 1);
 
         hp = 10;
         baseSpeed = 100;

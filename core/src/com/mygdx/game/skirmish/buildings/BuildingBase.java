@@ -19,6 +19,8 @@ public abstract class BuildingBase implements Commandable {
     protected Sprite sprite;
 
     public BuildingBase(int x, int y, int size) {
+        this.size = size;
+
         this.rect = new Rectangle(x * MapUtils.NODE_WIDTH_PX,
                 y * MapUtils.NODE_HEIGHT_PX,
                 size * MapUtils.NODE_WIDTH_PX,

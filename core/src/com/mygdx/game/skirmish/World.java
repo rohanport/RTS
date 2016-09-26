@@ -1,6 +1,7 @@
 package com.mygdx.game.skirmish;
 
 import com.badlogic.gdx.utils.Disposable;
+import com.mygdx.game.skirmish.buildings.BuildingManager;
 import com.mygdx.game.skirmish.gameplay.movement.MovementHandler;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundGraph;
 import com.mygdx.game.skirmish.units.UnitManager;
@@ -14,6 +15,7 @@ public class World implements Disposable {
 
     private final SkirmishScreen screen;
     private final UnitManager unitManager;
+    private final BuildingManager buildingManager;
     private final MovementHandler movementHandler;
     private final GroundGraph groundGraph;
 
@@ -27,6 +29,9 @@ public class World implements Disposable {
         return unitManager;
     }
 
+    public BuildingManager getBuildingManager() {
+        return buildingManager;
+    }
     //-------------------------------
 
     public World(SkirmishScreen screen, int width, int height) {
@@ -35,6 +40,7 @@ public class World implements Disposable {
         this.height = height;
 
         this.unitManager = this.screen.getUnitManager();
+        this.buildingManager = this.screen.getBuildingManager();
         movementHandler = new MovementHandler(this);
 
         this.groundGraph = new GroundGraph(this);

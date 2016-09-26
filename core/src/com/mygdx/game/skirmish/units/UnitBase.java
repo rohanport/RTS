@@ -31,15 +31,17 @@ public abstract class UnitBase implements Commandable {
 
     protected Sprite sprite;
 
-    public UnitBase(int mapX, int mapY) {
+    public UnitBase(int mapX, int mapY, int size) {
         this.mapX = mapX;
         this.mapY = mapY;
         this.destNodeX = mapX;
         this.destNodeY = mapY;
+        this.size = size;
 
         circle = new Circle();
         circle.setX(mapX * MapUtils.NODE_WIDTH_PX);
         circle.setY(mapY * MapUtils.NODE_HEIGHT_PX);
+        circle.setRadius(size * MapUtils.NODE_WIDTH_PX / 2f);
     }
 
     public void translate(Vector2 translation) {

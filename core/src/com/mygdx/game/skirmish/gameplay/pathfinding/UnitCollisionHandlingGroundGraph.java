@@ -10,7 +10,7 @@ import com.mygdx.game.skirmish.World;
  */
 public class UnitCollisionHandlingGroundGraph implements IndexedGraph<GroundNode> {
 
-    private static final int COLLISION_HANDLING_RANGE = 10;
+    public static final int COLLISION_HANDLING_RANGE = 10;
 
     private final World world;
     private final GroundGraph graph;
@@ -25,12 +25,12 @@ public class UnitCollisionHandlingGroundGraph implements IndexedGraph<GroundNode
 
     @Override
     public Array<Connection<GroundNode>> getConnections(GroundNode fromNode) {
-        if (getManhattanDistance(unitNode, fromNode) < COLLISION_HANDLING_RANGE) {
+        if (graph.getDist(unitNode, fromNode) < COLLISION_HANDLING_RANGE) {
             return graph.getConnections(fromNode, true);
-        } else if (getManhattanDistance(unitNode, fromNode) == COLLISION_HANDLING_RANGE) {
+        } else if (graph.getDist(unitNode, fromNode) == COLLISION_HANDLING_RANGE) {
             Array<Connection<GroundNode>> connections = graph.getConnections(fromNode, false);
             connections.select(connection ->
-                    getManhattanDistance(fromNode, connection.getToNode()) < COLLISION_HANDLING_RANGE &&
+                    graph.getDist(fromNode, connection.getToNode()) < COLLISION_HANDLING_RANGE &&
                     !graph.nodeIsOpen(connection.getToNode()))
                     .forEach(connection -> connections.removeValue(connection, true));
         }

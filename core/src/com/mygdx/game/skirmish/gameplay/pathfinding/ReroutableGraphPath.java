@@ -58,5 +58,15 @@ public class ReroutableGraphPath<N> extends DefaultGraphPath {
         }
     }
 
+    public void setNodesInPathToReroute(int numNodes) {
+        clearReroute();
+        numNodes = Math.min(getCount(), numNodes);
+        Array<N> newReroute = new Array<>();
+        for (int i = 0; i < numNodes; i++) {
+            newReroute.add(get(i));
+        }
+        rerouteNodes.addAll(newReroute);
 
+        nodes.removeRange(0, numNodes - 1);
+    }
 }

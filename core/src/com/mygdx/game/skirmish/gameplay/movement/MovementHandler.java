@@ -1,14 +1,13 @@
 package com.mygdx.game.skirmish.gameplay.movement;
 
+import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
+import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.ai.pfa.PathFinder;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.World;
-import com.mygdx.game.skirmish.gameplay.pathfinding.GroundGraph;
-import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
-import com.mygdx.game.skirmish.gameplay.pathfinding.NodeOccupant;
-import com.mygdx.game.skirmish.gameplay.pathfinding.ReroutableGraphPath;
+import com.mygdx.game.skirmish.gameplay.pathfinding.*;
 import com.mygdx.game.skirmish.units.UnitBase;
 import com.mygdx.game.skirmish.units.UnitState;
 import com.mygdx.game.skirmish.util.MapUtils;
@@ -56,10 +55,20 @@ public class MovementHandler {
             ReroutableGraphPath<GroundNode> graphPath = groundPathCache.get(unit);
             IndexedAStarPathFinder<GroundNode> groundPathFinder = new IndexedAStarPathFinder<>(groundGraph.getCollisionHandlingGraphFor(curNode));
 
-//            if (graphPath == null || finNode != graphPath.get(graphPath.getCount() -1)) {
+            if (graphPath == null || finNode != graphPath.get(graphPath.getCount() -1)) {
                 findAndCacheGraphPath(unit, curNode, finNode, groundGraph, groundPathFinder);
                 graphPath = groundPathCache.get(unit);
-//            }
+                graphPath.setNodesInPathToReroute(UnitCollisionHandlingGroundGraph.COLLISION_HANDLING_RANGE);
+            } else {
+                GraphPath<GroundNode> collisionHandlingPath = new DefaultGraphPath<>();
+                GroundNode endOfCollisionHandlingPath = graphPath.get(Math.min(graphPath.getCount() - 1, UnitCollisionHandlingGroundGraph.COLLISION_HANDLING_RANGE));
+                groundPathFinder.searchNodePath(curNode,
+                        endOfCollisionHandlingPath,
+                        groundGraph.getHeuristic(),
+                        collisionHandlingPath);
+                graphPath.clearReroute();
+                collisionHandlingPath.forEach(graphPath::addToReroute);
+            }
 
             if (graphPath != null && graphPath.getCount() > 1) {
                 destNode = graphPath.get(1);

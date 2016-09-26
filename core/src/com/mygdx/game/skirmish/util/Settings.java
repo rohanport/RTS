@@ -5,6 +5,7 @@ package com.mygdx.game.skirmish.util;
  */
 public class Settings {
     public static final boolean DEBUG_MODE = true;
+    public static final boolean FULLSCREEN_MODE = false;
 
     public static final float TIMEFRAME = 1/60f;
     public static final float MIN_DELTA = 1/4f;

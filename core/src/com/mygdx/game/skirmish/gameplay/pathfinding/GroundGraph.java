@@ -47,7 +47,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
             }
         }
         heuristic = new GroundHeuristic();
-        unitCollisionHandlingGroundGraph = new UnitCollisionHandlingGroundGraph(world, this, null);
+        unitCollisionHandlingGroundGraph = new UnitCollisionHandlingGroundGraph(this, null);
     }
 
     public void update() {
@@ -111,8 +111,8 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
                             if (i == fromNode.x || j == fromNode.y) {
                                 connections.add(new DefaultConnection<>(fromNode, node));
                             } else {
-                                GroundNode horizontalNode = getNodeByCoords(fromNode.x, j);
-                                GroundNode verticalNode = getNodeByCoords(i, fromNode.y);
+                                GroundNode verticalNode = getNodeByCoords(fromNode.x, j);
+                                GroundNode horizontalNode = getNodeByCoords(i, fromNode.y);
                                 if (nodeIsOpen(horizontalNode) && nodeIsOpen(verticalNode)) {
                                     connections.add(new DefaultConnection<>(fromNode, node));
                                 }

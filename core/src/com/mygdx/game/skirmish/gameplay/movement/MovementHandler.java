@@ -66,10 +66,8 @@ public class MovementHandler {
             ReroutableGraphPath<GroundNode> graphPath = groundPathCache.get(unit);
             unitCollisionHandlingGroundGraph.setUnitNode(curNode);
 
-//            IndexedAStarPathFinder<GroundNode> groundPathFinder = new IndexedAStarPathFinder<>(groundGraph.getCollisionHandlingGraphFor(curNode));
-
-            if (graphPath == null || finNode != graphPath.get(graphPath.getCount() -1)) {
-                findAndCacheGraphPath(unit, curNode, finNode, groundGraph.getHeuristic(), unitPathFinder);
+            if (graphPath == null || graphPath.getCount() < 1 || finNode != graphPath.get(graphPath.getCount() -1)) {
+                findAndCacheGraphPath(unit, curNode, finNode, groundGraph.getHeuristic(), pathFinder);
                 graphPath = groundPathCache.get(unit);
                 graphPath.setNodesInPathToReroute(UnitCollisionHandlingGroundGraph.COLLISION_HANDLING_RANGE);
             } else {

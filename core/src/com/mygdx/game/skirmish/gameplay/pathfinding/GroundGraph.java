@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.skirmish.World;
+import com.mygdx.game.skirmish.buildings.BuildingBase;
 import com.mygdx.game.skirmish.units.UnitBase;
 import com.mygdx.game.skirmish.units.UnitState;
 import com.mygdx.game.skirmish.util.MapUtils;
@@ -117,6 +118,12 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
     }
 
     public void update(GroundNode node) {
+        List<BuildingBase> buildings = world.getBuildingManager().getBuildingsAtNode(node);
+        if (buildings.size() > 0) {
+            node.setOccupant(NodeOccupant.BUILDING);
+            return;
+        }
+
         List<UnitBase> units = world.getUnitManager().getUnitsAtNode(node);
 
         node.setOccupant(NodeOccupant.NONE);
@@ -169,7 +176,15 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
                             }
                         }
                     } else if (nodeIsAvailable(node)) {
-                        connections.add(new DefaultConnection<>(fromNode, node));
+                        if (i == fromNode.x || j == fromNode.y) {
+                            connections.add(new DefaultConnection<>(fromNode, node));
+                        } else {
+                            GroundNode verticalNode = getNodeByCoords(fromNode.x, j);
+                            GroundNode horizontalNode = getNodeByCoords(i, fromNode.y);
+                            if (nodeIsAvailable(horizontalNode) && nodeIsAvailable(verticalNode)) {
+                                connections.add(new DefaultConnection<>(fromNode, node));
+                            }
+                        }
                     }
                 }
             }
@@ -190,19 +205,6 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
     public GroundNode getNodeByScreenCoords(Camera cam, float screenX, float screenY) {
         Vector2 nodeCoords = MapUtils.screenCoords2MapCoords(cam, screenX, screenY);
         return nodes[Math.round(nodeCoords.x)][Math.round(nodeCoords.y)];
-    }
-
-    public List<GroundNode> getNodesCoveredByBuilding(float x, float y, int size) {
-        List<GroundNode> coveredNodes = new ArrayList<>();
-
-        GroundNode rootNode = getNodeByMapPixelCoords(x, y);
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                coveredNodes.add(getNodeByCoords(rootNode.x + i, rootNode.y + j));
-            }
-        }
-
-        return coveredNodes;
     }
 
     public boolean nodeExists(int x, int y) {

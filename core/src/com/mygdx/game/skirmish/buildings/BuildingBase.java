@@ -21,8 +21,8 @@ public abstract class BuildingBase implements Commandable {
     public BuildingBase(int x, int y, int size) {
         this.size = size;
 
-        this.rect = new Rectangle(x * MapUtils.NODE_WIDTH_PX,
-                y * MapUtils.NODE_HEIGHT_PX,
+        this.rect = new Rectangle(x * MapUtils.NODE_WIDTH_PX - MapUtils.NODE_WIDTH_PX / 2,
+                y * MapUtils.NODE_HEIGHT_PX - MapUtils.NODE_HEIGHT_PX / 2,
                 size * MapUtils.NODE_WIDTH_PX,
                 size * MapUtils.NODE_HEIGHT_PX);
     }

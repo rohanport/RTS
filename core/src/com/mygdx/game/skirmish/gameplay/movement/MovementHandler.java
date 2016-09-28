@@ -23,17 +23,13 @@ import java.util.concurrent.ConcurrentMap;
 public class MovementHandler {
 
     private final ConcurrentMap<UnitBase, ReroutableGraphPath<GroundNode>> groundPathCache;
-    private final ConcurrentMap<UnitBase, PathFinder<GroundNode>> pathFinderCache;
-    private final World world;
     private final GroundGraph groundGraph;
     private final UnitCollisionHandlingGroundGraph unitCollisionHandlingGroundGraph;
     private final IndexedAStarPathFinder<GroundNode> pathFinder;
     private final IndexedAStarPathFinder<GroundNode> unitPathFinder;
 
     public MovementHandler(World world) {
-        this.world = world;
         this.groundPathCache = new ConcurrentHashMap<>();
-        pathFinderCache = new ConcurrentHashMap<>();
         groundGraph = world.getGroundGraph();
         unitCollisionHandlingGroundGraph = groundGraph.getCollisionHandlingGraphFor(null);
         pathFinder = new IndexedAStarPathFinder<>(groundGraph);
@@ -64,26 +60,12 @@ public class MovementHandler {
             }
 
             ReroutableGraphPath<GroundNode> graphPath = groundPathCache.get(unit);
-            unitCollisionHandlingGroundGraph.setUnitNode(curNode);
-
-            if (graphPath == null || graphPath.getCount() < 1 || finNode != graphPath.get(graphPath.getCount() -1)) {
+            if (graphPath == null || graphPath.getCount() < 1 || finNode != graphPath.get(graphPath.getCount() - 1)) {
                 findAndCacheGraphPath(unit, curNode, finNode, groundGraph.getHeuristic(), pathFinder);
                 graphPath = groundPathCache.get(unit);
-                graphPath.setNodesInPathToReroute(UnitCollisionHandlingGroundGraph.COLLISION_HANDLING_RANGE);
-            } else {
-                GraphPath<GroundNode> collisionHandlingPath = new DefaultGraphPath<>();
-                int endOfCollisionPathIndex = Math.min(graphPath.getCount() - 1, UnitCollisionHandlingGroundGraph.COLLISION_HANDLING_RANGE);
-                GroundNode endOfCollisionHandlingPath = graphPath.get(endOfCollisionPathIndex);
-                if (unitPathFinder.searchNodePath(curNode,
-                        endOfCollisionHandlingPath,
-                        groundGraph.getHeuristic(),
-                        collisionHandlingPath)) {
-                    for (int i = 0; i <= endOfCollisionPathIndex; i++) {
-                        graphPath.remove(0);
-                    }
-                    collisionHandlingPath.forEach(graphPath::addToReroute);
-                }
             }
+
+            updateCollisionHandlingSectionOfPath(graphPath, curNode);
 
             if (graphPath.getCount() > 1) {
                 destNode = graphPath.get(1);
@@ -103,53 +85,28 @@ public class MovementHandler {
                     groundGraph.update(newNode);
                 } else if (newNode == curNode) {
                     unit.translate(travelVec);
-                } else {
-//                    if (curNode == groundGraph.getNodeByMapPixelCoords(pos.x + travelVec.x, pos.y)) {
-//                        //Entering from top or bottom
-//                        travelVec.rotate90(-1 * Math.round(Math.signum(travelVec.x * travelVec.y)));
-//                    } else {
-//                        travelVec.rotate90(1 * Math.round(Math.signum(travelVec.x * travelVec.y)));
-//                    }
-//
-//                    newNode = groundGraph.getNodeByMapPixelCoords(pos.x + travelVec.x, pos.y + travelVec.y);
-//                    if (newNode != curNode && newNode.getOccupant() == NodeOccupant.NONE) {
-//                        if (newNode == destNode) {
-//                            graphPath.remove(0);
-//                        }
-//                        unit.translate(travelVec);
-//                        curNode.setOccupant(NodeOccupant.NONE);
-//                        newNode.setOccupant(NodeOccupant.MOVING_UNIT);
-//                        findAndCacheGraphPath(unit, newNode, finNode, groundGraph, groundPathFinder);
-//                    } else if (newNode == curNode) {
-//                        unit.translate(travelVec);
-//                    }
-//                    graphPath.remove(0);
-//                    graphPath.clearReroute();
-//                    //Next node is new and contains something
-//                    int dirHorizontal = Math.round(Math.signum(travelVec.x));
-//                    if (dirHorizontal == 0) {
-//                        dirHorizontal = 1;
-//                    }
-//                    int dirVertical = Math.round(Math.signum(travelVec.y));
-//                    if (dirVertical == 0) {
-//                        dirVertical = 1;
-//                    }
-//                    if (curNode != groundGraph.getNodeByMapPixelCoords(pos.x + travelVec.x, pos.y)) {
-//                        //Entering from right or left
-//                        graphPath.addToReroute(groundGraph.getNodeByCoords(curNode.x + dirHorizontal, curNode.y));
-//                        graphPath.addToReroute(groundGraph.getNodeByCoords(curNode.x + dirHorizontal, curNode.y + dirVertical));
-//                        graphPath.addToReroute(groundGraph.getNodeByCoords(curNode.x + dirHorizontal, curNode.y + 2 * dirVertical));
-//                    } else {
-//                        //Entering from top or bottom
-//                        graphPath.addToReroute(groundGraph.getNodeByCoords(curNode.x, curNode.y + dirVertical));
-//                        graphPath.addToReroute(groundGraph.getNodeByCoords(curNode.x + dirHorizontal, curNode.y + dirVertical));
-//                        graphPath.addToReroute(groundGraph.getNodeByCoords(curNode.x + 2 * dirHorizontal, curNode.y + dirVertical));
-//                    }
                 }
             }
         }
     }
 
+    private void updateCollisionHandlingSectionOfPath(ReroutableGraphPath<GroundNode> graphPath, GroundNode unitNode) {
+        unitCollisionHandlingGroundGraph.setUnitNode(unitNode);
+        GraphPath<GroundNode> collisionHandlingPath = new DefaultGraphPath<>();
+        int endOfCollisionPathIndex = Math.min(graphPath.getCount() - 1, UnitCollisionHandlingGroundGraph.COLLISION_HANDLING_RANGE);
+        GroundNode endOfCollisionHandlingPath = graphPath.get(endOfCollisionPathIndex);
+        if (unitPathFinder.searchNodePath(unitNode,
+                endOfCollisionHandlingPath,
+                groundGraph.getHeuristic(),
+                collisionHandlingPath)) {
+            for (int i = 0; i <= endOfCollisionPathIndex; i++) {
+                graphPath.remove(0);
+            }
+            collisionHandlingPath.forEach(graphPath::addToReroute);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     private void findAndCacheGraphPath(UnitBase unit,
                                        GroundNode startNode,
                                        GroundNode finNode,

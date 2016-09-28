@@ -6,10 +6,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Polygon;
 import com.mygdx.game.skirmish.SkirmishScreen;
+import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
 import com.mygdx.game.skirmish.util.GameMathUtils;
+import com.mygdx.game.skirmish.util.MapUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by paddlefish on 26-Sep-16.
@@ -74,5 +77,19 @@ public class BuildingManager {
                 .forEach(intersectingBuildings::add);
 
         return intersectingBuildings;
+    }
+
+    public List<BuildingBase> getBuildingsAtNode(GroundNode node) {
+        return buildings.stream()
+                .filter(building -> isBuildingAtNode(building, node))
+                .collect(Collectors.toList());
+    }
+
+    private boolean isBuildingAtNode(BuildingBase building, GroundNode node) {
+        int mapX = Math.round(building.rect.x / MapUtils.NODE_WIDTH_PX);
+        int mapY = Math.round(building.rect.y / MapUtils.NODE_WIDTH_PX);
+
+        return (mapX <= node.x && node.x < mapX + building.size) &&
+                (mapY <= node.y && node.y < mapY + building.size);
     }
 }

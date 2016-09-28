@@ -6,30 +6,61 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.gameplay.Commandable;
+import com.mygdx.game.skirmish.gameplay.GameObject;
+import com.mygdx.game.skirmish.gameplay.GameObjectType;
 import com.mygdx.game.skirmish.util.MapUtils;
 
 /**
  * Created by paddlefish on 18-Sep-16.
  */
-public abstract class UnitBase implements Commandable {
+public abstract class UnitBase implements Commandable, GameObject {
 
     public Circle circle;
     public int mapX;
     public int mapY;
     public float size;
     public float hp;
+    public float curHp;
     public float atk;
-    public int baseSpeed;
-    public float speedMulti = 1;
-    public float baseAtkSpeed;
-    public float baseAtkSpeedMulti;
+    public float baseSpeed;
+    public float speedMulti = 1f;
+    protected float baseAtkStartup;
+    protected float baseAtkEnd;
+    public float curAtkStartup;
+    public float curAtkEnd;
+    public float baseAtkSpeedMulti = 1f;
+    private int atkTargetID;
 
     public UnitState state;
     public int destNodeX;
     public int destNodeY;
 
+    private int gameID;
 
     protected Sprite sprite;
+
+    //----------- Getters and Setters ------------
+    @Override
+    public int getID() {
+        return gameID;
+    }
+    @Override
+    public void setID(int id) {
+        gameID = id;
+    }
+
+    public float getTotalAtkStartup() {
+        return baseAtkStartup / baseAtkSpeedMulti;
+    }
+    public float getTotalAtkEnd() {
+        return baseAtkEnd / baseAtkSpeedMulti;
+    }
+
+    public int getAtkTargetID() {
+        return atkTargetID;
+    }
+
+    //-----------------------------------------
 
     public UnitBase(int mapX, int mapY, int size) {
         this.mapX = mapX;
@@ -54,6 +85,11 @@ public abstract class UnitBase implements Commandable {
     }
 
     @Override
+    public GameObjectType getGameObjectType() {
+        return GameObjectType.UNIT;
+    }
+
+    @Override
     public void renderSelectionMarker(ShapeRenderer shapeRenderer) {
         shapeRenderer.circle(circle.x, circle.y, circle.radius);
     }
@@ -71,5 +107,10 @@ public abstract class UnitBase implements Commandable {
     @Override
     public int getMapCenterY() {
         return Math.round(circle.y / MapUtils.NODE_HEIGHT_PX);
+    }
+
+    @Override
+    public void applyDamage(float damage) {
+        curHp -= damage;
     }
 }

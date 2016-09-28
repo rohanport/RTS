@@ -10,6 +10,7 @@ import com.mygdx.game.DefaultScreen;
 import com.mygdx.game.Resources;
 import com.mygdx.game.skirmish.buildings.Building1;
 import com.mygdx.game.skirmish.buildings.BuildingManager;
+import com.mygdx.game.skirmish.gameplay.GameObjectManager;
 import com.mygdx.game.skirmish.map.MapCamera;
 import com.mygdx.game.skirmish.map.SelectorRenderer;
 import com.mygdx.game.skirmish.ui.SelectionManager;
@@ -29,6 +30,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     //--------- Managers -------
     private final World world;
     private final InputMultiplexer inputHandler;
+    private final GameObjectManager gameObjectManager;
     private final UnitManager unitManager;
     private final BuildingManager buildingManager;
     private final SelectionManager selectionManager;
@@ -40,20 +42,25 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     private SpriteBatch backgroundBatch;
 
     //-------- Camera ---------
-    private MapCamera cam = new MapCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), MAP_WIDTH, MAP_HEIGHT);
+    private MapCamera cam = new MapCamera(
+            Gdx.graphics.getWidth(),
+            Gdx.graphics.getHeight(),
+            MAP_WIDTH * MapUtils.NODE_WIDTH_PX,
+            MAP_HEIGHT * MapUtils.NODE_HEIGHT_PX
+    );
 
 
     //------- Getters and Setters --------
+    public GameObjectManager getGameObjectManager() {
+        return gameObjectManager;
+    }
+
     public UnitManager getUnitManager() {
         return unitManager;
     }
 
     public BuildingManager getBuildingManager() {
         return buildingManager;
-    }
-
-    public SelectionManager getSelectionManager() {
-        return selectionManager;
     }
 
     public MapCamera getCam() {
@@ -64,6 +71,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     public SkirmishScreen(Game game) {
         super(game);
 
+        gameObjectManager = new GameObjectManager(this);
         unitManager = new UnitManager(this);
         buildingManager = new BuildingManager(this);
         selectionManager = new SelectionManager(this);
@@ -80,7 +88,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     public void show() {
         background = Resources.getInstance().bgGrass01;
         background.setPosition(0, 0);
-        background.setSize(MAP_WIDTH, MAP_HEIGHT);
+        background.setSize(MAP_WIDTH * MapUtils.NODE_WIDTH_PX, MAP_HEIGHT * MapUtils.NODE_HEIGHT_PX);
         background.getTexture().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
         backgroundBatch = new SpriteBatch();
@@ -127,36 +135,18 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.Q) {
-            cam.rotate(1, 0, 0.1f , 0);
-        } else if (keycode == Input.Keys.W) {
-            cam.rotate(1, 0, -0.1f, 0);
-        }
-
-        if (keycode == Input.Keys.A) {
-            cam.rotate(1, 0.1f, 0 , 0);
-        } else if (keycode == Input.Keys.S) {
-            cam.rotate(1, -0.1f, 0 , 0);
-        }
-
-        if (keycode == Input.Keys.Z) {
-            cam.rotate(1, 0, 0 , 0.1f);
-        } else if (keycode == Input.Keys.X) {
-            cam.rotate(1, 0, 0 , -0.1f);
-        }
-
         if (keycode == Input.Keys.ENTER) {
             Vector2 middleOfScreen = MapUtils.screenCoords2MapCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
             Soldier1 test = new Soldier1(Math.round(middleOfScreen.x + 20 * ((float) Math.random() - 0.5f)),
                     Math.round(middleOfScreen.y + 20 * ((float) Math.random() - 0.5f)));
-            unitManager.addUnit(test);
+            gameObjectManager.add(test);
             selectionManager.addToSelection(test);
         }
 
         if (keycode == Input.Keys.SPACE) {
             Vector2 middleOfScreen = MapUtils.screenCoords2MapCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
             Building1 test = new Building1(Math.round(middleOfScreen.x), Math.round(middleOfScreen.y));
-            buildingManager.addBuilding(test);
+            gameObjectManager.add(test);
             selectionManager.addToSelection(test);
         }
 

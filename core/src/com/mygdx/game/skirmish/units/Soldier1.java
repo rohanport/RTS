@@ -10,8 +10,13 @@ public class Soldier1 extends UnitBase {
     public Soldier1(int x, int y) {
         super(x, y, 1);
 
-        hp = 10;
-        baseSpeed = 100;
+        hp = 10f;
+        curHp = hp;
+
+        baseSpeed = 100f;
+
+        baseAtkStartup = 0.7f;
+        baseAtkEnd = 0.3f;
 
         sprite = Resources.getInstance().soldier1;
     }

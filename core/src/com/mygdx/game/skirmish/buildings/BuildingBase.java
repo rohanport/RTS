@@ -5,26 +5,50 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.game.skirmish.gameplay.Commandable;
+import com.mygdx.game.skirmish.gameplay.GameObject;
+import com.mygdx.game.skirmish.gameplay.GameObjectType;
 import com.mygdx.game.skirmish.util.MapUtils;
 
 /**
  * Created by paddlefish on 26-Sep-16.
  */
-public abstract class BuildingBase implements Commandable {
+public abstract class BuildingBase implements Commandable, GameObject {
 
     public Rectangle rect;
     public float hp;
+    public float curHp;
     public int size;
 
+    private int gameID;
+
     protected Sprite sprite;
+
+    //----------- Getters and Setters ---------------
+    @Override
+    public int getID() {
+        return gameID;
+    }
+    @Override
+    public void setID(int id) {
+        gameID = id;
+    }
+
+    //--------------------------------------------
 
     public BuildingBase(int x, int y, int size) {
         this.size = size;
 
-        this.rect = new Rectangle(x * MapUtils.NODE_WIDTH_PX - MapUtils.NODE_WIDTH_PX / 2,
+        this.rect = new Rectangle(
+                x * MapUtils.NODE_WIDTH_PX - MapUtils.NODE_WIDTH_PX / 2,
                 y * MapUtils.NODE_HEIGHT_PX - MapUtils.NODE_HEIGHT_PX / 2,
                 size * MapUtils.NODE_WIDTH_PX,
-                size * MapUtils.NODE_HEIGHT_PX);
+                size * MapUtils.NODE_HEIGHT_PX
+        );
+    }
+
+    @Override
+    public GameObjectType getGameObjectType() {
+        return GameObjectType.BUILDING;
     }
 
     @Override
@@ -59,5 +83,10 @@ public abstract class BuildingBase implements Commandable {
     @Override
     public int getMapCenterY() {
         return 0;
+    }
+
+    @Override
+    public void applyDamage(float damage) {
+        curHp -= damage;
     }
 }

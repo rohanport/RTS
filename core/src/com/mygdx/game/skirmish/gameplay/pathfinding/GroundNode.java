@@ -7,6 +7,10 @@ public class GroundNode {
     public final int x;
     public final int y;
 
+    private int updateFrame = 0;
+
+    private final GroundGraph graph;
+
     private NodeOccupant occupant;
 
     public void setOccupant(NodeOccupant occupant) {
@@ -14,12 +18,18 @@ public class GroundNode {
     }
 
     public NodeOccupant getOccupant() {
+        if (updateFrame != graph.getUpdateFrame()) {
+            graph.update(this);
+            updateFrame = graph.getUpdateFrame();
+        }
+
         return occupant;
     }
 
-    public GroundNode(int x, int y) {
+    public GroundNode(GroundGraph graph, int x, int y) {
         this.x = x;
         this.y = y;
+        this.graph = graph;
 
         setOccupant(NodeOccupant.NONE);
     }

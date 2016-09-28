@@ -1,13 +1,16 @@
 package com.mygdx.game.skirmish.gameplay.pathfinding;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.pfa.Connection;
 import com.badlogic.gdx.ai.pfa.DefaultConnection;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.skirmish.World;
-import com.mygdx.game.skirmish.buildings.BuildingBase;
 import com.mygdx.game.skirmish.units.UnitBase;
 import com.mygdx.game.skirmish.units.UnitState;
 import com.mygdx.game.skirmish.util.MapUtils;
@@ -28,12 +31,19 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
     private final int width;
     private final int height;
 
+    private int updateFrame = 0;
+    
+    private final ShapeRenderer debugRenderer;
+
     //-------- Getters and Setters ------------
     public GroundHeuristic getHeuristic() {
         return heuristic;
     }
 
-    //-----------------------------------------
+    public int getUpdateFrame() {
+        return updateFrame;
+    }
+//-----------------------------------------
 
     public GroundGraph(World world) {
         this.world = world;
@@ -43,27 +53,67 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
         nodes = new GroundNode[height][width];
         for(int i = 0; i < width; i++) {
             for(int j = 0; j < height; j++) {
-                nodes[i][j] = new GroundNode(i, j);
+                nodes[i][j] = new GroundNode(this, i, j);
             }
         }
         heuristic = new GroundHeuristic();
         unitCollisionHandlingGroundGraph = new UnitCollisionHandlingGroundGraph(this, null);
+        debugRenderer = new ShapeRenderer();
+    }
+    
+    public void debugRender(Camera cam) {
+        debugRenderer.setProjectionMatrix(cam.combined);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        debugRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        int startNodeLeft = Math.max(Math.round((cam.position.x - cam.viewportWidth / 2f) / MapUtils.NODE_WIDTH_PX) - 2, 0);
+        int startNodeTop = Math.max(Math.round((cam.position.y - cam.viewportHeight / 2f) / MapUtils.NODE_HEIGHT_PX) - 2, 0);
+        int startNodeRight = Math.min(Math.round(startNodeLeft + cam.viewportWidth / MapUtils.NODE_WIDTH_PX) + 4, width);
+        int startNodeBottom = Math.min(Math.round(startNodeTop + cam.viewportHeight / MapUtils.NODE_HEIGHT_PX) + 4, height);
+        float xOffset = MapUtils.NODE_WIDTH_PX / 2f;
+        float yOffset = MapUtils.NODE_HEIGHT_PX / 2f;
+
+        for (int i = startNodeLeft; i < startNodeRight; i++) {
+            for (int j = startNodeTop; j < startNodeBottom; j++) {
+                GroundNode node = nodes[i][j];
+                if (!nodeIsOpen(node)) {
+                    debugRenderer.setColor(Color.RED.r, Color.RED.g, Color.RED.b, 0.5f);
+                } else if (node.getOccupant() == NodeOccupant.MOVING_UNIT) {
+                    debugRenderer.setColor(Color.YELLOW.r, Color.YELLOW.g, Color.YELLOW.b, 0.5f);
+                } else {
+                    debugRenderer.setColor(Color.GREEN.r, Color.GREEN.g, Color.GREEN.b, 0.5f);
+                }
+                debugRenderer.rect(node.x * MapUtils.NODE_WIDTH_PX - xOffset,
+                        node.y * MapUtils.NODE_HEIGHT_PX - yOffset,
+                        MapUtils.NODE_WIDTH_PX,
+                        MapUtils.NODE_HEIGHT_PX
+                );
+            }
+        }
+        debugRenderer.end();
+        debugRenderer.begin(ShapeRenderer.ShapeType.Line);
+        debugRenderer.setColor(Color.BLACK);
+        for (int i = startNodeLeft; i < startNodeRight; i++) {
+            debugRenderer.line(i * MapUtils.NODE_WIDTH_PX - xOffset,
+                    startNodeTop * MapUtils.NODE_HEIGHT_PX - yOffset,
+                    i * MapUtils.NODE_WIDTH_PX - xOffset,
+                    startNodeBottom * MapUtils.NODE_HEIGHT_PX - yOffset
+            );
+        }
+        for (int i = startNodeTop; i < startNodeBottom; i++) {
+            debugRenderer.line(startNodeLeft * MapUtils.NODE_WIDTH_PX - xOffset,
+                    i * MapUtils.NODE_HEIGHT_PX - yOffset,
+                    startNodeRight * MapUtils.NODE_WIDTH_PX - xOffset,
+                    i * MapUtils.NODE_HEIGHT_PX - yOffset
+            );
+        }
+        debugRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
-    public void update() {
-        List<UnitBase> units = world.getUnitManager().getUnits();
-
-        setAllNodesTo(NodeOccupant.NONE);
-        units.forEach(unit ->
-                getNodeByMapPixelCoords(unit.circle.x, unit.circle.y)
-                .setOccupant(unit.state == UnitState.MOVING ? NodeOccupant.MOVING_UNIT : NodeOccupant.STOPPED_UNIT)
-        );
-
-        List<BuildingBase> buildings = world.getBuildingManager().getBuildings();
-        buildings.forEach(building ->
-                getNodesCoveredByBuilding(building.rect.x, building.rect.y, building.size)
-                        .forEach(node -> node.setOccupant(NodeOccupant.BUILDING))
-        );
+    public void newUpdateFrame() {
+        updateFrame++;
     }
 
     public void update(GroundNode node) {
@@ -211,14 +261,6 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
             }
 
             return -1;
-        }
-    }
-
-    private void setAllNodesTo(NodeOccupant occupant) {
-        for(int i = 0; i < width; i++) {
-            for(int j = 0; j < height; j++) {
-                nodes[i][j].setOccupant(occupant);
-            }
         }
     }
 

@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Polygon;
 import com.mygdx.game.skirmish.SkirmishScreen;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
 import com.mygdx.game.skirmish.util.GameMathUtils;
-import com.mygdx.game.skirmish.util.MapUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,10 +88,8 @@ public class UnitManager {
     }
 
     public boolean isUnitAtNode(UnitBase unit, GroundNode node) {
-        return node.x * MapUtils.NODE_WIDTH_PX < unit.circle.x &&
-                (node.x + 1) * MapUtils.NODE_WIDTH_PX >= unit.circle.x &&
-                node.y * MapUtils.NODE_HEIGHT_PX < unit.circle.y &&
-                (node.y + 1) * MapUtils.NODE_HEIGHT_PX >= unit.circle.y;
+        return unit.getMapCenterX() == node.x &&
+                unit.getMapCenterY() == node.y;
     }
 
 }

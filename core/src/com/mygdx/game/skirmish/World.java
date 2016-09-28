@@ -45,7 +45,7 @@ public class World implements Disposable {
         this.buildingManager = this.screen.getBuildingManager();
 
         this.groundGraph = new GroundGraph(this);
-        groundGraph.update();
+        groundGraph.newUpdateFrame();
         movementHandler = new MovementHandler(this);
     }
 
@@ -57,6 +57,10 @@ public class World implements Disposable {
         for (; accumulatedDelta >= Settings.TIMEFRAME; accumulatedDelta -= Settings.TIMEFRAME) {
             step(Settings.TIMEFRAME);
         }
+    }
+
+    public void renderNodesDebug() {
+        groundGraph.debugRender(screen.getCam());
     }
 
     private void step(float timeframe) {

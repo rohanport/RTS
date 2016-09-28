@@ -98,6 +98,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         backgroundBatch.end();
 
         if (Settings.DEBUG_MODE) {
+            world.renderNodesDebug();
             unitManager.renderUnitsDebug();
             buildingManager.renderBuildingsDebug();
         } else {

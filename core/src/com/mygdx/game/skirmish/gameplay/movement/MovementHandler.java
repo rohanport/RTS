@@ -49,11 +49,11 @@ public class MovementHandler {
         Vector2 pos = new Vector2();
         Vector2 destPos = new Vector2();
         Vector2 travelVec;
-        groundGraph.update();
+        groundGraph.newUpdateFrame();
         for (UnitBase unit : units) {
             unitCircle =  unit.circle;
             pos.set(unitCircle.x, unitCircle.y);
-            curNode = groundGraph.getNodeByMapPixelCoords(pos.x, pos.y);
+            curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
             finNode = groundGraph.getNodeByCoords(unit.destNodeX, unit.destNodeY);
             if (groundGraph.getDist(curNode, finNode) <= groundGraph.getDistOfClosestFreeNode(finNode)) {
                 unit.state = UnitState.NONE;

@@ -60,7 +60,10 @@ public class UnitManager implements GameObjectsObserver {
         unitRenderer.setProjectionMatrix(cam.combined);
 
         unitRenderer.begin();
-        units.forEach(unit -> unit.render(unitRenderer));
+        for (UnitBase unit : units) {
+            unit.render(unitRenderer);
+            unit.renderHealthBar(unitRenderer);
+        }
         unitRenderer.end();
     }
 

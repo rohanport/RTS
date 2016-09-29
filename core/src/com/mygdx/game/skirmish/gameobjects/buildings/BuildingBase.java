@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
+import com.mygdx.game.skirmish.ui.HealthBar;
 import com.mygdx.game.skirmish.util.MapUtils;
 
 /**
@@ -22,6 +23,7 @@ public abstract class BuildingBase implements Commandable, GameObject {
     private int gameID;
 
     protected Sprite sprite;
+    private final HealthBar healthBar;
 
     //----------- Getters and Setters ---------------
     @Override
@@ -54,6 +56,8 @@ public abstract class BuildingBase implements Commandable, GameObject {
                 size * MapUtils.NODE_WIDTH_PX,
                 size * MapUtils.NODE_HEIGHT_PX
         );
+
+        healthBar = new HealthBar(this);
     }
 
     @Override
@@ -73,6 +77,10 @@ public abstract class BuildingBase implements Commandable, GameObject {
 
     public void render(SpriteBatch batch) {
         batch.draw(sprite, rect.x - sprite.getWidth()/2, rect.y - sprite.getHeight()/2);
+    }
+
+    public void renderHealthBar(SpriteBatch batch) {
+        healthBar.render(batch);
     }
 
     @Override

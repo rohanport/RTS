@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
+import com.mygdx.game.skirmish.ui.HealthBar;
 import com.mygdx.game.skirmish.util.MapUtils;
 
 /**
@@ -39,6 +40,7 @@ public abstract class UnitBase implements Commandable, GameObject {
     private int gameID;
 
     protected Sprite sprite;
+    private final HealthBar healthBar;
 
     //----------- Getters and Setters ------------
     @Override
@@ -83,6 +85,8 @@ public abstract class UnitBase implements Commandable, GameObject {
         circle.setX(mapX * MapUtils.NODE_WIDTH_PX);
         circle.setY(mapY * MapUtils.NODE_HEIGHT_PX);
         circle.setRadius(size * MapUtils.NODE_WIDTH_PX / 2f);
+
+        healthBar = new HealthBar(this);
     }
 
     public void translate(Vector2 translation) {
@@ -94,14 +98,18 @@ public abstract class UnitBase implements Commandable, GameObject {
         batch.draw(sprite, circle.x - sprite.getWidth()/2, circle.y - sprite.getHeight()/2);
     }
 
-    @Override
-    public GameObjectType getGameObjectType() {
-        return GameObjectType.UNIT;
+    public void renderHealthBar(SpriteBatch batch) {
+        healthBar.render(batch);
     }
 
     @Override
     public void renderSelectionMarker(ShapeRenderer shapeRenderer) {
         shapeRenderer.circle(circle.x, circle.y, circle.radius);
+    }
+
+    @Override
+    public GameObjectType getGameObjectType() {
+        return GameObjectType.UNIT;
     }
 
     @Override

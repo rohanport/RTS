@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
@@ -30,11 +31,7 @@ public class BuildingManager implements GameObjectsObserver {
     private List<BuildingBase> buildings;
     
     //------ Getters and Setters ----------
-    
-    public List<BuildingBase> getBuildings() {
-        return buildings;
-    }
-    
+
     //--------------------------------------
 
     public BuildingManager(SkirmishScreen screen) {
@@ -59,7 +56,10 @@ public class BuildingManager implements GameObjectsObserver {
         buildingRenderer.setProjectionMatrix(cam.combined);
 
         buildingRenderer.begin();
-        buildings.forEach(building -> building.render(buildingRenderer));
+        for (BuildingBase building : buildings) {
+            building.render(buildingRenderer);
+            building.renderHealthBar(buildingRenderer);
+        }
         buildingRenderer.end();
     }
 
@@ -76,14 +76,16 @@ public class BuildingManager implements GameObjectsObserver {
         buildingShapeRenderer.end();
     }
 
-    public List<BuildingBase> getIntersectingBuildings(final Polygon box) {
-        List<BuildingBase> intersectingBuildings = new ArrayList<>();
-
-        buildings.stream()
+    public List<BuildingBase> getIntersectingBuildings(Polygon box) {
+        return buildings.stream()
                 .filter(building -> GameMathUtils.isRectangleIntersectQuadrilateral(building.rect, box))
-                .forEach(intersectingBuildings::add);
+                .collect(Collectors.toList());
+    }
 
-        return intersectingBuildings;
+    public List<BuildingBase> getIntersectingBuildings(Vector2 point) {
+        return buildings.stream()
+                .filter(building -> building.rect.contains(point))
+                .collect(Collectors.toList());
     }
 
     public List<BuildingBase> getBuildingsAtNode(GroundNode node) {

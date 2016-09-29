@@ -15,6 +15,10 @@ public class Resources {
     public Sprite title = new Sprite(new Texture(Gdx.files.internal("sprites/menu/title.png")));
 
 
+    //--------- UI -----------------------
+    public Sprite healthBar = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/ui/healthBar.png")));
+
+
     //--------- Map ------------------------
     public Sprite bgGrass01 = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/terrain/grass01.jpg")));
 

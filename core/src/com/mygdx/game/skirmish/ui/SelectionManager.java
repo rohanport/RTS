@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
+import com.mygdx.game.skirmish.gameobjects.buildings.BuildingBase;
 import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
@@ -121,6 +122,11 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
                 screenX,
                 screenY
         )));
+        newSelection.addAll(screen.getBuildingManager().getIntersectingBuildings(MapUtils.screenCoords2MapCoords(
+                screen.getCam(),
+                screenX,
+                screenY
+        )));
     }
 
     private void handleSelectionEnd() {
@@ -150,9 +156,11 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
             });
 
             List<UnitBase> intersectingUnits = screen.getUnitManager().getIntersectingUnits(selectionPolygon);
+            List<BuildingBase> intersectingBuildings = screen.getBuildingManager().getIntersectingBuildings(selectionPolygon);
 
             newSelection.clear();
             newSelection.addAll(intersectingUnits);
+            newSelection.addAll(intersectingBuildings);
         }
     }
 

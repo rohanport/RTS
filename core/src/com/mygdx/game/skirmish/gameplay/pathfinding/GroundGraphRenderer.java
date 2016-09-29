@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.skirmish.util.MapUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by paddlefish on 29-Sep-16.
  */
@@ -14,11 +17,15 @@ public class GroundGraphRenderer {
 
     private final GroundGraph graph;
     private final ShapeRenderer debugRenderer;
+    private final List<GroundNode> nodesToRenderBlue;
+    private final List<GroundNode> nodesToRenderBlack;
 
     public GroundGraphRenderer(GroundGraph graph) {
         this.graph = graph;
 
         debugRenderer = new ShapeRenderer();
+        nodesToRenderBlue = new ArrayList<>();
+        nodesToRenderBlack = new ArrayList<>();
     }
 
     public void debugRender(Camera cam) {
@@ -51,6 +58,27 @@ public class GroundGraphRenderer {
                 );
             }
         }
+
+        debugRenderer.setColor(Color.BLUE.r, Color.BLUE.g, Color.BLUE.b, 0.5f);
+        for (GroundNode node : nodesToRenderBlue) {
+            debugRenderer.rect(node.x * MapUtils.NODE_WIDTH_PX - xOffset,
+                    node.y * MapUtils.NODE_HEIGHT_PX - yOffset,
+                    MapUtils.NODE_WIDTH_PX,
+                    MapUtils.NODE_HEIGHT_PX
+            );
+        }
+        nodesToRenderBlue.clear();
+
+        debugRenderer.setColor(Color.BLACK.r, Color.BLACK.g, Color.BLACK.b, 0.5f);
+        for (GroundNode node : nodesToRenderBlack) {
+            debugRenderer.rect(node.x * MapUtils.NODE_WIDTH_PX - xOffset,
+                    node.y * MapUtils.NODE_HEIGHT_PX - yOffset,
+                    MapUtils.NODE_WIDTH_PX,
+                    MapUtils.NODE_HEIGHT_PX
+            );
+        }
+        nodesToRenderBlack.clear();
+
         debugRenderer.end();
         debugRenderer.begin(ShapeRenderer.ShapeType.Line);
         debugRenderer.setColor(Color.BLACK);
@@ -70,5 +98,13 @@ public class GroundGraphRenderer {
         }
         debugRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
+    }
+
+    public void addToNodesToRenderBlue(List<GroundNode> nodes) {
+        nodesToRenderBlue.addAll(nodes);
+    }
+
+    public void addToNodesToRenderBlack(List<GroundNode> nodes) {
+        nodesToRenderBlack.addAll(nodes);
     }
 }

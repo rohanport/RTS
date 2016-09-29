@@ -25,7 +25,7 @@ public class UnitCollisionHandlingGroundGraph implements IndexedGraph<GroundNode
 
     @Override
     public Array<Connection<GroundNode>> getConnections(GroundNode fromNode) {
-        if (graph.getDist(unitNode, fromNode) <= COLLISION_HANDLING_RANGE) {
+        if (GroundGraphUtils.getDist(unitNode, fromNode) <= COLLISION_HANDLING_RANGE) {
             return graph.getConnections(fromNode, true);
         }
 

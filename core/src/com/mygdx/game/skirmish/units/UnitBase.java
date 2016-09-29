@@ -32,7 +32,7 @@ public abstract class UnitBase implements Commandable, GameObject {
     public float baseAtkSpeedMulti = 1f;
     private int atkTargetID;
 
-    public UnitState state;
+    public UnitState state = UnitState.NONE;
     public int destNodeX;
     public int destNodeY;
 

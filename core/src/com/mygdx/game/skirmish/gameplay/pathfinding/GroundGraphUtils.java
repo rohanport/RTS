@@ -74,7 +74,7 @@ public class GroundGraphUtils {
 
     public static List<GroundNode> getFreeNodesAtDistEuclidean(GroundGraph graph, float destX, float destY, int radius) {
         List<GroundNode> openNodesAtDist = new ArrayList<>();
-        Circle atkCircle = new Circle(destX, destY, radius);
+        Circle atkCircle = new Circle(destX, destY, radius - 0.5f);
         int i;
         int j;
 
@@ -90,36 +90,36 @@ public class GroundGraphUtils {
         }
 
         // 2nd Quadrant
-        i = -1;
+        i = 0;
         j = radius;
         while (i >= -radius && j >= 0) {
             while (atkCircle.contains(destX + i, destY + j) && graph.nodeIsOpen(graph.getNodeByMapPixelCoords(destX + i, destY + j))) {
-                openNodesAtDist.add(graph.getNodeByCoords((int) Math.floor(destX + i), (int) Math.floor(destY + j)));
-                j--;
+                openNodesAtDist.add(graph.getNodeByCoords((int) Math.ceil(destX + i), (int) Math.floor(destY + j)));
+                i--;
             }
-            i--;
+            j--;
         }
 
         // 3rd Quadrant
-        i = -radius + 1;
-        j = -1;
+        i = -radius;
+        j = 0;
         while (i <= 0 && j >= -radius) {
             while (atkCircle.contains(destX + i, destY + j) && graph.nodeIsOpen(graph.getNodeByMapPixelCoords(destX + i, destY + j))) {
-                openNodesAtDist.add(graph.getNodeByCoords((int) Math.floor(destX + i), (int) Math.floor(destY + j)));
+                openNodesAtDist.add(graph.getNodeByCoords((int) Math.ceil(destX + i), (int) Math.ceil(destY + j)));
                 j--;
             }
             i++;
         }
 
         // 4th Quadrant
-        i = 1;
-        j = -radius + 1;
-        while (i < radius && j < 0) {
+        i = 0;
+        j = -radius;
+        while (i <= radius && j <= 0) {
             while (atkCircle.contains(destX + i, destY + j) && graph.nodeIsOpen(graph.getNodeByMapPixelCoords(destX + i, destY + j))) {
-                openNodesAtDist.add(graph.getNodeByCoords((int) Math.floor(destX + i), (int) Math.floor(destY + j)));
-                j++;
+                openNodesAtDist.add(graph.getNodeByCoords((int) Math.floor(destX + i), (int) Math.ceil(destY + j)));
+                i++;
             }
-            i++;
+            j++;
         }
 
         return openNodesAtDist;

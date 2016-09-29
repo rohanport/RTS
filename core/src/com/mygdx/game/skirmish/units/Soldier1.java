@@ -10,7 +10,7 @@ public class Soldier1 extends UnitBase {
     public Soldier1(int x, int y) {
         super(x, y, 1);
 
-        hp = 10f;
+        hp = 100f;
         curHp = hp;
 
         atk = 10f;

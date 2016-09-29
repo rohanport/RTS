@@ -13,4 +13,5 @@ public interface GameObject {
     GameObjectType getGameObjectType();
 
     void applyDamage(float damage);
+    boolean isToBeDestroyed();
 }

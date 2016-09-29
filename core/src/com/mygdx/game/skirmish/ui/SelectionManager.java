@@ -9,6 +9,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
 import com.mygdx.game.skirmish.gameplay.Commandable;
+import com.mygdx.game.skirmish.gameplay.GameObject;
+import com.mygdx.game.skirmish.gameplay.GameObjectType;
+import com.mygdx.game.skirmish.gameplay.GameObjectsObserver;
 import com.mygdx.game.skirmish.units.UnitBase;
 import com.mygdx.game.skirmish.util.MapUtils;
 import com.mygdx.game.skirmish.util.Settings;
@@ -20,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * Created by paddlefish on 19-Sep-16.
  */
-public class SelectionManager implements InputProcessor {
+public class SelectionManager implements InputProcessor, GameObjectsObserver {
     private final SkirmishScreen screen;
 
     private List<Commandable> selection;
@@ -220,5 +223,25 @@ public class SelectionManager implements InputProcessor {
             unit.renderSelectionMarker(selectionRenderer);
         }
         selectionRenderer.end();
+    }
+
+    @Override
+    public void notify(GameObject gameObject, Notification notification) {
+        if (!(gameObject.getGameObjectType() == GameObjectType.UNIT ||
+                gameObject.getGameObjectType() == GameObjectType.BUILDING)) {
+            return;
+        }
+
+        switch (notification) {
+            case CREATE:
+                //Do nothing
+                break;
+            case DESTROY:
+                selection.remove(gameObject);
+                newSelection.remove(gameObject);
+                break;
+            default:
+                throw new RuntimeException("Unknown notification " + notification);
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.game.skirmish.buildings.BuildingManager;
 import com.mygdx.game.skirmish.gameplay.GameObjectManager;
 import com.mygdx.game.skirmish.gameplay.combat.CombatHandler;
+import com.mygdx.game.skirmish.gameplay.combat.DestructionHandler;
 import com.mygdx.game.skirmish.gameplay.movement.MovementHandler;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundGraph;
 import com.mygdx.game.skirmish.units.UnitManager;
@@ -21,6 +22,7 @@ public class World implements Disposable {
     private final BuildingManager buildingManager;
     private final MovementHandler movementHandler;
     private final CombatHandler combatHandler;
+    private final DestructionHandler destructionHandler;
     private final GroundGraph groundGraph;
 
     public final int width;
@@ -56,6 +58,7 @@ public class World implements Disposable {
         groundGraph.newUpdateFrame();
         movementHandler = new MovementHandler(this);
         combatHandler = new CombatHandler(this);
+        destructionHandler = new DestructionHandler(this);
     }
 
     // Update to be called after rendering
@@ -77,6 +80,7 @@ public class World implements Disposable {
         movementHandler.handleGroundUnitMovingToAtk(timeframe, unitManager.getUnitsInState(UnitState.MOVING_TO_ATK), gameObjectManager);
         combatHandler.handleAtkStarting(timeframe, unitManager.getUnitsInState(UnitState.ATK_STARTING));
         combatHandler.handleAtkEnding(timeframe, unitManager.getUnitsInState(UnitState.ATK_ENDING));
+        destructionHandler.handleGameObjectDestruction(gameObjectManager.getGameObjectsToBeDestroyed());
     }
 
 

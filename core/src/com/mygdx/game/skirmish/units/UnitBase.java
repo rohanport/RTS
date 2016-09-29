@@ -130,4 +130,9 @@ public abstract class UnitBase implements Commandable, GameObject {
         this.state = UnitState.MOVING_TO_ATK;
         return false;
     }
+
+    @Override
+    public boolean isToBeDestroyed() {
+        return curHp <= 0;
+    }
 }

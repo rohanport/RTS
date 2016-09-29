@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
+import com.mygdx.game.skirmish.gameplay.GameObject;
+import com.mygdx.game.skirmish.gameplay.GameObjectType;
+import com.mygdx.game.skirmish.gameplay.GameObjectsObserver;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
 import com.mygdx.game.skirmish.util.GameMathUtils;
 
@@ -19,7 +22,7 @@ import java.util.stream.Collectors;
  *
  * Manages units in skirmish mode
  */
-public class UnitManager {
+public class UnitManager implements GameObjectsObserver {
 
     private final SkirmishScreen screen;
 
@@ -46,6 +49,10 @@ public class UnitManager {
 
     public void addUnit(UnitBase unit) {
         units.add(unit);
+    }
+
+    public void removeUnit(UnitBase unit) {
+        units.remove(unit);
     }
 
     public void renderUnits() {
@@ -95,4 +102,21 @@ public class UnitManager {
                 unit.getMapCenterY() == node.y;
     }
 
+    @Override
+    public void notify(GameObject gameObject, Notification notification) {
+        if (gameObject.getGameObjectType() != GameObjectType.UNIT) {
+            return;
+        }
+
+        switch (notification) {
+            case CREATE:
+                addUnit((UnitBase) gameObject);
+                break;
+            case DESTROY:
+                removeUnit((UnitBase) gameObject);
+                break;
+            default:
+                throw new RuntimeException("Unknown notification " + notification);
+        }
+    }
 }

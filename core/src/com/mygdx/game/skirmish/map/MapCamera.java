@@ -9,8 +9,8 @@ public class MapCamera extends OrthographicCamera {
     private final int mapWidth;
     private final int mapHeight;
 
-    private static final float MAX_X_SPEED = 200f;
-    private static final float MAX_Y_SPEED = 200f;
+    private static final float MAX_X_SPEED = 300f;
+    private static final float MAX_Y_SPEED = 300f;
     private static final float X_ACCELERATION = 400f;
     private static final float Y_ACCELERATION = 400f;
 

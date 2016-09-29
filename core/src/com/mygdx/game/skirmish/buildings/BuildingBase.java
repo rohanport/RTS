@@ -104,4 +104,9 @@ public abstract class BuildingBase implements Commandable, GameObject {
     public boolean processAtkCommand(int targetID) {
         return false;
     }
+
+    @Override
+    public boolean isToBeDestroyed() {
+        return curHp <= 0;
+    }
 }

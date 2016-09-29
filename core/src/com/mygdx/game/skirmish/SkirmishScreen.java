@@ -72,6 +72,9 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         unitManager = new UnitManager(this);
         buildingManager = new BuildingManager(this);
         selectionManager = new SelectionManager(this);
+        gameObjectManager.addObserver(unitManager);
+        gameObjectManager.addObserver(buildingManager);
+        gameObjectManager.addObserver(selectionManager);
         selectorRenderer = new SelectorRenderer();
         inputHandler = new InputMultiplexer();
 

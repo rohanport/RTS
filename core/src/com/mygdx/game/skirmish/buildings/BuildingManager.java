@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Polygon;
 import com.mygdx.game.skirmish.SkirmishScreen;
+import com.mygdx.game.skirmish.gameplay.GameObject;
+import com.mygdx.game.skirmish.gameplay.GameObjectType;
+import com.mygdx.game.skirmish.gameplay.GameObjectsObserver;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
 import com.mygdx.game.skirmish.util.GameMathUtils;
 import com.mygdx.game.skirmish.util.MapUtils;
@@ -17,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * Created by paddlefish on 26-Sep-16.
  */
-public class BuildingManager {
+public class BuildingManager implements GameObjectsObserver {
 
     private final SkirmishScreen screen;
 
@@ -45,6 +48,10 @@ public class BuildingManager {
 
     public void addBuilding(BuildingBase building) {
         buildings.add(building);
+    }
+
+    public void removeBuilding(BuildingBase building) {
+        buildings.remove(building);
     }
 
     public void renderBuildings() {
@@ -91,5 +98,23 @@ public class BuildingManager {
 
         return (mapX <= node.x && node.x < mapX + building.size) &&
                 (mapY <= node.y && node.y < mapY + building.size);
+    }
+
+    @Override
+    public void notify(GameObject gameObject, Notification notification) {
+        if (gameObject.getGameObjectType() != GameObjectType.BUILDING) {
+            return;
+        }
+
+        switch (notification) {
+            case CREATE:
+                addBuilding((BuildingBase) gameObject);
+                break;
+            case DESTROY:
+                removeBuilding((BuildingBase) gameObject);
+                break;
+            default:
+                throw new RuntimeException("Unknown notification " + notification);
+        }
     }
 }

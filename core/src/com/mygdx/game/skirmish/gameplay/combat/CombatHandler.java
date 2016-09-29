@@ -38,8 +38,9 @@ public class CombatHandler {
         for (UnitBase unit : units){
             unit.curAtkEnd += delta;
             if (unit.curAtkEnd > unit.getTotalAtkEnd()) {
+                GameObject atkTarget = world.getGameObjectManager().getGameObjectByID(unit.getAtkTargetID());
+                unit.state = atkTarget != null ? UnitState.MOVING_TO_ATK : UnitState.NONE;
                 unit.curAtkEnd = 0f;
-                unit.state = UnitState.NONE;
             }
         }
     }

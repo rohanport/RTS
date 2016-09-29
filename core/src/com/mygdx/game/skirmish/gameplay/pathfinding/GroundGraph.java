@@ -1,14 +1,9 @@
 package com.mygdx.game.skirmish.gameplay.pathfinding;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.pfa.Connection;
 import com.badlogic.gdx.ai.pfa.DefaultConnection;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.skirmish.World;
@@ -17,7 +12,6 @@ import com.mygdx.game.skirmish.units.UnitBase;
 import com.mygdx.game.skirmish.units.UnitState;
 import com.mygdx.game.skirmish.util.MapUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,8 +28,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
     private final int height;
 
     private int updateFrame = 0;
-    
-    private final ShapeRenderer debugRenderer;
+    private final GroundGraphRenderer renderer;
 
     //-------- Getters and Setters ------------
     public GroundHeuristic getHeuristic() {
@@ -60,58 +53,11 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
         }
         heuristic = new GroundHeuristic();
         unitCollisionHandlingGroundGraph = new UnitCollisionHandlingGroundGraph(this, null);
-        debugRenderer = new ShapeRenderer();
+        renderer = new GroundGraphRenderer(this);
     }
     
     public void debugRender(Camera cam) {
-        debugRenderer.setProjectionMatrix(cam.combined);
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
-        debugRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        int startNodeLeft = Math.max(Math.round((cam.position.x - cam.viewportWidth / 2f) / MapUtils.NODE_WIDTH_PX) - 2, 0);
-        int startNodeTop = Math.max(Math.round((cam.position.y - cam.viewportHeight / 2f) / MapUtils.NODE_HEIGHT_PX) - 2, 0);
-        int startNodeRight = Math.min(Math.round(startNodeLeft + cam.viewportWidth / MapUtils.NODE_WIDTH_PX) + 4, width);
-        int startNodeBottom = Math.min(Math.round(startNodeTop + cam.viewportHeight / MapUtils.NODE_HEIGHT_PX) + 4, height);
-        float xOffset = MapUtils.NODE_WIDTH_PX / 2f;
-        float yOffset = MapUtils.NODE_HEIGHT_PX / 2f;
-
-        for (int i = startNodeLeft; i < startNodeRight; i++) {
-            for (int j = startNodeTop; j < startNodeBottom; j++) {
-                GroundNode node = nodes[i][j];
-                if (!nodeIsOpen(node)) {
-                    debugRenderer.setColor(Color.RED.r, Color.RED.g, Color.RED.b, 0.5f);
-                } else if (node.getOccupant() == NodeOccupant.MOVING_UNIT) {
-                    debugRenderer.setColor(Color.YELLOW.r, Color.YELLOW.g, Color.YELLOW.b, 0.5f);
-                } else {
-                    debugRenderer.setColor(Color.GREEN.r, Color.GREEN.g, Color.GREEN.b, 0.5f);
-                }
-                debugRenderer.rect(node.x * MapUtils.NODE_WIDTH_PX - xOffset,
-                        node.y * MapUtils.NODE_HEIGHT_PX - yOffset,
-                        MapUtils.NODE_WIDTH_PX,
-                        MapUtils.NODE_HEIGHT_PX
-                );
-            }
-        }
-        debugRenderer.end();
-        debugRenderer.begin(ShapeRenderer.ShapeType.Line);
-        debugRenderer.setColor(Color.BLACK);
-        for (int i = startNodeLeft; i < startNodeRight; i++) {
-            debugRenderer.line(i * MapUtils.NODE_WIDTH_PX - xOffset,
-                    startNodeTop * MapUtils.NODE_HEIGHT_PX - yOffset,
-                    i * MapUtils.NODE_WIDTH_PX - xOffset,
-                    startNodeBottom * MapUtils.NODE_HEIGHT_PX - yOffset
-            );
-        }
-        for (int i = startNodeTop; i < startNodeBottom; i++) {
-            debugRenderer.line(startNodeLeft * MapUtils.NODE_WIDTH_PX - xOffset,
-                    i * MapUtils.NODE_HEIGHT_PX - yOffset,
-                    startNodeRight * MapUtils.NODE_WIDTH_PX - xOffset,
-                    i * MapUtils.NODE_HEIGHT_PX - yOffset
-            );
-        }
-        debugRenderer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
+        renderer.debugRender(cam);
     }
 
     public void newUpdateFrame() {
@@ -229,7 +175,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
             int dist = 1;
 
             while (dist < Math.max(height, width) / 2) {
-                List<GroundNode> openNodesAtDist = getFreeNodesAtDist(destNode, dist);
+                List<GroundNode> openNodesAtDist = GroundGraphUtils.getFreeNodesAtDist(this, destNode, dist);
 
                 if (openNodesAtDist.size() > 0) {
                     openNodesAtDist.sort((node1, node2) ->
@@ -246,7 +192,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
     }
 
     public GroundNode getClosestFreeNodeEuclidean(GroundNode curNode, float destX, float destY, int radius) {
-        List<GroundNode> openNodesAtDist = getFreeNodesAtDistEuclidean(destX, destY, radius);
+        List<GroundNode> openNodesAtDist = GroundGraphUtils.getFreeNodesAtDistEuclidean(this, destX, destY, radius);
 
         if (openNodesAtDist.size() > 0) {
             openNodesAtDist.sort((node1, node2) ->
@@ -257,120 +203,6 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
         }
 
         throw new RuntimeException("Couldn't find free node at radius in the whole world");
-    }
-
-    public int getDist(GroundNode src, GroundNode dest) {
-        return Math.max(Math.abs(dest.x - src.x), Math.abs(dest.y - src.y));
-    }
-
-    public int getDistOfClosestFreeNode(GroundNode destNode) {
-        if (nodeIsOpen(destNode)) {
-            return 0;
-        } else {
-            int dist = 1;
-
-            while (dist < Math.max(height, width) / 2) {
-                if (isFreeNodeAtDist(destNode, dist)) {
-                    return dist;
-                }
-
-                dist++;
-            }
-
-            return -1;
-        }
-    }
-
-    private boolean isFreeNodeAtDist(GroundNode baseNode, int dist) {
-        for (int i = -dist; i <= dist; i++) {
-            for (int j = -dist; j <= dist; j++) {
-                if (Math.abs(i) < dist && Math.abs(j) < dist) {
-                    continue;
-                }
-
-                if (nodeExists(baseNode.x + i, baseNode.y + j)) {
-                    GroundNode node = getNodeByCoords(baseNode.x + i, baseNode.y + j);
-                    if (nodeIsOpen(node)) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private List<GroundNode> getFreeNodesAtDist(GroundNode baseNode, int dist) {
-        List<GroundNode> openNodesAtDist = new ArrayList<>();
-        for (int i = -dist; i <= dist; i++) {
-            for (int j = -dist; j <= dist; j++) {
-                if (Math.abs(i) < dist && Math.abs(j) < dist) {
-                    continue;
-                }
-
-                if (nodeExists(baseNode.x + i, baseNode.y + j)) {
-                    GroundNode node = getNodeByCoords(baseNode.x + i, baseNode.y + j);
-                    if (nodeIsOpen(node)) {
-                        openNodesAtDist.add(node);
-                    }
-                }
-            }
-        }
-
-        return openNodesAtDist;
-    }
-
-    private List<GroundNode> getFreeNodesAtDistEuclidean(float destX, float destY, int radius) {
-        List<GroundNode> openNodesAtDist = new ArrayList<>();
-        Circle atkCircle = new Circle(destX, destY, radius);
-        int i;
-        int j;
-
-        // 1st Quadrant
-        i = radius;
-        j = 0;
-        while (i >= 0 && j <= radius) {
-            while (atkCircle.contains(destX + i, destY + j) && nodeIsOpen(getNodeByMapPixelCoords(destX + i, destY + j))) {
-                openNodesAtDist.add(getNodeByCoords((int) Math.floor(destX + i), (int) Math.floor(destY + j)));
-                j++;
-            }
-            i--;
-        }
-
-        // 2nd Quadrant
-        i = -1;
-        j = radius;
-        while (i >= -radius && j >= 0) {
-            while (atkCircle.contains(destX + i, destY + j) && nodeIsOpen(getNodeByMapPixelCoords(destX + i, destY + j))) {
-                openNodesAtDist.add(getNodeByCoords((int) Math.floor(destX + i), (int) Math.floor(destY + j)));
-                j--;
-            }
-            i--;
-        }
-
-        // 3rd Quadrant
-        i = -radius + 1;
-        j = -1;
-        while (i <= 0 && j >= -radius) {
-            while (atkCircle.contains(destX + i, destY + j) && nodeIsOpen(getNodeByMapPixelCoords(destX + i, destY + j))) {
-                openNodesAtDist.add(getNodeByCoords((int) Math.floor(destX + i), (int) Math.floor(destY + j)));
-                j--;
-            }
-            i++;
-        }
-
-        // 4th Quadrant
-        i = 1;
-        j = -radius + 1;
-        while (i < radius && j < 0) {
-            while (atkCircle.contains(destX + i, destY + j) && nodeIsOpen(getNodeByMapPixelCoords(destX + i, destY + j))) {
-                openNodesAtDist.add(getNodeByCoords((int) Math.floor(destX + i), (int) Math.floor(destY + j)));
-                j++;
-            }
-            i++;
-        }
-
-        return openNodesAtDist;
     }
 
     public UnitCollisionHandlingGroundGraph getCollisionHandlingGraphFor(GroundNode node) {

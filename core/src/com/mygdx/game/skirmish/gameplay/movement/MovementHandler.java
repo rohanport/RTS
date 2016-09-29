@@ -45,7 +45,7 @@ public class MovementHandler {
         for (UnitBase unit : units) {
             curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
             finNode = groundGraph.getNodeByCoords(unit.destNodeX, unit.destNodeY);
-            if (groundGraph.getDist(curNode, finNode) <= groundGraph.getDistOfClosestFreeNode(finNode)) {
+            if (GroundGraphUtils.getDist(curNode, finNode) <= GroundGraphUtils.getDistOfClosestFreeNode(groundGraph, finNode)) {
                 unit.state = UnitState.NONE;
                 groundGraph.update(curNode);
                 continue;

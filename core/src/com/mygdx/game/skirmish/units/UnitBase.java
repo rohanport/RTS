@@ -22,6 +22,7 @@ public abstract class UnitBase implements Commandable, GameObject {
     public float hp;
     public float curHp;
     public float atk;
+    public int range;
     public float baseSpeed;
     public float speedMulti = 1f;
     protected float baseAtkStartup;
@@ -47,6 +48,15 @@ public abstract class UnitBase implements Commandable, GameObject {
     @Override
     public void setID(int id) {
         gameID = id;
+    }
+
+    @Override
+    public float getCenterX() {
+        return circle.x;
+    }
+    @Override
+    public float getCenterY() {
+        return circle.y;
     }
 
     public float getTotalAtkStartup() {
@@ -112,5 +122,12 @@ public abstract class UnitBase implements Commandable, GameObject {
     @Override
     public void applyDamage(float damage) {
         curHp -= damage;
+    }
+
+    @Override
+    public boolean processAtkCommand(int targetID) {
+        this.atkTargetID = targetID;
+        this.state = UnitState.MOVING_TO_ATK;
+        return false;
     }
 }

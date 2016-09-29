@@ -24,9 +24,6 @@ import com.mygdx.game.skirmish.util.Settings;
  */
 public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
-    public static final int MAP_HEIGHT = 1000;
-    public static final int MAP_WIDTH  = 1000;
-
     //--------- Managers -------
     private final World world;
     private final InputMultiplexer inputHandler;
@@ -45,8 +42,8 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     private MapCamera cam = new MapCamera(
             Gdx.graphics.getWidth(),
             Gdx.graphics.getHeight(),
-            MAP_WIDTH * MapUtils.NODE_WIDTH_PX,
-            MAP_HEIGHT * MapUtils.NODE_HEIGHT_PX
+            MapUtils.MAP_WIDTH * MapUtils.NODE_WIDTH_PX,
+            MapUtils.MAP_HEIGHT * MapUtils.NODE_HEIGHT_PX
     );
 
 
@@ -81,14 +78,14 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         Gdx.input.setInputProcessor(inputHandler);
         inputHandler.addProcessor(this);
         inputHandler.addProcessor(selectionManager);
-        world = new World(this, MAP_WIDTH, MAP_HEIGHT);
+        world = new World(this, MapUtils.MAP_WIDTH, MapUtils.MAP_HEIGHT);
     }
 
     @Override
     public void show() {
         background = Resources.getInstance().bgGrass01;
         background.setPosition(0, 0);
-        background.setSize(MAP_WIDTH * MapUtils.NODE_WIDTH_PX, MAP_HEIGHT * MapUtils.NODE_HEIGHT_PX);
+        background.setSize(MapUtils.MAP_WIDTH * MapUtils.NODE_WIDTH_PX, MapUtils.MAP_HEIGHT * MapUtils.NODE_HEIGHT_PX);
         background.getTexture().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
         backgroundBatch = new SpriteBatch();
@@ -136,7 +133,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.ENTER) {
-            Vector2 middleOfScreen = MapUtils.screenCoords2MapCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
+            Vector2 middleOfScreen = MapUtils.screenCoords2NodeCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
             Soldier1 test = new Soldier1(Math.round(middleOfScreen.x + 20 * ((float) Math.random() - 0.5f)),
                     Math.round(middleOfScreen.y + 20 * ((float) Math.random() - 0.5f)));
             gameObjectManager.add(test);
@@ -144,7 +141,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         }
 
         if (keycode == Input.Keys.SPACE) {
-            Vector2 middleOfScreen = MapUtils.screenCoords2MapCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
+            Vector2 middleOfScreen = MapUtils.screenCoords2NodeCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
             Building1 test = new Building1(Math.round(middleOfScreen.x), Math.round(middleOfScreen.y));
             gameObjectManager.add(test);
             selectionManager.addToSelection(test);

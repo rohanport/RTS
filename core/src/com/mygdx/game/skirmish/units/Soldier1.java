@@ -13,6 +13,9 @@ public class Soldier1 extends UnitBase {
         hp = 10f;
         curHp = hp;
 
+        atk = 10f;
+        range = 4;
+
         baseSpeed = 100f;
 
         baseAtkStartup = 0.7f;

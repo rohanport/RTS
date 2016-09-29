@@ -12,6 +12,8 @@ public interface Commandable {
 
     boolean processRightClick(int screenX, int screenY);
 
+    boolean processAtkCommand(int targetID);
+
     void renderSelectionMarker(ShapeRenderer shapeRenderer);
 
     boolean isMoveable();

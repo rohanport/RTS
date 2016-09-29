@@ -73,7 +73,8 @@ public class World implements Disposable {
     }
 
     private void step(float timeframe) {
-        movementHandler.handleGroundUnitMovement(timeframe, unitManager.getUnitsInState(UnitState.MOVING));
+        movementHandler.handleGroundUnitMoving(timeframe, unitManager.getUnitsInState(UnitState.MOVING));
+        movementHandler.handleGroundUnitMovingToAtk(timeframe, unitManager.getUnitsInState(UnitState.MOVING_TO_ATK), gameObjectManager);
         combatHandler.handleAtkStarting(timeframe, unitManager.getUnitsInState(UnitState.ATK_STARTING));
         combatHandler.handleAtkEnding(timeframe, unitManager.getUnitsInState(UnitState.ATK_ENDING));
     }

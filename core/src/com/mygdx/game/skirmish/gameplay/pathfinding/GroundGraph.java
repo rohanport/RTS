@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.skirmish.World;
@@ -203,7 +204,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
 
     @SuppressWarnings("unused")
     public GroundNode getNodeByScreenCoords(Camera cam, float screenX, float screenY) {
-        Vector2 nodeCoords = MapUtils.screenCoords2MapCoords(cam, screenX, screenY);
+        Vector2 nodeCoords = MapUtils.screenCoords2NodeCoords(cam, screenX, screenY);
         return nodes[Math.round(nodeCoords.x)][Math.round(nodeCoords.y)];
     }
 
@@ -242,6 +243,20 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
         }
 
         throw new RuntimeException("Couldn't find open node in the whole world");
+    }
+
+    public GroundNode getClosestFreeNodeEuclidean(GroundNode curNode, float destX, float destY, int radius) {
+        List<GroundNode> openNodesAtDist = getFreeNodesAtDistEuclidean(destX, destY, radius);
+
+        if (openNodesAtDist.size() > 0) {
+            openNodesAtDist.sort((node1, node2) ->
+                    Math.round(Math.signum(heuristic.estimate(node1, curNode) - heuristic.estimate(node2, curNode)))
+            );
+
+            return openNodesAtDist.get(0);
+        }
+
+        throw new RuntimeException("Couldn't find free node at radius in the whole world");
     }
 
     public int getDist(GroundNode src, GroundNode dest) {
@@ -300,6 +315,59 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
                     }
                 }
             }
+        }
+
+        return openNodesAtDist;
+    }
+
+    private List<GroundNode> getFreeNodesAtDistEuclidean(float destX, float destY, int radius) {
+        List<GroundNode> openNodesAtDist = new ArrayList<>();
+        Circle atkCircle = new Circle(destX, destY, radius);
+        int i;
+        int j;
+
+        // 1st Quadrant
+        i = radius;
+        j = 0;
+        while (i >= 0 && j <= radius) {
+            while (atkCircle.contains(destX + i, destY + j) && nodeIsOpen(getNodeByMapPixelCoords(destX + i, destY + j))) {
+                openNodesAtDist.add(getNodeByCoords((int) Math.floor(destX + i), (int) Math.floor(destY + j)));
+                j++;
+            }
+            i--;
+        }
+
+        // 2nd Quadrant
+        i = -1;
+        j = radius;
+        while (i >= -radius && j >= 0) {
+            while (atkCircle.contains(destX + i, destY + j) && nodeIsOpen(getNodeByMapPixelCoords(destX + i, destY + j))) {
+                openNodesAtDist.add(getNodeByCoords((int) Math.floor(destX + i), (int) Math.floor(destY + j)));
+                j--;
+            }
+            i--;
+        }
+
+        // 3rd Quadrant
+        i = -radius + 1;
+        j = -1;
+        while (i <= 0 && j >= -radius) {
+            while (atkCircle.contains(destX + i, destY + j) && nodeIsOpen(getNodeByMapPixelCoords(destX + i, destY + j))) {
+                openNodesAtDist.add(getNodeByCoords((int) Math.floor(destX + i), (int) Math.floor(destY + j)));
+                j--;
+            }
+            i++;
+        }
+
+        // 4th Quadrant
+        i = 1;
+        j = -radius + 1;
+        while (i < radius && j < 0) {
+            while (atkCircle.contains(destX + i, destY + j) && nodeIsOpen(getNodeByMapPixelCoords(destX + i, destY + j))) {
+                openNodesAtDist.add(getNodeByCoords((int) Math.floor(destX + i), (int) Math.floor(destY + j)));
+                j++;
+            }
+            i++;
         }
 
         return openNodesAtDist;

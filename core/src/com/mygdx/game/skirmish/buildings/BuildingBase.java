@@ -33,6 +33,16 @@ public abstract class BuildingBase implements Commandable, GameObject {
         gameID = id;
     }
 
+    @Override
+    public float getCenterX() {
+        return rect.x + rect.getWidth() / 2;
+    }
+
+    @Override
+    public float getCenterY() {
+        return rect.y + rect.getHeight() / 2;
+    }
+
     //--------------------------------------------
 
     public BuildingBase(int x, int y, int size) {
@@ -88,5 +98,10 @@ public abstract class BuildingBase implements Commandable, GameObject {
     @Override
     public void applyDamage(float damage) {
         curHp -= damage;
+    }
+
+    @Override
+    public boolean processAtkCommand(int targetID) {
+        return false;
     }
 }

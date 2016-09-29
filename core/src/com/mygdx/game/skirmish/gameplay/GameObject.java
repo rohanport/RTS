@@ -7,6 +7,9 @@ public interface GameObject {
     int getID();
     void setID(int id);
 
+    float getCenterX();
+    float getCenterY();
+
     GameObjectType getGameObjectType();
 
     void applyDamage(float damage);

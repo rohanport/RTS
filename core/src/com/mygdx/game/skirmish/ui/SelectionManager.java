@@ -7,11 +7,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.skirmish.SkirmishScreen;
 import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.units.UnitBase;
 import com.mygdx.game.skirmish.util.MapUtils;
+import com.mygdx.game.skirmish.util.Settings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +29,7 @@ public class SelectionManager implements InputProcessor {
     private ShapeRenderer selectionRenderer;
 
     private boolean isSelecting;
+    private SelectionInputState state;
 
     public SelectionManager(SkirmishScreen screen) {
         this.screen = screen;
@@ -37,6 +38,7 @@ public class SelectionManager implements InputProcessor {
         newSelection = new ArrayList<>();
         selector = new Rectangle();
         selectionRenderer = new ShapeRenderer();
+        state = SelectionInputState.NONE;
     }
 
     public void addToSelection(Commandable commandable) {
@@ -45,6 +47,10 @@ public class SelectionManager implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        if (keycode == Settings.HotKeys.ATK) {
+            state = SelectionInputState.ATK;
+        }
+
         return false;
     }
 
@@ -61,7 +67,15 @@ public class SelectionManager implements InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == 0) {
-            handleSelectionStart(screenX, screenY);
+            switch (state) {
+                case ATK:
+                    handleAtkCommand(screenX, screenY);
+                    state = SelectionInputState.NONE;
+                    break;
+                default:
+                    handleSelectionStart(screenX, screenY);
+                    break;
+            }
         } else if (button == 1) {
             handleRightClick(screenX, screenY);
         }
@@ -98,9 +112,12 @@ public class SelectionManager implements InputProcessor {
         selector.setY(screenY);
         isSelecting = true;
 
-        Vector3 mapPoint = screen.getCam().unproject(new Vector3(screenX, screenY, 0));
         newSelection.clear();
-        newSelection.addAll(screen.getUnitManager().getIntersectingUnits(new Vector2(mapPoint.x, mapPoint.y)));
+        newSelection.addAll(screen.getUnitManager().getIntersectingUnits(MapUtils.screenCoords2MapCoords(
+                screen.getCam(),
+                screenX,
+                screenY
+        )));
     }
 
     private void handleSelectionEnd() {
@@ -118,10 +135,10 @@ public class SelectionManager implements InputProcessor {
             selector.setWidth(screenX - selector.getX());
             selector.setHeight(screenY - selector.getY());
 
-            Vector3 mapA = screen.getCam().unproject(new Vector3(selector.getX(), selector.getY(), 0));
-            Vector3 mapB = screen.getCam().unproject(new Vector3(selector.getX() + selector.getWidth(), selector.getY(), 0));
-            Vector3 mapC = screen.getCam().unproject(new Vector3(selector.getX() + selector.getWidth(), selector.getY() + selector.getHeight(), 0));
-            Vector3 mapD = screen.getCam().unproject(new Vector3(selector.getX(), selector.getY() + selector.getHeight(), 0));
+            Vector2 mapA = MapUtils.screenCoords2MapCoords(screen.getCam(), selector.getX(), selector.getY());
+            Vector2 mapB = MapUtils.screenCoords2MapCoords(screen.getCam(), selector.getX() + selector.getWidth(), selector.getY());
+            Vector2 mapC = MapUtils.screenCoords2MapCoords(screen.getCam(), selector.getX() + selector.getWidth(), selector.getY() + selector.getHeight());
+            Vector2 mapD = MapUtils.screenCoords2MapCoords(screen.getCam(), selector.getX(), selector.getY() + selector.getHeight());
 
             Polygon selectionPolygon = new Polygon(new float[]{mapA.x, mapA.y,
                     mapB.x, mapB.y,
@@ -137,7 +154,7 @@ public class SelectionManager implements InputProcessor {
     }
 
     private void handleRightClick(float screenX, float screenY) {
-        Vector2 mapCords = MapUtils.screenCoords2MapCoords(screen.getCam(), screenX, screenY);
+        Vector2 mapCords = MapUtils.screenCoords2NodeCoords(screen.getCam(), screenX, screenY);
         int mapX = Math.round(mapCords.x);
         int mapY = Math.round(mapCords.y);
 
@@ -179,6 +196,19 @@ public class SelectionManager implements InputProcessor {
             for (Commandable moveable : moveables) {
                 moveable.processRightClick(moveable.getMapCenterX() + diffX, moveable.getMapCenterY() + diffY);
             }
+        }
+    }
+
+    private void handleAtkCommand(int screenX, int screenY) {
+        List<UnitBase> targetedUnits = screen.getUnitManager().getIntersectingUnits(MapUtils.screenCoords2MapCoords(
+                screen.getCam(),
+                screenX,
+                screenY
+        ));
+
+        if (targetedUnits.size() > 0) {
+            int targetID =  targetedUnits.get(0).getID();
+            selection.forEach(commandable -> commandable.processAtkCommand(targetID));
         }
     }
 

@@ -82,7 +82,8 @@ public class GroundGraphUtils {
         i = radius;
         j = 0;
         while (i >= 0 && j <= radius) {
-            while (atkCircle.contains(destX + i, destY + j) && graph.nodeIsOpen(graph.getNodeByMapPixelCoords(destX + i, destY + j))) {
+            while (atkCircle.contains(destX + i, destY + j) &&
+                    graph.nodeIsOpen(graph.getNodeByCoords((int) Math.floor(destX + i), (int) Math.floor(destY + j)))) {
                 openNodesAtDist.add(graph.getNodeByCoords((int) Math.floor(destX + i), (int) Math.floor(destY + j)));
                 j++;
             }
@@ -93,7 +94,8 @@ public class GroundGraphUtils {
         i = 0;
         j = radius;
         while (i >= -radius && j >= 0) {
-            while (atkCircle.contains(destX + i, destY + j) && graph.nodeIsOpen(graph.getNodeByMapPixelCoords(destX + i, destY + j))) {
+            while (atkCircle.contains(destX + i, destY + j) &&
+                    graph.nodeIsOpen(graph.getNodeByCoords((int) Math.ceil(destX + i), (int) Math.floor(destY + j)))) {
                 openNodesAtDist.add(graph.getNodeByCoords((int) Math.ceil(destX + i), (int) Math.floor(destY + j)));
                 i--;
             }
@@ -104,7 +106,8 @@ public class GroundGraphUtils {
         i = -radius;
         j = 0;
         while (i <= 0 && j >= -radius) {
-            while (atkCircle.contains(destX + i, destY + j) && graph.nodeIsOpen(graph.getNodeByMapPixelCoords(destX + i, destY + j))) {
+            while (atkCircle.contains(destX + i, destY + j) &&
+                    graph.nodeIsOpen(graph.getNodeByCoords((int) Math.ceil(destX + i), (int) Math.ceil(destY + j)))) {
                 openNodesAtDist.add(graph.getNodeByCoords((int) Math.ceil(destX + i), (int) Math.ceil(destY + j)));
                 j--;
             }
@@ -115,7 +118,8 @@ public class GroundGraphUtils {
         i = 0;
         j = -radius;
         while (i <= radius && j <= 0) {
-            while (atkCircle.contains(destX + i, destY + j) && graph.nodeIsOpen(graph.getNodeByMapPixelCoords(destX + i, destY + j))) {
+            while (atkCircle.contains(destX + i, destY + j) &&
+                    graph.nodeIsOpen(graph.getNodeByCoords((int) Math.floor(destX + i), (int) Math.ceil(destY + j)))) {
                 openNodesAtDist.add(graph.getNodeByCoords((int) Math.floor(destX + i), (int) Math.ceil(destY + j)));
                 i++;
             }

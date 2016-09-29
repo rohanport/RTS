@@ -10,6 +10,9 @@ import com.mygdx.game.skirmish.gameobjects.GameObject;
  */
 public class HealthBar {
 
+    public static final int BUFFER_ABOVE_OWNER      = 3;
+    public static final int DEBUG_HEALTH_BAR_HEIGHT = 3;
+
     private final GameObject owner;
 
     private final Sprite sprite = Resources.getInstance().healthBar;

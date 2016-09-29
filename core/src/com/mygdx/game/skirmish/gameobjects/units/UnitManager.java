@@ -11,6 +11,7 @@ import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
 import com.mygdx.game.skirmish.gameobjects.GameObjectsObserver;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
+import com.mygdx.game.skirmish.ui.HealthBar;
 import com.mygdx.game.skirmish.util.GameMathUtils;
 
 import java.util.ArrayList;
@@ -73,6 +74,22 @@ public class UnitManager implements GameObjectsObserver {
         unitShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         unitShapeRenderer.setColor(Color.RED);
         units.forEach(unit -> unitShapeRenderer.circle(unit.circle.x, unit.circle.y, unit.circle.radius));
+        unitShapeRenderer.setColor(Color.GREEN);
+        for (UnitBase unit : units) {
+            unitShapeRenderer.rect(
+                    unit.circle.x - unit.circle.radius,
+                    unit.circle.y + unit.circle.radius + HealthBar.BUFFER_ABOVE_OWNER,
+                    2 * unit.circle.radius * (unit.curHp / unit.hp),
+                    HealthBar.DEBUG_HEALTH_BAR_HEIGHT);
+        }
+        unitShapeRenderer.setColor(Color.BLACK);
+        for (UnitBase unit : units) {
+            unitShapeRenderer.rect(
+                    unit.circle.x - unit.circle.radius + 2 * unit.circle.radius * (unit.curHp / unit.hp),
+                    unit.circle.y + unit.circle.radius + HealthBar.BUFFER_ABOVE_OWNER,
+                    2 * unit.circle.radius * (1 - (unit.curHp / unit.hp)),
+                    HealthBar.DEBUG_HEALTH_BAR_HEIGHT);
+        }
         unitShapeRenderer.end();
     }
 

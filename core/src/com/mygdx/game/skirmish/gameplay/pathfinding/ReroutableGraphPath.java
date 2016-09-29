@@ -37,12 +37,8 @@ public class ReroutableGraphPath<N> extends DefaultGraphPath {
         return allNodes;
     }
 
-    public void clearReroute() {
-        rerouteNodes.clear();
-    }
-
-    public void addToReroute(N node) {
-        rerouteNodes.add(node);
+    public void addToReroute(N node, int index) {
+        rerouteNodes.insert(index, node);
     }
 
     @Override
@@ -52,25 +48,10 @@ public class ReroutableGraphPath<N> extends DefaultGraphPath {
 
     public void remove(int index) {
         if (index < rerouteNodes.size) {
-            rerouteNodes.removeIndex(0);
+            rerouteNodes.removeIndex(index);
         } else {
             nodes.removeIndex(index - rerouteNodes.size);
         }
     }
 
-    public void setNodesInPathToReroute(int numNodes) {
-        clearReroute();
-        numNodes = Math.min(getCount(), numNodes);
-        if (numNodes < 1) {
-            return;
-        }
-
-        Array<N> newReroute = new Array<>();
-        for (int i = 0; i < numNodes; i++) {
-            newReroute.add(get(i));
-        }
-        rerouteNodes.addAll(newReroute);
-
-        nodes.removeRange(0, numNodes - 1);
-    }
 }

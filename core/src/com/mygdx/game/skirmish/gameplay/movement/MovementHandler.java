@@ -65,6 +65,12 @@ public class MovementHandler {
         for (UnitBase unit : units) {
             atkTarget = gameObjectManager.getGameObjectByID(unit.getAtkTargetID());
             curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
+            if (atkTarget == null) {
+                unit.state = UnitState.NONE;
+                groundGraph.update(curNode);
+                continue;
+            }
+
             if (GameMathUtils.distBetween(
                     unit.getCenterX() / MapUtils.NODE_WIDTH_PX,
                     unit.getCenterY() / MapUtils.NODE_HEIGHT_PX,
@@ -116,15 +122,6 @@ public class MovementHandler {
             } else if (newNode == curNode) {
                 unit.translate(travelVec);
             }
-        } else if (graphPath.getCount() == 0) {
-            GroundNode destNode = graphPath.get(0);
-            Vector2 pos = new Vector2(unit.circle.x, unit.circle.y);
-            Vector2 destPos = new Vector2(destNode.x * MapUtils.NODE_WIDTH_PX, destNode.y * MapUtils.NODE_HEIGHT_PX);
-            Vector2 travelVec = destPos.cpy().sub(pos);
-            float maxTravelDist = unit.baseSpeed * unit.speedMulti * delta;
-            travelVec.setLength(Math.min(maxTravelDist, travelVec.len()));
-
-            unit.translate(travelVec);
         }
     }
 
@@ -140,7 +137,8 @@ public class MovementHandler {
             for (int i = 0; i <= endOfCollisionPathIndex; i++) {
                 graphPath.remove(0);
             }
-            collisionHandlingPath.forEach(graphPath::addToReroute);
+            collisionHandlingPath.reverse();
+            collisionHandlingPath.forEach(node -> graphPath.addToReroute(node, 0));
         }
     }
 

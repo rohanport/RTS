@@ -9,10 +9,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
 import com.mygdx.game.skirmish.gameplay.Commandable;
-import com.mygdx.game.skirmish.gameplay.GameObject;
-import com.mygdx.game.skirmish.gameplay.GameObjectType;
-import com.mygdx.game.skirmish.gameplay.GameObjectsObserver;
-import com.mygdx.game.skirmish.units.UnitBase;
+import com.mygdx.game.skirmish.gameobjects.GameObject;
+import com.mygdx.game.skirmish.gameobjects.GameObjectType;
+import com.mygdx.game.skirmish.gameobjects.GameObjectsObserver;
+import com.mygdx.game.skirmish.gameobjects.units.UnitBase;
 import com.mygdx.game.skirmish.util.MapUtils;
 import com.mygdx.game.skirmish.util.Settings;
 

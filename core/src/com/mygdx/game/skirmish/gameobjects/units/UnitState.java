@@ -1,4 +1,4 @@
-package com.mygdx.game.skirmish.units;
+package com.mygdx.game.skirmish.gameobjects.units;
 
 /**
  * Created by paddlefish on 23-Sep-16.

@@ -1,9 +1,9 @@
 package com.mygdx.game.skirmish.gameplay.combat;
 
 import com.mygdx.game.skirmish.World;
-import com.mygdx.game.skirmish.gameplay.GameObject;
-import com.mygdx.game.skirmish.units.UnitBase;
-import com.mygdx.game.skirmish.units.UnitState;
+import com.mygdx.game.skirmish.gameobjects.GameObject;
+import com.mygdx.game.skirmish.gameobjects.units.UnitBase;
+import com.mygdx.game.skirmish.gameobjects.units.UnitState;
 
 import java.util.List;
 

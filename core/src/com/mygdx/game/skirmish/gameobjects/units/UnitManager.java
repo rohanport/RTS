@@ -1,4 +1,4 @@
-package com.mygdx.game.skirmish.units;
+package com.mygdx.game.skirmish.gameobjects.units;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
-import com.mygdx.game.skirmish.gameplay.GameObject;
-import com.mygdx.game.skirmish.gameplay.GameObjectType;
-import com.mygdx.game.skirmish.gameplay.GameObjectsObserver;
+import com.mygdx.game.skirmish.gameobjects.GameObject;
+import com.mygdx.game.skirmish.gameobjects.GameObjectType;
+import com.mygdx.game.skirmish.gameobjects.GameObjectsObserver;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
 import com.mygdx.game.skirmish.util.GameMathUtils;
 

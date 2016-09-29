@@ -1,4 +1,4 @@
-package com.mygdx.game.skirmish.gameplay;
+package com.mygdx.game.skirmish.gameobjects;
 
 /**
  * Created by paddlefish on 29-Sep-16.

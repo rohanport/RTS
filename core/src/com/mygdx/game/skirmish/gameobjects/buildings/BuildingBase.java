@@ -1,12 +1,12 @@
-package com.mygdx.game.skirmish.buildings;
+package com.mygdx.game.skirmish.gameobjects.buildings;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.game.skirmish.gameplay.Commandable;
-import com.mygdx.game.skirmish.gameplay.GameObject;
-import com.mygdx.game.skirmish.gameplay.GameObjectType;
+import com.mygdx.game.skirmish.gameobjects.GameObject;
+import com.mygdx.game.skirmish.gameobjects.GameObjectType;
 import com.mygdx.game.skirmish.util.MapUtils;
 
 /**

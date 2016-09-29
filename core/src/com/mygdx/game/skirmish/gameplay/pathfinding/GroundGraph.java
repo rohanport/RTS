@@ -7,8 +7,8 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.skirmish.World;
-import com.mygdx.game.skirmish.buildings.BuildingBase;
-import com.mygdx.game.skirmish.units.UnitBase;
+import com.mygdx.game.skirmish.gameobjects.buildings.BuildingBase;
+import com.mygdx.game.skirmish.gameobjects.units.UnitBase;
 import com.mygdx.game.skirmish.util.MapUtils;
 
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package com.mygdx.game.skirmish.gameplay;
+package com.mygdx.game.skirmish.gameobjects;
 
 import com.mygdx.game.skirmish.SkirmishScreen;
 

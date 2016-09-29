@@ -1,7 +1,7 @@
 package com.mygdx.game.skirmish.gameplay.combat;
 
 import com.mygdx.game.skirmish.World;
-import com.mygdx.game.skirmish.gameplay.GameObject;
+import com.mygdx.game.skirmish.gameobjects.GameObject;
 
 import java.util.List;
 

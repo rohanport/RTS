@@ -1,4 +1,4 @@
-package com.mygdx.game.skirmish.units;
+package com.mygdx.game.skirmish.gameobjects.units;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.gameplay.Commandable;
-import com.mygdx.game.skirmish.gameplay.GameObject;
-import com.mygdx.game.skirmish.gameplay.GameObjectType;
+import com.mygdx.game.skirmish.gameobjects.GameObject;
+import com.mygdx.game.skirmish.gameobjects.GameObjectType;
 import com.mygdx.game.skirmish.util.MapUtils;
 
 /**

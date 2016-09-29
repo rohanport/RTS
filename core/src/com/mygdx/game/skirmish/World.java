@@ -1,14 +1,14 @@
 package com.mygdx.game.skirmish;
 
 import com.badlogic.gdx.utils.Disposable;
-import com.mygdx.game.skirmish.buildings.BuildingManager;
-import com.mygdx.game.skirmish.gameplay.GameObjectManager;
+import com.mygdx.game.skirmish.gameobjects.buildings.BuildingManager;
+import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
 import com.mygdx.game.skirmish.gameplay.combat.CombatHandler;
 import com.mygdx.game.skirmish.gameplay.combat.DestructionHandler;
 import com.mygdx.game.skirmish.gameplay.movement.MovementHandler;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundGraph;
-import com.mygdx.game.skirmish.units.UnitManager;
-import com.mygdx.game.skirmish.units.UnitState;
+import com.mygdx.game.skirmish.gameobjects.units.UnitManager;
+import com.mygdx.game.skirmish.gameobjects.units.UnitState;
 import com.mygdx.game.skirmish.util.Settings;
 
 /**

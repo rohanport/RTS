@@ -1,4 +1,4 @@
-package com.mygdx.game.skirmish.units;
+package com.mygdx.game.skirmish.gameobjects.units;
 
 import com.mygdx.game.Resources;
 

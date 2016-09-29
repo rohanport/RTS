@@ -7,11 +7,11 @@ import com.badlogic.gdx.ai.pfa.PathFinder;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.World;
-import com.mygdx.game.skirmish.gameplay.GameObject;
-import com.mygdx.game.skirmish.gameplay.GameObjectManager;
+import com.mygdx.game.skirmish.gameobjects.GameObject;
+import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
 import com.mygdx.game.skirmish.gameplay.pathfinding.*;
-import com.mygdx.game.skirmish.units.UnitBase;
-import com.mygdx.game.skirmish.units.UnitState;
+import com.mygdx.game.skirmish.gameobjects.units.UnitBase;
+import com.mygdx.game.skirmish.gameobjects.units.UnitState;
 import com.mygdx.game.skirmish.util.GameMathUtils;
 import com.mygdx.game.skirmish.util.MapUtils;
 

@@ -97,6 +97,10 @@ public class SelectionManager implements InputProcessor {
         selector.setX(screenX);
         selector.setY(screenY);
         isSelecting = true;
+
+        Vector3 mapPoint = screen.getCam().unproject(new Vector3(screenX, screenY, 0));
+        newSelection.clear();
+        newSelection.addAll(screen.getUnitManager().getIntersectingUnits(new Vector2(mapPoint.x, mapPoint.y)));
     }
 
     private void handleSelectionEnd() {

@@ -3,6 +3,7 @@ package com.mygdx.game.skirmish;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.game.skirmish.buildings.BuildingManager;
 import com.mygdx.game.skirmish.gameplay.GameObjectManager;
+import com.mygdx.game.skirmish.gameplay.combat.CombatHandler;
 import com.mygdx.game.skirmish.gameplay.movement.MovementHandler;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundGraph;
 import com.mygdx.game.skirmish.units.UnitManager;
@@ -19,6 +20,7 @@ public class World implements Disposable {
     private final UnitManager unitManager;
     private final BuildingManager buildingManager;
     private final MovementHandler movementHandler;
+    private final CombatHandler combatHandler;
     private final GroundGraph groundGraph;
 
     public final int width;
@@ -53,6 +55,7 @@ public class World implements Disposable {
         this.groundGraph = new GroundGraph(this);
         groundGraph.newUpdateFrame();
         movementHandler = new MovementHandler(this);
+        combatHandler = new CombatHandler(this);
     }
 
     // Update to be called after rendering
@@ -70,9 +73,9 @@ public class World implements Disposable {
     }
 
     private void step(float timeframe) {
-
         movementHandler.handleGroundUnitMovement(timeframe, unitManager.getUnitsInState(UnitState.MOVING));
-
+        combatHandler.handleAtkStarting(timeframe, unitManager.getUnitsInState(UnitState.ATK_STARTING));
+        combatHandler.handleAtkEnding(timeframe, unitManager.getUnitsInState(UnitState.ATK_ENDING));
     }
 
 

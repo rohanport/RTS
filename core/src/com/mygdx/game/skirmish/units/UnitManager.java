@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
 import com.mygdx.game.skirmish.util.GameMathUtils;
@@ -65,14 +66,16 @@ public class UnitManager {
         unitShapeRenderer.end();
     }
 
-    public List<UnitBase> getIntersectingUnits(final Polygon box) {
-        List<UnitBase> intersectingUnits = new ArrayList<>();
+    public List<UnitBase> getIntersectingUnits(Vector2 point) {
+        return units.stream()
+                .filter(unit -> unit.circle.contains(point))
+                .collect(Collectors.toList());
+    }
 
-        units.stream()
+    public List<UnitBase> getIntersectingUnits(Polygon box) {
+        return units.stream()
                 .filter(unit -> GameMathUtils.isCircleIntersectQuadrilateral(unit.circle, box))
-                .forEach(intersectingUnits::add);
-
-        return intersectingUnits;
+                .collect(Collectors.toList());
     }
 
     public List<UnitBase> getUnitsInState(UnitState state) {

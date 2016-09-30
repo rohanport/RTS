@@ -175,6 +175,25 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
         return node.getOccupant() != NodeOccupant.BUILDING;
     }
 
+    public GroundNode getClosestFreeNode(GroundNode destNode) {
+        if (nodeIsOpen(destNode)) {
+            return destNode;
+        } else {
+            int dist = 1;
+
+            while (dist < Math.max(height, width) / 2) {
+                List<GroundNode> openNodesAtDist = GroundGraphUtils.getFreeNodesAtDist(this, destNode, dist);
+
+                if (openNodesAtDist.size() > 0) {
+                    return openNodesAtDist.get(0);
+                }
+                dist++;
+            }
+        }
+
+        throw new RuntimeException("Couldn't find open node in the whole world");
+    }
+
     public GroundNode getClosestFreeNode(GroundNode curNode, GroundNode destNode) {
         if (nodeIsOpen(destNode)) {
             return destNode;

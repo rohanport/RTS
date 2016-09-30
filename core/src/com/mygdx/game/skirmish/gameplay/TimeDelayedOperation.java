@@ -5,6 +5,7 @@ package com.mygdx.game.skirmish.gameplay;
  */
 public interface TimeDelayedOperation {
     float getTotalTime();
+    void passTime(float time);
     float getRemainingTime();
     void performOperation();
 }

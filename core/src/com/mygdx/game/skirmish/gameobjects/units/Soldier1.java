@@ -1,5 +1,6 @@
 package com.mygdx.game.skirmish.gameobjects.units;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Resources;
 
 /**
@@ -22,6 +23,7 @@ public class Soldier1 extends UnitBase {
         baseAtkEnd = 0.3f;
 
         sprite = Resources.getInstance().soldier1;
+        portrait = Resources.getInstance().soldier1Portrait;
     }
 
     @Override
@@ -36,5 +38,15 @@ public class Soldier1 extends UnitBase {
         state = UnitState.MOVING;
 
         return false;
+    }
+
+    @Override
+    public void render(SpriteBatch batch) {
+        batch.draw(sprite,
+                circle.x - (circle.radius * 1.3f),
+                circle.y - (circle.radius * 1.3f),
+                circle.radius * 2 * 1.3f,
+                4 * (circle.radius * 2 / 3f) * 1.3f
+        );
     }
 }

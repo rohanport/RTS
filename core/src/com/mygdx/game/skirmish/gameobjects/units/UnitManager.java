@@ -56,7 +56,15 @@ public class UnitManager implements GameObjectsObserver {
         units.remove(unit);
     }
 
-    public void renderUnits() {
+    public void renderUnits(boolean debug) {
+        if (debug) {
+            renderUnitsDebug();
+        } else {
+            renderUnits();
+        }
+    }
+
+    private void renderUnits() {
         Camera cam = screen.getCam();
         unitRenderer.setProjectionMatrix(cam.combined);
 
@@ -68,7 +76,7 @@ public class UnitManager implements GameObjectsObserver {
         unitRenderer.end();
     }
 
-    public void renderUnitsDebug() {
+    private void renderUnitsDebug() {
         unitShapeRenderer.setProjectionMatrix(screen.getCam().combined);
 
         unitShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);

@@ -35,6 +35,14 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
     private boolean isSelecting;
     private SelectionInputState state;
 
+    //----------- Getters and Setters -------------
+
+    public List<Commandable> getSelection() {
+        return selection;
+    }
+
+    //------------------------------------------
+
     public SelectionManager(SkirmishScreen screen) {
         this.screen = screen;
 
@@ -223,7 +231,7 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
         }
     }
 
-    public void renderSelection(Camera cam) {
+    public void renderSelectionMarkers(Camera cam) {
         selectionRenderer.setProjectionMatrix(cam.combined);
         selectionRenderer.begin(ShapeRenderer.ShapeType.Line);
         selectionRenderer.setColor(Color.WHITE);

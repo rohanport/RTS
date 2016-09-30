@@ -22,6 +22,6 @@ public class HealthBar {
     }
 
     public void render(SpriteBatch spriteBatch) {
-        spriteBatch.draw(sprite, owner.getCenterX(), owner.getCenterY());
+//        spriteBatch.draw(sprite, owner.getCenterX(), owner.getCenterY());
     }
 }

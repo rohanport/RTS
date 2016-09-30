@@ -51,7 +51,15 @@ public class BuildingManager implements GameObjectsObserver {
         buildings.remove(building);
     }
 
-    public void renderBuildings() {
+    public void renderBuildings(boolean debug) {
+        if (debug) {
+            renderBuildingsDebug();
+        } else {
+            renderBuildings();
+        }
+    }
+
+    private void renderBuildings() {
         Camera cam = screen.getCam();
         buildingRenderer.setProjectionMatrix(cam.combined);
 
@@ -63,7 +71,7 @@ public class BuildingManager implements GameObjectsObserver {
         buildingRenderer.end();
     }
 
-    public void renderBuildingsDebug() {
+    private void renderBuildingsDebug() {
         buildingShapeRenderer.setProjectionMatrix(screen.getCam().combined);
 
         buildingShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);

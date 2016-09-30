@@ -12,7 +12,8 @@ import com.mygdx.game.skirmish.gameobjects.buildings.Building1;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingManager;
 import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
 import com.mygdx.game.skirmish.map.MapCamera;
-import com.mygdx.game.skirmish.map.SelectorRenderer;
+import com.mygdx.game.skirmish.map.DragBoxRenderer;
+import com.mygdx.game.skirmish.ui.GUI;
 import com.mygdx.game.skirmish.ui.SelectionManager;
 import com.mygdx.game.skirmish.gameobjects.units.Soldier1;
 import com.mygdx.game.skirmish.gameobjects.units.UnitManager;
@@ -31,7 +32,8 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     private final UnitManager unitManager;
     private final BuildingManager buildingManager;
     private final SelectionManager selectionManager;
-    private final SelectorRenderer selectorRenderer;
+    private final DragBoxRenderer dragBoxRenderer;
+    private final GUI gui;
 
     //-------- Sprites --------
     private Sprite background;
@@ -60,6 +62,10 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         return buildingManager;
     }
 
+    public SelectionManager getSelectionManager() {
+        return selectionManager;
+    }
+
     public MapCamera getCam() {
         return cam;
     }
@@ -75,12 +81,14 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         gameObjectManager.addObserver(unitManager);
         gameObjectManager.addObserver(buildingManager);
         gameObjectManager.addObserver(selectionManager);
-        selectorRenderer = new SelectorRenderer();
+        dragBoxRenderer = new DragBoxRenderer();
         inputHandler = new InputMultiplexer();
+        gui = new GUI(this);
 
         Gdx.input.setInputProcessor(inputHandler);
         inputHandler.addProcessor(this);
         inputHandler.addProcessor(selectionManager);
+
         world = new World(this, MapUtils.MAP_WIDTH, MapUtils.MAP_HEIGHT);
     }
 
@@ -107,16 +115,14 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
         if (Settings.DEBUG_MODE) {
             world.renderNodesDebug();
-            unitManager.renderUnitsDebug();
-            buildingManager.renderBuildingsDebug();
-        } else {
-            unitManager.renderUnits();
-            buildingManager.renderBuildings();
         }
 
-        selectionManager.renderSelection(cam);
+        unitManager.renderUnits(Settings.DEBUG_MODE);
+        buildingManager.renderBuildings(Settings.DEBUG_MODE);
+        selectionManager.renderSelectionMarkers(cam);
 
-        selectorRenderer.render();
+        gui.render(Settings.DEBUG_MODE);
+        dragBoxRenderer.render();
 
         world.update(delta);
     }
@@ -166,7 +172,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == 0) {
-            selectorRenderer.handleMouseDown(screenX, screenY);
+            dragBoxRenderer.handleMouseDown(screenX, screenY);
         }
 
         return false;
@@ -175,7 +181,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (button == 0) {
-            selectorRenderer.handleMouseUp();
+            dragBoxRenderer.handleMouseUp();
         }
 
         return false;
@@ -183,7 +189,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        selectorRenderer.handleMouseMove(screenX, screenY);
+        dragBoxRenderer.handleMouseMove(screenX, screenY);
 
         return false;
     }

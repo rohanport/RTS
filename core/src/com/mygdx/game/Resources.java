@@ -24,7 +24,8 @@ public class Resources {
 
 
     //--------- Units ----------------------
-    public Sprite soldier1 = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/units/soldier1.png")));
+    public Sprite soldier1 = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/units/soldier1_portrait2.png")));
+    public Sprite soldier1Portrait = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/units/soldier1_portrait2.png")));
 
     private static Resources instance;
 

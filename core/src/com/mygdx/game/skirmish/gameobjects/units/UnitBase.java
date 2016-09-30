@@ -40,6 +40,7 @@ public abstract class UnitBase implements Commandable, GameObject {
     private int gameID;
 
     protected Sprite sprite;
+    protected Sprite portrait;
     private final HealthBar healthBar;
 
     //----------- Getters and Setters ------------
@@ -70,6 +71,11 @@ public abstract class UnitBase implements Commandable, GameObject {
 
     public int getAtkTargetID() {
         return atkTargetID;
+    }
+
+    @Override
+    public Sprite getPortrait() {
+        return portrait;
     }
 
     //-----------------------------------------

@@ -1,5 +1,6 @@
 package com.mygdx.game.skirmish.gameplay;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /**
@@ -15,6 +16,8 @@ public interface Commandable {
     boolean processAtkCommand(int targetID);
 
     void renderSelectionMarker(ShapeRenderer shapeRenderer);
+
+    Sprite getPortrait();
 
     boolean isMoveable();
 

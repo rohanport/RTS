@@ -11,8 +11,8 @@ public class MapUtils {
     public static final int NODE_WIDTH_PX  = 15;
     public static final int NODE_HEIGHT_PX = 15;
 
-    public static final int MAP_HEIGHT = 1000;
-    public static final int MAP_WIDTH  = 1000;
+    public static final int MAP_HEIGHT = 200;
+    public static final int MAP_WIDTH  = 200;
 
     public static Vector2 screenCoords2NodeCoords(Camera cam, float screenX, float screenY) {
         Vector3 worldCordsInPix = cam.unproject(new Vector3(screenX, screenY, 0));

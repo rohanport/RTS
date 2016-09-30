@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 /**
  * Created by paddlefish on 18-Sep-16.
  */
-public class SelectorRenderer {
+public class DragBoxRenderer {
 
     private ShapeRenderer renderer;
 
@@ -51,7 +51,7 @@ public class SelectorRenderer {
         isDrawing = drawing;
     }
 
-    public SelectorRenderer() {
+    public DragBoxRenderer() {
         renderer = new ShapeRenderer();
         renderer.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }

@@ -8,13 +8,18 @@ import com.mygdx.game.skirmish.World;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
 import com.mygdx.game.skirmish.gameplay.Commandable;
+import com.mygdx.game.skirmish.gameplay.ProductionTask;
+import com.mygdx.game.skirmish.gameplay.production.QueueingProducer;
 import com.mygdx.game.skirmish.ui.HealthBar;
 import com.mygdx.game.skirmish.util.MapUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by paddlefish on 26-Sep-16.
  */
-public abstract class BuildingBase implements Commandable, GameObject {
+public abstract class BuildingBase implements Commandable, GameObject, QueueingProducer {
 
     public Rectangle rect;
     public float hp;
@@ -25,6 +30,7 @@ public abstract class BuildingBase implements Commandable, GameObject {
 
     protected Sprite sprite;
     protected final World world;
+    protected final List<ProductionTask> productionQueue;
     private final HealthBar healthBar;
 
     //----------- Getters and Setters ---------------
@@ -61,6 +67,16 @@ public abstract class BuildingBase implements Commandable, GameObject {
         );
 
         healthBar = new HealthBar(this);
+        productionQueue = new ArrayList<>();
+    }
+
+    public void update() {
+        if (productionQueue.size() > 0) {
+            ProductionTask firstInQueue = productionQueue.get(0);
+            if (!world.getProductionManager().isProductionTaskRunning(firstInQueue)) {
+                world.getProductionManager().add(firstInQueue);
+            }
+        }
     }
 
     @Override
@@ -119,5 +135,15 @@ public abstract class BuildingBase implements Commandable, GameObject {
     @Override
     public boolean isToBeDestroyed() {
         return curHp <= 0;
+    }
+
+    @Override
+    public void addToProductionQueue(ProductionTask productionTask) {
+        productionQueue.add(productionTask);
+    }
+
+    @Override
+    public void removeFromProductionQueue(ProductionTask productionTask) {
+        productionQueue.remove(productionTask);
     }
 }

@@ -43,6 +43,10 @@ public class BuildingManager implements GameObjectsObserver {
         buildings = new ArrayList<>();
     }
 
+    public void update() {
+        buildings.forEach(BuildingBase::update);
+    }
+
     public void addBuilding(BuildingBase building) {
         buildings.add(building);
     }

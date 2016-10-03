@@ -27,11 +27,9 @@ public class Building1 extends BuildingBase {
     public boolean processKeyStroke(int keycode) {
         switch (keycode) {
             case Input.Keys.S:
-                UnitProductionTask soldierBuildingTask = new UnitProductionTask(
-                        world.getUnitProducerSupplier().getUnitProducerFor(UnitType.SOLDIER1, getMapCenterX(), getMapCenterY()),
-                        100f
-                );
-                world.getProductionManager().add(soldierBuildingTask);
+                UnitProductionTask soldierBuildingTask = world.getUnitProductionTaskFactory()
+                        .getUnitProducerFor(this, UnitType.SOLDIER1, getMapCenterX(), getMapCenterY(), 0.1f);
+                addToProductionQueue(soldierBuildingTask);
                 return true;
             default:
                 return false;

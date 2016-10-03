@@ -10,15 +10,23 @@ import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
 /**
  * Created by paddlefish on 30-Sep-16.
  */
-public class UnitProducerSupplier {
+public class UnitProductionTaskFactory {
     private final World world;
 
-    public UnitProducerSupplier(World world) {
+    public UnitProductionTaskFactory(World world) {
         this.world = world;
     }
 
-    public Runnable getUnitProducerFor(UnitType unitType, int x, int y) {
-        return () -> produceUnit(unitType, x, y);
+    public UnitProductionTask getUnitProducerFor(QueueingProducer queueingProducer,
+                                                 UnitType unitType,
+                                                 int x,
+                                                 int y,
+                                                 float duration) {
+        return new UnitProductionTask(
+                queueingProducer,
+                () -> produceUnit(unitType, x, y),
+                duration
+        );
     }
 
     private void produceUnit(UnitType unitType, int x, int y) {

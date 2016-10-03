@@ -1,7 +1,7 @@
 package com.mygdx.game.skirmish.gameplay.production;
 
 import com.mygdx.game.skirmish.World;
-import com.mygdx.game.skirmish.gameplay.TimeDelayedOperation;
+import com.mygdx.game.skirmish.gameplay.ProductionTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +17,10 @@ public class ProductionHandler {
         this.world = world;
     }
 
-    public void handleProductions(float delta, List<TimeDelayedOperation> productions) {
-        List<TimeDelayedOperation> completedProductions = new ArrayList<>();
+    public void handleProductions(float delta, List<ProductionTask> productions) {
+        List<ProductionTask> completedProductions = new ArrayList<>();
 
-        for (TimeDelayedOperation production : productions) {
+        for (ProductionTask production : productions) {
             if (production.getRemainingTime() <= 0) {
                 production.performOperation();
                 completedProductions.add(production);

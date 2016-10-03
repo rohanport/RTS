@@ -11,7 +11,7 @@ import com.mygdx.game.skirmish.gameobjects.units.UnitManager;
 import com.mygdx.game.skirmish.gameobjects.units.UnitState;
 import com.mygdx.game.skirmish.gameplay.production.ProductionHandler;
 import com.mygdx.game.skirmish.gameplay.production.ProductionManager;
-import com.mygdx.game.skirmish.gameplay.production.UnitProducerSupplier;
+import com.mygdx.game.skirmish.gameplay.production.UnitProductionTaskFactory;
 import com.mygdx.game.skirmish.util.Settings;
 
 /**
@@ -25,7 +25,7 @@ public class World implements Disposable {
     private final BuildingManager buildingManager;
     private final ProductionManager productionManager;
     private final ProductionHandler productionHandler;
-    private final UnitProducerSupplier unitProducerSupplier;
+    private final UnitProductionTaskFactory unitProductionTaskFactory;
     private final MovementHandler movementHandler;
     private final CombatHandler combatHandler;
     private final DestructionHandler destructionHandler;
@@ -52,8 +52,8 @@ public class World implements Disposable {
     public GroundGraph getGroundGraph() {
         return groundGraph;
     }
-    public UnitProducerSupplier getUnitProducerSupplier() {
-        return unitProducerSupplier;
+    public UnitProductionTaskFactory getUnitProductionTaskFactory() {
+        return unitProductionTaskFactory;
     }
     //-------------------------------
 
@@ -74,7 +74,7 @@ public class World implements Disposable {
         combatHandler = new CombatHandler(this);
         destructionHandler = new DestructionHandler(this);
         productionHandler = new ProductionHandler(this);
-        unitProducerSupplier = new UnitProducerSupplier(this);
+        unitProductionTaskFactory = new UnitProductionTaskFactory(this);
     }
 
     // Update to be called after rendering
@@ -99,6 +99,7 @@ public class World implements Disposable {
         destructionHandler.handleGameObjectDestruction(gameObjectManager.getGameObjectsToBeDestroyed());
 
         productionHandler.handleProductions(timeframe, productionManager.getProductions());
+        buildingManager.update();
     }
 
 

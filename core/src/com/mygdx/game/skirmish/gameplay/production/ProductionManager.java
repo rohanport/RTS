@@ -1,7 +1,7 @@
 package com.mygdx.game.skirmish.gameplay.production;
 
 import com.mygdx.game.skirmish.SkirmishScreen;
-import com.mygdx.game.skirmish.gameplay.TimeDelayedOperation;
+import com.mygdx.game.skirmish.gameplay.ProductionTask;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,10 +13,10 @@ import java.util.List;
 public class ProductionManager {
 
     private final SkirmishScreen screen;
-    private final List<TimeDelayedOperation> productions;
+    private final List<ProductionTask> productions;
 
     //------------- Getters and Setters -----------
-    public List<TimeDelayedOperation> getProductions() {
+    public List<ProductionTask> getProductions() {
         return productions;
     }
     //------------------------------------------
@@ -26,11 +26,15 @@ public class ProductionManager {
         productions = new ArrayList<>();
     }
 
-    public void add(TimeDelayedOperation production) {
+    public void add(ProductionTask production) {
         productions.add(production);
     }
 
-    public void removeAll(Collection<TimeDelayedOperation> toRemove) {
+    public void removeAll(Collection<ProductionTask> toRemove) {
         productions.removeAll(toRemove);
+    }
+
+    public boolean isProductionTaskRunning(ProductionTask productionTask) {
+        return productions.contains(productionTask);
     }
 }

@@ -8,16 +8,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.DefaultScreen;
 import com.mygdx.game.Resources;
+import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
 import com.mygdx.game.skirmish.gameobjects.buildings.Building1;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingManager;
-import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
+import com.mygdx.game.skirmish.gameobjects.units.UnitManager;
 import com.mygdx.game.skirmish.gameplay.production.ProductionManager;
-import com.mygdx.game.skirmish.map.MapCamera;
 import com.mygdx.game.skirmish.map.DragBoxRenderer;
+import com.mygdx.game.skirmish.map.MapCamera;
 import com.mygdx.game.skirmish.ui.GUI;
 import com.mygdx.game.skirmish.ui.SelectionManager;
-import com.mygdx.game.skirmish.gameobjects.units.Soldier1;
-import com.mygdx.game.skirmish.gameobjects.units.UnitManager;
 import com.mygdx.game.skirmish.util.MapUtils;
 import com.mygdx.game.skirmish.util.Settings;
 
@@ -107,6 +106,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         background.getTexture().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
         backgroundBatch = new SpriteBatch();
+
     }
 
     @Override
@@ -148,13 +148,6 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.ENTER) {
-            Vector2 middleOfScreen = MapUtils.screenCoords2NodeCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
-            Soldier1 test = new Soldier1(world, Math.round(middleOfScreen.x + 20 * ((float) Math.random() - 0.5f)),
-                    Math.round(middleOfScreen.y + 20 * ((float) Math.random() - 0.5f)));
-            gameObjectManager.add(test);
-            selectionManager.addToSelection(test);
-        }
 
         if (keycode == Input.Keys.SPACE) {
             Vector2 middleOfScreen = MapUtils.screenCoords2NodeCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);

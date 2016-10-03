@@ -2,14 +2,15 @@ package com.mygdx.game.skirmish.gameobjects.units;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Resources;
+import com.mygdx.game.skirmish.World;
 
 /**
  * Created by paddlefish on 18-Sep-16.
  */
 public class Soldier1 extends UnitBase {
 
-    public Soldier1(int x, int y) {
-        super(x, y, 1);
+    public Soldier1(World world, int x, int y) {
+        super(world, x, y, 1);
 
         hp = 100f;
         curHp = hp;

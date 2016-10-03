@@ -5,14 +5,15 @@ import com.mygdx.game.skirmish.gameplay.TimeDelayedOperation;
 /**
  * Created by paddlefish on 30-Sep-16.
  */
-public class UnitProducer implements TimeDelayedOperation {
+public class UnitProductionTask implements TimeDelayedOperation {
 
     private final float totalDuration;
     private float timeRemaining;
     private final Runnable unitProducer;
 
-    public UnitProducer(Runnable unitProducer, float totalDuration) {
+    public UnitProductionTask(Runnable unitProducer, float totalDuration) {
         this.totalDuration = totalDuration;
+        this.timeRemaining = totalDuration;
         this.unitProducer = unitProducer;
     }
 
@@ -33,6 +34,6 @@ public class UnitProducer implements TimeDelayedOperation {
 
     @Override
     public void performOperation() {
-
+        unitProducer.run();
     }
 }

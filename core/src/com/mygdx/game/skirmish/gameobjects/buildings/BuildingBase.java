@@ -4,9 +4,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.mygdx.game.skirmish.gameplay.Commandable;
+import com.mygdx.game.skirmish.World;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
+import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.ui.HealthBar;
 import com.mygdx.game.skirmish.util.MapUtils;
 
@@ -23,6 +24,7 @@ public abstract class BuildingBase implements Commandable, GameObject {
     private int gameID;
 
     protected Sprite sprite;
+    protected final World world;
     private final HealthBar healthBar;
 
     //----------- Getters and Setters ---------------
@@ -47,7 +49,8 @@ public abstract class BuildingBase implements Commandable, GameObject {
 
     //--------------------------------------------
 
-    public BuildingBase(int x, int y, int size) {
+    public BuildingBase(World world, int x, int y, int size) {
+        this.world = world;
         this.size = size;
 
         this.rect = new Rectangle(
@@ -95,12 +98,12 @@ public abstract class BuildingBase implements Commandable, GameObject {
 
     @Override
     public int getMapCenterX() {
-        return 0;
+        return Math.round(getCenterX() / MapUtils.NODE_WIDTH_PX);
     }
 
     @Override
     public int getMapCenterY() {
-        return 0;
+        return Math.round(getCenterY() / MapUtils.NODE_HEIGHT_PX);
     }
 
     @Override

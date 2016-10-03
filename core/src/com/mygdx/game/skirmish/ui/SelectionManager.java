@@ -18,6 +18,7 @@ import com.mygdx.game.skirmish.util.MapUtils;
 import com.mygdx.game.skirmish.util.Settings;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,8 +60,18 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Settings.HotKeys.ATK) {
-            state = SelectionInputState.ATK;
+        switch (keycode) {
+            case Settings.HotKeys.ATK:
+                state = SelectionInputState.ATK;
+                break;
+            default:
+                boolean keyPressProccssed = false;
+                Iterator<Commandable> selectionIterator = selection.iterator();
+                while (keyPressProccssed == false && selectionIterator.hasNext()) {
+                    Commandable commandable = selectionIterator.next();
+                    keyPressProccssed = commandable.processKeyStroke(keycode);
+                }
+                break;
         }
 
         return false;

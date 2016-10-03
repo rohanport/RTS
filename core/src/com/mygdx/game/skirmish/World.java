@@ -9,6 +9,9 @@ import com.mygdx.game.skirmish.gameplay.movement.MovementHandler;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundGraph;
 import com.mygdx.game.skirmish.gameobjects.units.UnitManager;
 import com.mygdx.game.skirmish.gameobjects.units.UnitState;
+import com.mygdx.game.skirmish.gameplay.production.ProductionHandler;
+import com.mygdx.game.skirmish.gameplay.production.ProductionManager;
+import com.mygdx.game.skirmish.gameplay.production.UnitProducerSupplier;
 import com.mygdx.game.skirmish.util.Settings;
 
 /**
@@ -20,6 +23,9 @@ public class World implements Disposable {
     private final GameObjectManager gameObjectManager;
     private final UnitManager unitManager;
     private final BuildingManager buildingManager;
+    private final ProductionManager productionManager;
+    private final ProductionHandler productionHandler;
+    private final UnitProducerSupplier unitProducerSupplier;
     private final MovementHandler movementHandler;
     private final CombatHandler combatHandler;
     private final DestructionHandler destructionHandler;
@@ -40,8 +46,14 @@ public class World implements Disposable {
     public BuildingManager getBuildingManager() {
         return buildingManager;
     }
+    public ProductionManager getProductionManager() {
+        return productionManager;
+    }
     public GroundGraph getGroundGraph() {
         return groundGraph;
+    }
+    public UnitProducerSupplier getUnitProducerSupplier() {
+        return unitProducerSupplier;
     }
     //-------------------------------
 
@@ -50,15 +62,19 @@ public class World implements Disposable {
         this.width = width;
         this.height = height;
 
-        this.gameObjectManager = this.screen.getGameObjectManager();
-        this.unitManager = this.screen.getUnitManager();
-        this.buildingManager = this.screen.getBuildingManager();
+        gameObjectManager = this.screen.getGameObjectManager();
+        unitManager = this.screen.getUnitManager();
+        buildingManager = this.screen.getBuildingManager();
+        productionManager = this.screen.getProductionManager();
 
         this.groundGraph = new GroundGraph(this);
         groundGraph.newUpdateFrame();
+
         movementHandler = new MovementHandler(this);
         combatHandler = new CombatHandler(this);
         destructionHandler = new DestructionHandler(this);
+        productionHandler = new ProductionHandler(this);
+        unitProducerSupplier = new UnitProducerSupplier(this);
     }
 
     // Update to be called after rendering
@@ -81,6 +97,8 @@ public class World implements Disposable {
         combatHandler.handleAtkStarting(timeframe, unitManager.getUnitsInState(UnitState.ATK_STARTING));
         combatHandler.handleAtkEnding(timeframe, unitManager.getUnitsInState(UnitState.ATK_ENDING));
         destructionHandler.handleGameObjectDestruction(gameObjectManager.getGameObjectsToBeDestroyed());
+
+        productionHandler.handleProductions(timeframe, productionManager.getProductions());
     }
 
 

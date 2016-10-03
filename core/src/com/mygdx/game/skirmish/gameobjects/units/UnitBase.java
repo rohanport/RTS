@@ -5,9 +5,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.skirmish.gameplay.Commandable;
+import com.mygdx.game.skirmish.World;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
+import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.ui.HealthBar;
 import com.mygdx.game.skirmish.util.MapUtils;
 
@@ -39,6 +40,7 @@ public abstract class UnitBase implements Commandable, GameObject {
 
     private int gameID;
 
+    protected World world;
     protected Sprite sprite;
     protected Sprite portrait;
     private final HealthBar healthBar;
@@ -80,7 +82,8 @@ public abstract class UnitBase implements Commandable, GameObject {
 
     //-----------------------------------------
 
-    public UnitBase(int mapX, int mapY, int size) {
+    public UnitBase(World world, int mapX, int mapY, int size) {
+        this.world = world;
         this.mapX = mapX;
         this.mapY = mapY;
         this.destNodeX = mapX;

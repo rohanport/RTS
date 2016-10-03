@@ -11,6 +11,7 @@ import com.mygdx.game.Resources;
 import com.mygdx.game.skirmish.gameobjects.buildings.Building1;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingManager;
 import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
+import com.mygdx.game.skirmish.gameplay.production.ProductionManager;
 import com.mygdx.game.skirmish.map.MapCamera;
 import com.mygdx.game.skirmish.map.DragBoxRenderer;
 import com.mygdx.game.skirmish.ui.GUI;
@@ -31,6 +32,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     private final GameObjectManager gameObjectManager;
     private final UnitManager unitManager;
     private final BuildingManager buildingManager;
+    private final ProductionManager productionManager;
     private final SelectionManager selectionManager;
     private final DragBoxRenderer dragBoxRenderer;
     private final GUI gui;
@@ -62,6 +64,10 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         return buildingManager;
     }
 
+    public ProductionManager getProductionManager() {
+        return productionManager;
+    }
+
     public SelectionManager getSelectionManager() {
         return selectionManager;
     }
@@ -77,6 +83,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         gameObjectManager = new GameObjectManager(this);
         unitManager = new UnitManager(this);
         buildingManager = new BuildingManager(this);
+        productionManager = new ProductionManager(this);
         selectionManager = new SelectionManager(this);
         gameObjectManager.addObserver(unitManager);
         gameObjectManager.addObserver(buildingManager);
@@ -143,7 +150,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.ENTER) {
             Vector2 middleOfScreen = MapUtils.screenCoords2NodeCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
-            Soldier1 test = new Soldier1(Math.round(middleOfScreen.x + 20 * ((float) Math.random() - 0.5f)),
+            Soldier1 test = new Soldier1(world, Math.round(middleOfScreen.x + 20 * ((float) Math.random() - 0.5f)),
                     Math.round(middleOfScreen.y + 20 * ((float) Math.random() - 0.5f)));
             gameObjectManager.add(test);
             selectionManager.addToSelection(test);
@@ -151,7 +158,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
         if (keycode == Input.Keys.SPACE) {
             Vector2 middleOfScreen = MapUtils.screenCoords2NodeCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
-            Building1 test = new Building1(Math.round(middleOfScreen.x), Math.round(middleOfScreen.y));
+            Building1 test = new Building1(world, Math.round(middleOfScreen.x), Math.round(middleOfScreen.y));
             gameObjectManager.add(test);
             selectionManager.addToSelection(test);
         }

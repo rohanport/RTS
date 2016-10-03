@@ -32,11 +32,23 @@ public class GameMathUtils {
         Vector2 rectB = new Vector2(rect.x + rect.getWidth(), rect.y);
         Vector2 rectC = new Vector2(rect.x + rect.getWidth(), rect.y + rect.getHeight());
         Vector2 rectD = new Vector2(rect.x, rect.y + rect.getHeight());
+        Vector2 quadA = new Vector2(quadrilateral.getVertices()[0], quadrilateral.getVertices()[1]);
+        Vector2 quadB = new Vector2(quadrilateral.getVertices()[2], quadrilateral.getVertices()[3]);
+        Vector2 quadC = new Vector2(quadrilateral.getVertices()[4], quadrilateral.getVertices()[5]);
+        Vector2 quadD = new Vector2(quadrilateral.getVertices()[6], quadrilateral.getVertices()[7]);
 
-        return Intersector.intersectLinePolygon(rectA, rectB, quadrilateral) ||
-                Intersector.intersectLinePolygon(rectB, rectC, quadrilateral) ||
-                Intersector.intersectLinePolygon(rectC, rectD, quadrilateral) ||
-                Intersector.intersectLinePolygon(rectD, rectA, quadrilateral);
+        return rect.contains(quadA) ||
+                rect.contains(quadB) ||
+                rect.contains(quadC) ||
+                rect.contains(quadD) ||
+                quadrilateral.contains(rectA) ||
+                quadrilateral.contains(rectB) ||
+                quadrilateral.contains(rectC) ||
+                quadrilateral.contains(rectD) ||
+                Intersector.intersectSegmentPolygon(rectA, rectB, quadrilateral) ||
+                Intersector.intersectSegmentPolygon(rectB, rectC, quadrilateral) ||
+                Intersector.intersectSegmentPolygon(rectC, rectD, quadrilateral) ||
+                Intersector.intersectSegmentPolygon(rectD, rectA, quadrilateral);
 
     }
 

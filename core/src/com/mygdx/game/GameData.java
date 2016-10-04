@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
  *
  * Utility class containing data for all game resources, eg. sprites, audio, etc.
  */
-public class Resources {
+public class GameData {
 
     //--------- Menu -----------------------
     public Sprite title = new Sprite(new Texture(Gdx.files.internal("sprites/menu/title.png")));
@@ -27,11 +27,11 @@ public class Resources {
     public Sprite soldier1 = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/units/soldier1_portrait2.png")));
     public Sprite soldier1Portrait = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/units/soldier1_portrait2.png")));
 
-    private static Resources instance;
+    private static GameData instance;
 
-    public static Resources getInstance() {
+    public static GameData getInstance() {
         if (instance == null) {
-            instance = new Resources();
+            instance = new GameData();
         }
         return instance;
     }

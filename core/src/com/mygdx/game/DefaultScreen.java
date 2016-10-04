@@ -24,12 +24,12 @@ public abstract class DefaultScreen implements Screen {
 
     @Override
     public void resume() {
-//		Resources.getInstance().reInit();
+//		GameData.getInstance().reInit();
     }
 
     @Override
     public void dispose() {
-//		Resources.getInstance().dispose();
+//		GameData.getInstance().dispose();
     }
 
 }

@@ -7,7 +7,6 @@ import com.mygdx.game.skirmish.gameobjects.buildings.BuildingType;
  */
 public interface Builder {
     boolean isBuilding();
-    boolean isMovingToBuild();
 
     int getBuildLocationX();
     int getBuildLocationY();

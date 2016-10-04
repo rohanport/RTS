@@ -9,8 +9,12 @@ public enum UnitState {
 
     BUILDING,
 
+    GATHERING,
+
     MOVING_TO_ATK,
     MOVING_TO_BUILD,
+    MOVING_TO_GATHER,
+    MOVING_TO_RETURN_RESOURCES,
     MOVING,
     NONE
 }

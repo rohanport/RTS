@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.skirmish.World;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingBase;
 import com.mygdx.game.skirmish.gameobjects.units.UnitBase;
+import com.mygdx.game.skirmish.resources.Resource;
 import com.mygdx.game.skirmish.util.MapUtils;
 
 import java.util.Collections;
@@ -65,6 +66,12 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
     }
 
     public void update(GroundNode node) {
+        List<Resource> resources = world.getResourceManager().getResourcesAtNode(node);
+        if (resources.size() > 0) {
+            node.setOccupant(NodeOccupant.RESOURCE);
+            return;
+        }
+
         List<BuildingBase> buildings = world.getBuildingManager().getBuildingsAtNode(node);
         if (buildings.size() > 0) {
             node.setOccupant(NodeOccupant.BUILDING);
@@ -79,11 +86,14 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
                 case MOVING:
                 case MOVING_TO_ATK:
                 case MOVING_TO_BUILD:
+                case MOVING_TO_GATHER:
+                case MOVING_TO_RETURN_RESOURCES:
                     node.setOccupant(NodeOccupant.MOVING_UNIT);
                     break;
                 case ATK_STARTING:
                 case ATK_ENDING:
                 case BUILDING:
+                case GATHERING:
                 case NONE:
                     node.setOccupant(NodeOccupant.STOPPED_UNIT);
                     return;

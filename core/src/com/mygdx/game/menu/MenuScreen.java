@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Ray;
 import com.mygdx.game.DefaultScreen;
-import com.mygdx.game.Resources;
+import com.mygdx.game.GameData;
 import com.mygdx.game.ScreenOption;
 import com.mygdx.game.skirmish.SkirmishScreen;
 
@@ -37,7 +37,7 @@ public class MenuScreen extends DefaultScreen implements InputProcessor {
 
     @Override
     public void show() {
-        title = Resources.getInstance().title;
+        title = GameData.getInstance().title;
         collisionTitle.set(
                 new Vector3(Gdx.graphics.getWidth() / 4, Gdx.graphics.getHeight() / 4, -10),
                 new Vector3(3 * Gdx.graphics.getWidth() / 4, 3 * Gdx.graphics.getHeight() / 4, 10)

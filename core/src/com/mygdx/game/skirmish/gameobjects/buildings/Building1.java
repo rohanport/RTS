@@ -38,4 +38,9 @@ public class Building1 extends BuildingBase {
                 return false;
         }
     }
+
+    @Override
+    public boolean isResourceDropOff() {
+        return true;
+    }
 }

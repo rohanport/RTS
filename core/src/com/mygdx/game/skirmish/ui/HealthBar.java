@@ -2,7 +2,7 @@ package com.mygdx.game.skirmish.ui;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mygdx.game.Resources;
+import com.mygdx.game.GameData;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
 
 /**
@@ -15,7 +15,7 @@ public class HealthBar {
 
     private final GameObject owner;
 
-    private final Sprite sprite = Resources.getInstance().healthBar;
+    private final Sprite sprite = GameData.getInstance().healthBar;
 
     public HealthBar(GameObject owner) {
         this.owner = owner;

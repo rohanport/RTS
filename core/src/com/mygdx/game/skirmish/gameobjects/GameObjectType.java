@@ -5,5 +5,6 @@ package com.mygdx.game.skirmish.gameobjects;
  */
 public enum  GameObjectType {
     UNIT,
-    BUILDING
+    BUILDING,
+    RESOURCE
 }

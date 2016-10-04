@@ -9,11 +9,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.World;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
+import com.mygdx.game.skirmish.gameobjects.buildings.BuildingBase;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingUtils;
 import com.mygdx.game.skirmish.gameobjects.units.Builder;
+import com.mygdx.game.skirmish.gameobjects.units.Gatherer;
 import com.mygdx.game.skirmish.gameplay.pathfinding.*;
 import com.mygdx.game.skirmish.gameobjects.units.UnitBase;
 import com.mygdx.game.skirmish.gameobjects.units.UnitState;
+import com.mygdx.game.skirmish.resources.Resource;
 import com.mygdx.game.skirmish.util.GameMathUtils;
 import com.mygdx.game.skirmish.util.MapUtils;
 
@@ -55,7 +58,7 @@ public class MovementHandler {
                 finNode = groundGraph.getClosestFreeNode(curNode, finNode);
             }
 
-            moveUnitAlongPath(delta, unit, curNode, finNode);
+            moveUnitAlongPath(delta, unit, curNode, finNode, false);
         }
     }
 
@@ -91,11 +94,11 @@ public class MovementHandler {
                 );
             }
 
-            moveUnitAlongPath(delta, unit, curNode, finNode);
+            moveUnitAlongPath(delta, unit, curNode, finNode, false);
         }
     }
 
-    public void handleGroundUnitMovingToBuild(float delta, List<Builder> buildingUnits, GameObjectManager gameObjectManager) {
+    public void handleGroundUnitMovingToBuild(float delta, List<Builder> buildingUnits) {
         GroundNode curNode;
         GroundNode buildingNode;
         GroundNode finNode;
@@ -115,11 +118,73 @@ public class MovementHandler {
                 );
             }
 
-            moveUnitAlongPath(delta, (UnitBase) unit, curNode, finNode);
+            moveUnitAlongPath(delta, (UnitBase) unit, curNode, finNode, false);
         }
     }
 
-    private void moveUnitAlongPath(float delta, UnitBase unit, GroundNode curNode, GroundNode finNode) {
+    public void handleGroundUnitMovingToGather(float delta, List<Gatherer> units, GameObjectManager gameObjectManager) {
+        GameObject gatherTarget;
+        GroundNode curNode;
+        GroundNode resourceNode;
+        GroundNode finNode;
+        groundGraph.newUpdateFrame();
+        for (Gatherer unit : units) {
+            gatherTarget = gameObjectManager.getGameObjectByID(unit.getGatherSourceID());
+            curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
+            if (gatherTarget == null) {
+                unit.stopGathering();
+                groundGraph.update(curNode);
+                continue;
+            }
+
+            resourceNode = groundGraph.getNodeByCoords(gatherTarget.getMapCenterX(), gatherTarget.getMapCenterY());
+            if (GroundGraphUtils.getDist(curNode, resourceNode) <= (1 + ((Resource) gatherTarget).size / 2)) {
+                unit.startGathering();
+                groundGraph.update(curNode);
+                continue;
+            } else {
+                finNode = groundGraph.getClosestFreeNode(
+                        curNode,
+                        resourceNode
+                );
+            }
+
+            moveUnitAlongPath(delta, (UnitBase) unit, curNode, finNode, true);
+        }
+    }
+
+    public void handleGroundUnitMovingToReturnResources(float delta, List<Gatherer> units, GameObjectManager gameObjectManager) {
+        GameObject dropOffTarget;
+        GroundNode curNode;
+        GroundNode dropOffNode;
+        GroundNode finNode;
+        groundGraph.newUpdateFrame();
+        for (Gatherer unit : units) {
+            dropOffTarget = gameObjectManager.getGameObjectByID(unit.getDropOffTargetID());
+            curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
+            if (dropOffTarget == null) {
+                unit.stopGathering();
+                groundGraph.update(curNode);
+                continue;
+            }
+
+            dropOffNode = groundGraph.getNodeByCoords(dropOffTarget.getMapCenterX(), dropOffTarget.getMapCenterY());
+            if (GroundGraphUtils.getDist(curNode, dropOffNode) <= (1 + ((BuildingBase) dropOffTarget).size / 2)) {
+                unit.performDropOff();
+                groundGraph.update(curNode);
+                continue;
+            } else {
+                finNode = groundGraph.getClosestFreeNode(
+                        curNode,
+                        dropOffNode
+                );
+            }
+
+            moveUnitAlongPath(delta, (UnitBase) unit, curNode, finNode, true);
+        }
+    }
+
+    private void moveUnitAlongPath(float delta, UnitBase unit, GroundNode curNode, GroundNode finNode, boolean isGatherer) {
         ReroutableGraphPath<GroundNode> graphPath = groundPathCache.get(unit);
         if (graphPath == null || graphPath.getCount() < 1 || finNode != graphPath.get(graphPath.getCount() - 1)) {
             findAndCacheGraphPath(unit, curNode, finNode, groundGraph.getHeuristic(), pathFinder);
@@ -138,7 +203,9 @@ public class MovementHandler {
             travelVec.setLength(Math.min(maxTravelDist, travelVec.len()));
 
             GroundNode newNode = groundGraph.getNodeByMapPixelCoords(pos.x + travelVec.x, pos.y + travelVec.y);
-            if (newNode != curNode && newNode.getOccupant() == NodeOccupant.NONE) {
+            if (newNode != curNode &&
+                    (newNode.getOccupant() == NodeOccupant.NONE || (isGatherer && newNode.getOccupant() == NodeOccupant.MOVING_UNIT))
+                    ) {
                 if (newNode == destNode) {
                     graphPath.remove(0);
                 }

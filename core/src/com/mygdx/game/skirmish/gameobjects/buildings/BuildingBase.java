@@ -90,7 +90,7 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
     }
 
     @Override
-    public boolean processRightClick(int screenX, int screenY) {
+    public boolean processRightClick(int x, int y) {
         return false;
     }
 
@@ -159,6 +159,10 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
 
     @Override
     public boolean processBuildCommand(int x, int y) {
+        return false;
+    }
+
+    public boolean isResourceDropOff() {
         return false;
     }
 }

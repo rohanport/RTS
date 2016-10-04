@@ -110,6 +110,22 @@ public class UnitManager implements GameObjectsObserver {
                 .collect(Collectors.toList());
     }
 
+    public List<Builder> getBuilderUnitsInState(UnitState state) {
+        return units.stream()
+                .filter(unit -> unit instanceof Builder)
+                .filter(unit -> unit.state == state)
+                .map(Builder.class::cast)
+                .collect(Collectors.toList());
+    }
+
+    public List<Gatherer> getGatherersInState(UnitState state) {
+        return units.stream()
+                .filter(unit -> unit instanceof Gatherer)
+                .filter(unit -> unit.state == state)
+                .map(Gatherer.class::cast)
+                .collect(Collectors.toList());
+    }
+
     public List<UnitBase> getIntersectingUnits(Vector2 point) {
         return units.stream()
                 .filter(unit -> unit.circle.contains(point))

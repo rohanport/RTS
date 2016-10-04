@@ -9,5 +9,7 @@ public enum NodeOccupant {
     STOPPED_UNIT,
     MOVING_UNIT,
 
+    RESOURCE,
+
     NONE
 }

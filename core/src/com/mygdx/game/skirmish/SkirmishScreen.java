@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.DefaultScreen;
-import com.mygdx.game.Resources;
+import com.mygdx.game.GameData;
 import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
 import com.mygdx.game.skirmish.gameobjects.buildings.Building1;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingManager;
@@ -18,6 +18,9 @@ import com.mygdx.game.skirmish.map.DragBoxRenderer;
 import com.mygdx.game.skirmish.map.MapCamera;
 import com.mygdx.game.skirmish.player.Player;
 import com.mygdx.game.skirmish.player.PlayerManager;
+import com.mygdx.game.skirmish.resources.Resource;
+import com.mygdx.game.skirmish.resources.ResourceManager;
+import com.mygdx.game.skirmish.resources.ResourceType;
 import com.mygdx.game.skirmish.ui.GUI;
 import com.mygdx.game.skirmish.ui.SelectionManager;
 import com.mygdx.game.skirmish.util.MapUtils;
@@ -37,6 +40,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     private final ProductionManager productionManager;
     private final SelectionManager selectionManager;
     private final PlayerManager playerManager;
+    private final ResourceManager resourceManager;
     private final DragBoxRenderer dragBoxRenderer;
     private final GUI gui;
 
@@ -79,6 +83,10 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         return playerManager;
     }
 
+    public ResourceManager getResourceManager() {
+        return resourceManager;
+    }
+
     public MapCamera getCam() {
         return cam;
     }
@@ -92,9 +100,11 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         buildingManager = new BuildingManager(this);
         productionManager = new ProductionManager(this);
         selectionManager = new SelectionManager(this);
+        resourceManager = new ResourceManager(this);
         gameObjectManager.addObserver(unitManager);
         gameObjectManager.addObserver(buildingManager);
         gameObjectManager.addObserver(selectionManager);
+        gameObjectManager.addObserver(resourceManager);
         playerManager = new PlayerManager(this);
         dragBoxRenderer = new DragBoxRenderer();
         inputHandler = new InputMultiplexer();
@@ -109,7 +119,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
     @Override
     public void show() {
-        background = Resources.getInstance().bgGrass01;
+        background = GameData.getInstance().bgGrass01;
         background.setPosition(0, 0);
         background.setSize(MapUtils.MAP_WIDTH * MapUtils.NODE_WIDTH_PX, MapUtils.MAP_HEIGHT * MapUtils.NODE_HEIGHT_PX);
         background.getTexture().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
@@ -135,6 +145,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
         unitManager.renderUnits(Settings.DEBUG_MODE);
         buildingManager.renderBuildings(Settings.DEBUG_MODE);
+        resourceManager.renderResources(Settings.DEBUG_MODE);
         selectionManager.renderSelectionMarkers(cam);
 
         gui.render(Settings.DEBUG_MODE);
@@ -167,6 +178,18 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
             Building1 test = new Building1(world, playerManager.getPlayerByID(0).id, Math.round(middleOfScreen.x), Math.round(middleOfScreen.y));
             gameObjectManager.add(test);
             selectionManager.addToSelection(test);
+        }
+
+        if (keycode == Input.Keys.P) {
+            Vector2 middleOfScreen = MapUtils.screenCoords2NodeCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
+            Resource test = new Resource(
+                    ResourceType.FOOD,
+                    2000,
+                    Math.round(middleOfScreen.x + 60f * ((float) Math.random() - 0.5f)),
+                    Math.round(middleOfScreen.y + 60f * ((float) Math.random() - 0.5f)),
+                    3
+            );
+            gameObjectManager.add(test);
         }
 
         return false;

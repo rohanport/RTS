@@ -139,4 +139,10 @@ public class BuildingManager implements GameObjectsObserver {
                 throw new RuntimeException("Unknown notification " + notification);
         }
     }
+
+    public List<BuildingBase> getDropOffBuildings() {
+        return buildings.stream()
+                .filter(BuildingBase::isResourceDropOff)
+                .collect(Collectors.toList());
+    }
 }

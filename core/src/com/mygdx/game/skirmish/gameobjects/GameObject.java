@@ -11,6 +11,9 @@ public interface GameObject {
     float getCenterX();
     float getCenterY();
 
+    int getMapCenterX();
+    int getMapCenterY();
+
     GameObjectType getGameObjectType();
 
     void applyDamage(float damage);

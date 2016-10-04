@@ -11,7 +11,7 @@ public interface Commandable {
 
     boolean processKeyStroke(int keycode);
 
-    boolean processRightClick(int screenX, int screenY);
+    boolean processRightClick(int x, int y);
 
     boolean processAtkCommand(int targetID);
 

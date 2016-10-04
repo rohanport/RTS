@@ -7,7 +7,10 @@ public enum UnitState {
     ATK_STARTING,
     ATK_ENDING,
 
+    BUILDING,
+
     MOVING_TO_ATK,
+    MOVING_TO_BUILD,
     MOVING,
     NONE
 }

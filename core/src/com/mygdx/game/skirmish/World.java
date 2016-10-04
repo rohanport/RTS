@@ -3,6 +3,7 @@ package com.mygdx.game.skirmish;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingManager;
 import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
+import com.mygdx.game.skirmish.gameobjects.units.Builder;
 import com.mygdx.game.skirmish.gameplay.combat.CombatHandler;
 import com.mygdx.game.skirmish.gameplay.combat.DestructionHandler;
 import com.mygdx.game.skirmish.gameplay.movement.MovementHandler;
@@ -13,6 +14,8 @@ import com.mygdx.game.skirmish.gameplay.production.ProductionHandler;
 import com.mygdx.game.skirmish.gameplay.production.ProductionManager;
 import com.mygdx.game.skirmish.gameplay.production.UnitProductionTaskFactory;
 import com.mygdx.game.skirmish.util.Settings;
+
+import java.util.stream.Collectors;
 
 /**
  * Created by paddlefish on 22-Sep-16.
@@ -37,6 +40,9 @@ public class World implements Disposable {
     private float accumulatedDelta = 0f;
 
     //------ Setters and Getters ----------
+    public SkirmishScreen getScreen() {
+        return screen;
+    }
     public GameObjectManager getGameObjectManager() {
         return gameObjectManager;
     }
@@ -94,12 +100,12 @@ public class World implements Disposable {
     private void step(float timeframe) {
         movementHandler.handleGroundUnitMoving(timeframe, unitManager.getUnitsInState(UnitState.MOVING));
         movementHandler.handleGroundUnitMovingToAtk(timeframe, unitManager.getUnitsInState(UnitState.MOVING_TO_ATK), gameObjectManager);
+        movementHandler.handleGroundUnitMovingToBuild(timeframe, unitManager.getBuilderUnits().stream().filter(Builder::isMovingToBuild).collect(Collectors.toList()), gameObjectManager);
         combatHandler.handleAtkStarting(timeframe, unitManager.getUnitsInState(UnitState.ATK_STARTING));
         combatHandler.handleAtkEnding(timeframe, unitManager.getUnitsInState(UnitState.ATK_ENDING));
         destructionHandler.handleGameObjectDestruction(gameObjectManager.getGameObjectsToBeDestroyed());
-
-        productionHandler.handleProductions(timeframe, productionManager.getProductions());
-        buildingManager.update();
+        productionHandler.handleRunningProductions(timeframe, productionManager.getRunningProductionTasks());
+        buildingManager.update(timeframe);
     }
 
 

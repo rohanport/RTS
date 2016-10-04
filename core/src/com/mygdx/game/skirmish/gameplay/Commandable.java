@@ -15,6 +15,8 @@ public interface Commandable {
 
     boolean processAtkCommand(int targetID);
 
+    boolean processBuildCommand(int x, int y);
+
     void renderSelectionMarker(ShapeRenderer shapeRenderer);
 
     Sprite getPortrait();

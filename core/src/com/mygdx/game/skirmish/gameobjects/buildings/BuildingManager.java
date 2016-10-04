@@ -43,8 +43,8 @@ public class BuildingManager implements GameObjectsObserver {
         buildings = new ArrayList<>();
     }
 
-    public void update() {
-        buildings.forEach(BuildingBase::update);
+    public void update(float delta) {
+        buildings.forEach(building -> building.update(delta));
     }
 
     public void addBuilding(BuildingBase building) {
@@ -103,6 +103,13 @@ public class BuildingManager implements GameObjectsObserver {
     public List<BuildingBase> getBuildingsAtNode(GroundNode node) {
         return buildings.stream()
                 .filter(building -> isBuildingAtNode(building, node))
+                .collect(Collectors.toList());
+    }
+
+    public List<ConstructingBuilding> getConstructingBuildings() {
+        return buildings.stream()
+                .filter(building -> building instanceof ConstructingBuilding)
+                .map(ConstructingBuilding.class::cast)
                 .collect(Collectors.toList());
     }
 

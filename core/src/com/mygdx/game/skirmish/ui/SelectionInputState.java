@@ -5,5 +5,6 @@ package com.mygdx.game.skirmish.ui;
  */
 public enum SelectionInputState {
     ATK,
+    BUILD,
     NONE
 }

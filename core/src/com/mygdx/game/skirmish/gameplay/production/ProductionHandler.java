@@ -17,7 +17,7 @@ public class ProductionHandler {
         this.world = world;
     }
 
-    public void handleProductions(float delta, List<ProductionTask> productions) {
+    public void handleRunningProductions(float delta, List<ProductionTask> productions) {
         List<ProductionTask> completedProductions = new ArrayList<>();
 
         for (ProductionTask production : productions) {

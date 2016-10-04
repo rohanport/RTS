@@ -10,11 +10,14 @@ import com.mygdx.game.skirmish.gameplay.production.UnitProductionTask;
  * Created by paddlefish on 26-Sep-16.
  */
 public class Building1 extends BuildingBase {
+    public static final int SIZE = 3;
+    public static final float BUILD_DURATION = 2f;
+    public static final float HP = 100f;
 
     public Building1(World world,int x, int y) {
-        super(world, x, y, 3);
+        super(world, x, y, SIZE);
 
-        hp = 100f;
+        hp = HP;
         curHp = hp;
     }
 
@@ -28,7 +31,7 @@ public class Building1 extends BuildingBase {
         switch (keycode) {
             case Input.Keys.S:
                 UnitProductionTask soldierBuildingTask = world.getUnitProductionTaskFactory()
-                        .getUnitProducerFor(this, UnitType.SOLDIER1, getMapCenterX(), getMapCenterY(), 0.1f);
+                        .getUnitProducerFor(this, UnitType.SOLDIER1, getMapCenterX(), getMapCenterY(), 1.0f);
                 addToProductionQueue(soldierBuildingTask);
                 return true;
             default:

@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.World;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
+import com.mygdx.game.skirmish.gameobjects.buildings.BuildingUtils;
+import com.mygdx.game.skirmish.gameobjects.units.Builder;
 import com.mygdx.game.skirmish.gameplay.pathfinding.*;
 import com.mygdx.game.skirmish.gameobjects.units.UnitBase;
 import com.mygdx.game.skirmish.gameobjects.units.UnitState;
@@ -90,6 +92,30 @@ public class MovementHandler {
             }
 
             moveUnitAlongPath(delta, unit, curNode, finNode);
+        }
+    }
+
+    public void handleGroundUnitMovingToBuild(float delta, List<Builder> buildingUnits, GameObjectManager gameObjectManager) {
+        GroundNode curNode;
+        GroundNode buildingNode;
+        GroundNode finNode;
+        groundGraph.newUpdateFrame();
+        for (Builder unit : buildingUnits) {
+            curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
+            buildingNode = groundGraph.getNodeByCoords(unit.getBuildLocationX(), unit.getBuildLocationY());
+
+            if (GroundGraphUtils.getDist(curNode, buildingNode) <= (1 + BuildingUtils.getSizeFor(unit.getBuildingType())) / 2) {
+                unit.startBuilding();
+                groundGraph.update(curNode);
+                continue;
+            } else {
+                finNode = groundGraph.getClosestFreeNode(
+                        curNode,
+                        buildingNode
+                );
+            }
+
+            moveUnitAlongPath(delta, (UnitBase) unit, curNode, finNode);
         }
     }
 

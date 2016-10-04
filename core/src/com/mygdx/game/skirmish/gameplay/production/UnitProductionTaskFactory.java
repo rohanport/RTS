@@ -37,10 +37,11 @@ public class UnitProductionTaskFactory {
         switch (unitType) {
             case SOLDIER1:
                 unit = new Soldier1(world, graph.getClosestFreeNode(sourceNode).x, graph.getClosestFreeNode(sourceNode).y);
-                world.getGameObjectManager().add(unit);
                 break;
             default:
                 throw new RuntimeException("Attempting to build unknown unit type " + unitType);
         }
+
+        world.getGameObjectManager().add(unit);
     }
 }

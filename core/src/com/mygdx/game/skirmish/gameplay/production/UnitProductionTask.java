@@ -20,6 +20,11 @@ public class UnitProductionTask implements ProductionTask {
     }
 
     @Override
+    public boolean isBeingProduced() {
+        return productionSource.getFirstInQueue() == this;
+    }
+
+    @Override
     public float getTotalTime() {
         return totalDuration;
     }

@@ -78,10 +78,12 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
             switch (unit.state) {
                 case MOVING:
                 case MOVING_TO_ATK:
+                case MOVING_TO_BUILD:
                     node.setOccupant(NodeOccupant.MOVING_UNIT);
                     break;
                 case ATK_STARTING:
                 case ATK_ENDING:
+                case BUILDING:
                 case NONE:
                     node.setOccupant(NodeOccupant.STOPPED_UNIT);
                     return;

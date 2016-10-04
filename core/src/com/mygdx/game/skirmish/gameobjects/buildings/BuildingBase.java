@@ -60,8 +60,8 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
         this.size = size;
 
         this.rect = new Rectangle(
-                x * MapUtils.NODE_WIDTH_PX - MapUtils.NODE_WIDTH_PX / 2,
-                y * MapUtils.NODE_HEIGHT_PX - MapUtils.NODE_HEIGHT_PX / 2,
+                x * MapUtils.NODE_WIDTH_PX - size * MapUtils.NODE_WIDTH_PX / 2,
+                y * MapUtils.NODE_HEIGHT_PX - size * MapUtils.NODE_HEIGHT_PX / 2,
                 size * MapUtils.NODE_WIDTH_PX,
                 size * MapUtils.NODE_HEIGHT_PX
         );
@@ -70,13 +70,7 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
         productionQueue = new ArrayList<>();
     }
 
-    public void update() {
-        if (productionQueue.size() > 0) {
-            ProductionTask firstInQueue = productionQueue.get(0);
-            if (!world.getProductionManager().isProductionTaskRunning(firstInQueue)) {
-                world.getProductionManager().add(firstInQueue);
-            }
-        }
+    public void update(float delta) {
     }
 
     @Override
@@ -138,12 +132,27 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
     }
 
     @Override
+    public ProductionTask getFirstInQueue() {
+        if (productionQueue.size() > 0) {
+            return productionQueue.get(0);
+        }
+
+        return null;
+    }
+
+    @Override
     public void addToProductionQueue(ProductionTask productionTask) {
         productionQueue.add(productionTask);
+        world.getProductionManager().add(productionTask);
     }
 
     @Override
     public void removeFromProductionQueue(ProductionTask productionTask) {
         productionQueue.remove(productionTask);
+    }
+
+    @Override
+    public boolean processBuildCommand(int x, int y) {
+        return false;
     }
 }

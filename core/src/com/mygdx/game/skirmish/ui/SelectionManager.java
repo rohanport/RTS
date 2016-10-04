@@ -37,11 +37,12 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
     private SelectionInputState state;
 
     //----------- Getters and Setters -------------
-
     public List<Commandable> getSelection() {
         return selection;
     }
-
+    public void setState(SelectionInputState state) {
+        this.state = state;
+    }
     //------------------------------------------
 
     public SelectionManager(SkirmishScreen screen) {
@@ -67,7 +68,7 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
             default:
                 boolean keyPressProccssed = false;
                 Iterator<Commandable> selectionIterator = selection.iterator();
-                while (keyPressProccssed == false && selectionIterator.hasNext()) {
+                while (!keyPressProccssed && selectionIterator.hasNext()) {
                     Commandable commandable = selectionIterator.next();
                     keyPressProccssed = commandable.processKeyStroke(keycode);
                 }
@@ -93,6 +94,10 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
             switch (state) {
                 case ATK:
                     handleAtkCommand(screenX, screenY);
+                    state = SelectionInputState.NONE;
+                    break;
+                case BUILD:
+                    handleBuildCommand(screenX, screenY);
                     state = SelectionInputState.NONE;
                     break;
                 default:
@@ -230,6 +235,18 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
     }
 
     private void handleAtkCommand(int screenX, int screenY) {
+        List<BuildingBase> targetBuildings = screen.getBuildingManager().getIntersectingBuildings(MapUtils.screenCoords2MapCoords(
+                screen.getCam(),
+                screenX,
+                screenY
+        ));
+
+        if (targetBuildings.size() > 0) {
+            int targetID =  targetBuildings.get(0).getID();
+            selection.forEach(commandable -> commandable.processAtkCommand(targetID));
+            return;
+        }
+
         List<UnitBase> targetedUnits = screen.getUnitManager().getIntersectingUnits(MapUtils.screenCoords2MapCoords(
                 screen.getCam(),
                 screenX,
@@ -239,6 +256,17 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
         if (targetedUnits.size() > 0) {
             int targetID =  targetedUnits.get(0).getID();
             selection.forEach(commandable -> commandable.processAtkCommand(targetID));
+            return;
+        }
+    }
+
+    private void handleBuildCommand(int screenX, int screenY) {
+        Vector2 buildDestCoords = MapUtils.screenCoords2NodeCoords(screen.getCam(), screenX, screenY);
+
+        boolean commandProccessed = false;
+        int i = 0;
+        while (!commandProccessed && i < selection.size()) {
+            commandProccessed = selection.get(i).processBuildCommand(Math.round(buildDestCoords.x), Math.round(buildDestCoords.y));
         }
     }
 

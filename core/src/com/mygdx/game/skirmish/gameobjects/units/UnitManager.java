@@ -101,6 +101,13 @@ public class UnitManager implements GameObjectsObserver {
         unitShapeRenderer.end();
     }
 
+    public List<Builder> getBuilderUnits() {
+        return units.stream()
+                .filter(unit -> unit instanceof Builder)
+                .map(Builder.class::cast)
+                .collect(Collectors.toList());
+    }
+
     public List<UnitBase> getIntersectingUnits(Vector2 point) {
         return units.stream()
                 .filter(unit -> unit.circle.contains(point))

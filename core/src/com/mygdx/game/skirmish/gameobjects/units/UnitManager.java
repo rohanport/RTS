@@ -80,8 +80,10 @@ public class UnitManager implements GameObjectsObserver {
         unitShapeRenderer.setProjectionMatrix(screen.getCam().combined);
 
         unitShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        unitShapeRenderer.setColor(Color.RED);
-        units.forEach(unit -> unitShapeRenderer.circle(unit.circle.x, unit.circle.y, unit.circle.radius));
+        for (UnitBase unit : units) {
+            unitShapeRenderer.setColor(screen.getPlayerManager().getPlayerByID(unit.getPlayerID()).color);
+            unitShapeRenderer.circle(unit.circle.x, unit.circle.y, unit.circle.radius);
+        }
         unitShapeRenderer.setColor(Color.GREEN);
         for (UnitBase unit : units) {
             unitShapeRenderer.rect(

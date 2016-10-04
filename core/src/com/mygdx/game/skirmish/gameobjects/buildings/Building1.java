@@ -14,8 +14,8 @@ public class Building1 extends BuildingBase {
     public static final float BUILD_DURATION = 2f;
     public static final float HP = 100f;
 
-    public Building1(World world,int x, int y) {
-        super(world, x, y, SIZE);
+    public Building1(World world, int playerID, int x, int y) {
+        super(world, playerID, x, y, SIZE);
 
         hp = HP;
         curHp = hp;
@@ -31,7 +31,7 @@ public class Building1 extends BuildingBase {
         switch (keycode) {
             case Input.Keys.S:
                 UnitProductionTask soldierBuildingTask = world.getUnitProductionTaskFactory()
-                        .getUnitProducerFor(this, UnitType.SOLDIER1, getMapCenterX(), getMapCenterY(), 1.0f);
+                        .getUnitProducerFor(this, UnitType.SOLDIER1, getPlayerID(), getMapCenterX(), getMapCenterY(), 1.0f);
                 addToProductionQueue(soldierBuildingTask);
                 return true;
             default:

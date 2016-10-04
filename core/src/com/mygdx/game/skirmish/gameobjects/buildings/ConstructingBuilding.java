@@ -18,11 +18,12 @@ public class ConstructingBuilding extends BuildingBase implements ProductionTask
     public final BuildingType finBuildingType;
 
     public ConstructingBuilding(World world,
+                                int playerID,
                                 BuildingType finBuildingType,
                                 int x,
                                 int y,
                                 int constructingUnitID) {
-        super(world, x, y, BuildingUtils.getSizeFor(finBuildingType));
+        super(world, playerID, x, y, BuildingUtils.getSizeFor(finBuildingType));
 
         this.hp = BuildingUtils.getHpFor(finBuildingType);
         this.duration = BuildingUtils.getBuildDurationFor(finBuildingType);
@@ -77,7 +78,7 @@ public class ConstructingBuilding extends BuildingBase implements ProductionTask
         BuildingBase building;
         switch (finBuildingType) {
             case BUILDING1:
-                building = new Building1(world, getMapCenterX(), getMapCenterY());
+                building = new Building1(world, getPlayerID(), getMapCenterX(), getMapCenterY());
                 break;
             default:
                 throw new RuntimeException("Attempting to build unknown unit type " + finBuildingType);

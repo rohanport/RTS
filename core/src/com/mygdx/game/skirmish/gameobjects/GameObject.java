@@ -6,6 +6,7 @@ package com.mygdx.game.skirmish.gameobjects;
 public interface GameObject {
     int getID();
     void setID(int id);
+    int getPlayerID();
 
     float getCenterX();
     float getCenterY();

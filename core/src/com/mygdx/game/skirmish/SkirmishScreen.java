@@ -1,6 +1,7 @@
 package com.mygdx.game.skirmish;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -15,6 +16,8 @@ import com.mygdx.game.skirmish.gameobjects.units.UnitManager;
 import com.mygdx.game.skirmish.gameplay.production.ProductionManager;
 import com.mygdx.game.skirmish.map.DragBoxRenderer;
 import com.mygdx.game.skirmish.map.MapCamera;
+import com.mygdx.game.skirmish.player.Player;
+import com.mygdx.game.skirmish.player.PlayerManager;
 import com.mygdx.game.skirmish.ui.GUI;
 import com.mygdx.game.skirmish.ui.SelectionManager;
 import com.mygdx.game.skirmish.util.MapUtils;
@@ -33,6 +36,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     private final BuildingManager buildingManager;
     private final ProductionManager productionManager;
     private final SelectionManager selectionManager;
+    private final PlayerManager playerManager;
     private final DragBoxRenderer dragBoxRenderer;
     private final GUI gui;
 
@@ -71,6 +75,10 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         return selectionManager;
     }
 
+    public PlayerManager getPlayerManager() {
+        return playerManager;
+    }
+
     public MapCamera getCam() {
         return cam;
     }
@@ -87,6 +95,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         gameObjectManager.addObserver(unitManager);
         gameObjectManager.addObserver(buildingManager);
         gameObjectManager.addObserver(selectionManager);
+        playerManager = new PlayerManager(this);
         dragBoxRenderer = new DragBoxRenderer();
         inputHandler = new InputMultiplexer();
         gui = new GUI(this);
@@ -150,8 +159,12 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     public boolean keyDown(int keycode) {
 
         if (keycode == Input.Keys.SPACE) {
+            if (playerManager.getNumPlayers() <= 0) {
+                Player player1 = new Player(0, Color.BLUE);
+                playerManager.addPlayer(player1);
+            }
             Vector2 middleOfScreen = MapUtils.screenCoords2NodeCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
-            Building1 test = new Building1(world, Math.round(middleOfScreen.x), Math.round(middleOfScreen.y));
+            Building1 test = new Building1(world, playerManager.getPlayerByID(0).id, Math.round(middleOfScreen.x), Math.round(middleOfScreen.y));
             gameObjectManager.add(test);
             selectionManager.addToSelection(test);
         }

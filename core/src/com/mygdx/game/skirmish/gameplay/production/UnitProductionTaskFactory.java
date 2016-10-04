@@ -19,24 +19,25 @@ public class UnitProductionTaskFactory {
 
     public UnitProductionTask getUnitProducerFor(QueueingProducer queueingProducer,
                                                  UnitType unitType,
+                                                 int playerID,
                                                  int x,
                                                  int y,
                                                  float duration) {
         return new UnitProductionTask(
                 queueingProducer,
-                () -> produceUnit(unitType, x, y),
+                () -> produceUnit(unitType, playerID, x, y),
                 duration
         );
     }
 
-    private void produceUnit(UnitType unitType, int x, int y) {
+    private void produceUnit(UnitType unitType, int playerID, int x, int y) {
         GroundGraph graph = world.getGroundGraph();
         GroundNode sourceNode = graph.getNodeByCoords(x, y);
 
         UnitBase unit;
         switch (unitType) {
             case SOLDIER1:
-                unit = new Soldier1(world, graph.getClosestFreeNode(sourceNode).x, graph.getClosestFreeNode(sourceNode).y);
+                unit = new Soldier1(world, playerID, graph.getClosestFreeNode(sourceNode).x, graph.getClosestFreeNode(sourceNode).y);
                 break;
             default:
                 throw new RuntimeException("Attempting to build unknown unit type " + unitType);

@@ -17,8 +17,8 @@ public class Soldier1 extends UnitBase implements Builder {
     private int buildLocationY;
     private BuildingType targetBuildingType;
 
-    public Soldier1(World world, int x, int y) {
-        super(world, x, y, 1);
+    public Soldier1(World world, int playerID, int x, int y) {
+        super(world, playerID, x, y, 1);
 
         hp = 100f;
         curHp = hp;
@@ -104,6 +104,7 @@ public class Soldier1 extends UnitBase implements Builder {
         state = UnitState.BUILDING;
         ConstructingBuilding constructingBuilding = new ConstructingBuilding(
                 world,
+                getPlayerID(),
                 targetBuildingType,
                 buildLocationX,
                 buildLocationY,

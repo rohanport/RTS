@@ -27,6 +27,7 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
     public int size;
 
     private int gameID;
+    private int playerID;
 
     protected Sprite sprite;
     protected final World world;
@@ -53,10 +54,15 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
         return rect.y + rect.getHeight() / 2;
     }
 
+    @Override
+    public int getPlayerID() {
+        return playerID;
+    }
     //--------------------------------------------
 
-    public BuildingBase(World world, int x, int y, int size) {
+    public BuildingBase(World world, int playerID, int x, int y, int size) {
         this.world = world;
+        this.playerID = playerID;
         this.size = size;
 
         this.rect = new Rectangle(

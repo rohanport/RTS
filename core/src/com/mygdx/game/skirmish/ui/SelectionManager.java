@@ -256,7 +256,6 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
         if (targetedUnits.size() > 0) {
             int targetID =  targetedUnits.get(0).getID();
             selection.forEach(commandable -> commandable.processAtkCommand(targetID));
-            return;
         }
     }
 

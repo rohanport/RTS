@@ -39,6 +39,7 @@ public abstract class UnitBase implements Commandable, GameObject {
     public int destNodeY;
 
     private int gameID;
+    private int playerID;
 
     protected World world;
     protected Sprite sprite;
@@ -53,6 +54,11 @@ public abstract class UnitBase implements Commandable, GameObject {
     @Override
     public void setID(int id) {
         gameID = id;
+    }
+
+    @Override
+    public int getPlayerID() {
+        return playerID;
     }
 
     @Override
@@ -82,8 +88,9 @@ public abstract class UnitBase implements Commandable, GameObject {
 
     //-----------------------------------------
 
-    public UnitBase(World world, int mapX, int mapY, int size) {
+    public UnitBase(World world, int playerID, int mapX, int mapY, int size) {
         this.world = world;
+        this.playerID = playerID;
         this.mapX = mapX;
         this.mapY = mapY;
         this.destNodeX = mapX;

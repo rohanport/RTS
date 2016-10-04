@@ -1,7 +1,6 @@
 package com.mygdx.game.skirmish.gameobjects.buildings;
 
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Polygon;
@@ -79,12 +78,14 @@ public class BuildingManager implements GameObjectsObserver {
         buildingShapeRenderer.setProjectionMatrix(screen.getCam().combined);
 
         buildingShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        buildingShapeRenderer.setColor(Color.RED);
-        buildings.forEach(building -> buildingShapeRenderer.rect(building.rect.x,
-                building.rect.y,
-                building.rect.getWidth(),
-                building.rect.getHeight()));
-
+        for (BuildingBase building : buildings) {
+            buildingShapeRenderer.setColor(screen.getPlayerManager().getPlayerByID(building.getPlayerID()).color);
+            buildingShapeRenderer.rect(building.rect.x,
+                    building.rect.y,
+                    building.rect.getWidth(),
+                    building.rect.getHeight()
+            );
+        }
         buildingShapeRenderer.end();
     }
 

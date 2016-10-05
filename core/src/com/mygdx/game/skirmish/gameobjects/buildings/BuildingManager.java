@@ -7,8 +7,10 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
+import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
 import com.mygdx.game.skirmish.gameobjects.GameObjectsObserver;
+import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
 import com.mygdx.game.skirmish.util.GameMathUtils;
 import com.mygdx.game.skirmish.util.MapUtils;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * Created by paddlefish on 26-Sep-16.
  */
-public class BuildingManager implements GameObjectsObserver {
+public class BuildingManager implements GameObjectsObserver, GameObjectManager<BuildingBase> {
 
     private final SkirmishScreen screen;
 
@@ -46,23 +48,31 @@ public class BuildingManager implements GameObjectsObserver {
         buildings.forEach(building -> building.update(delta));
     }
 
-    public void addBuilding(BuildingBase building) {
+    @Override
+    public void add(BuildingBase building) {
         buildings.add(building);
     }
 
-    public void removeBuilding(BuildingBase building) {
+    @Override
+    public void remove(BuildingBase building) {
         buildings.remove(building);
     }
 
-    public void renderBuildings(boolean debug) {
+    @Override
+    public GameObjectType getObjectType() {
+        return GameObjectType.BUILDING;
+    }
+
+    @Override
+    public void render(boolean debug) {
         if (debug) {
             renderBuildingsDebug();
         } else {
-            renderBuildings();
+            render();
         }
     }
 
-    private void renderBuildings() {
+    private void render() {
         Camera cam = screen.getCam();
         buildingRenderer.setProjectionMatrix(cam.combined);
 
@@ -89,28 +99,38 @@ public class BuildingManager implements GameObjectsObserver {
         buildingShapeRenderer.end();
     }
 
-    public List<BuildingBase> getIntersectingBuildings(Polygon box) {
+    @Override
+    public List<BuildingBase> getIntersecting(Polygon box) {
         return buildings.stream()
                 .filter(building -> GameMathUtils.isRectangleIntersectQuadrilateral(building.rect, box))
                 .collect(Collectors.toList());
     }
 
-    public List<BuildingBase> getIntersectingBuildings(Vector2 point) {
+    @Override
+    public List<Commandable> getIntersectingCommandables(Vector2 point) {
+        return getIntersecting(point).stream()
+                .map(Commandable.class::cast)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Commandable> getIntersectingCommandables(Polygon box) {
+        return getIntersecting(box).stream()
+                .map(Commandable.class::cast)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BuildingBase> getIntersecting(Vector2 point) {
         return buildings.stream()
                 .filter(building -> building.rect.contains(point))
                 .collect(Collectors.toList());
     }
 
-    public List<BuildingBase> getBuildingsAtNode(GroundNode node) {
+    @Override
+    public List<BuildingBase> getAtNode(GroundNode node) {
         return buildings.stream()
                 .filter(building -> isBuildingAtNode(building, node))
-                .collect(Collectors.toList());
-    }
-
-    public List<ConstructingBuilding> getConstructingBuildings() {
-        return buildings.stream()
-                .filter(building -> building instanceof ConstructingBuilding)
-                .map(ConstructingBuilding.class::cast)
                 .collect(Collectors.toList());
     }
 
@@ -130,10 +150,10 @@ public class BuildingManager implements GameObjectsObserver {
 
         switch (notification) {
             case CREATE:
-                addBuilding((BuildingBase) gameObject);
+                add((BuildingBase) gameObject);
                 break;
             case DESTROY:
-                removeBuilding((BuildingBase) gameObject);
+                remove((BuildingBase) gameObject);
                 break;
             default:
                 throw new RuntimeException("Unknown notification " + notification);

@@ -1,7 +1,7 @@
 package com.mygdx.game.skirmish;
 
 import com.badlogic.gdx.utils.Disposable;
-import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
+import com.mygdx.game.skirmish.gameobjects.GameObjectCache;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingManager;
 import com.mygdx.game.skirmish.gameobjects.units.UnitManager;
 import com.mygdx.game.skirmish.gameobjects.units.UnitState;
@@ -22,7 +22,7 @@ import com.mygdx.game.skirmish.util.Settings;
 public class World implements Disposable {
 
     private final SkirmishScreen screen;
-    private final GameObjectManager gameObjectManager;
+    private final GameObjectCache gameObjectCache;
     private final UnitManager unitManager;
     private final BuildingManager buildingManager;
     private final ProductionManager productionManager;
@@ -44,8 +44,8 @@ public class World implements Disposable {
     public SkirmishScreen getScreen() {
         return screen;
     }
-    public GameObjectManager getGameObjectManager() {
-        return gameObjectManager;
+    public GameObjectCache getGameObjectCache() {
+        return gameObjectCache;
     }
     public UnitManager getUnitManager() {
         return unitManager;
@@ -72,7 +72,7 @@ public class World implements Disposable {
         this.width = width;
         this.height = height;
 
-        gameObjectManager = this.screen.getGameObjectManager();
+        gameObjectCache = this.screen.getGameObjectCache();
         unitManager = this.screen.getUnitManager();
         buildingManager = this.screen.getBuildingManager();
         productionManager = this.screen.getProductionManager();
@@ -105,14 +105,14 @@ public class World implements Disposable {
 
     private void step(float timeframe) {
         movementHandler.handleGroundUnitMoving(timeframe, unitManager.getUnitsInState(UnitState.MOVING));
-        movementHandler.handleGroundUnitMovingToAtk(timeframe, unitManager.getUnitsInState(UnitState.MOVING_TO_ATK), gameObjectManager);
+        movementHandler.handleGroundUnitMovingToAtk(timeframe, unitManager.getUnitsInState(UnitState.MOVING_TO_ATK), gameObjectCache);
         movementHandler.handleGroundUnitMovingToBuild(timeframe, unitManager.getBuilderUnitsInState(UnitState.MOVING_TO_BUILD));
-        movementHandler.handleGroundUnitMovingToGather(timeframe, unitManager.getGatherersInState(UnitState.MOVING_TO_GATHER), gameObjectManager);
-        movementHandler.handleGroundUnitMovingToReturnResources(timeframe, unitManager.getGatherersInState(UnitState.MOVING_TO_RETURN_RESOURCES), gameObjectManager);
+        movementHandler.handleGroundUnitMovingToGather(timeframe, unitManager.getGatherersInState(UnitState.MOVING_TO_GATHER), gameObjectCache);
+        movementHandler.handleGroundUnitMovingToReturnResources(timeframe, unitManager.getGatherersInState(UnitState.MOVING_TO_RETURN_RESOURCES), gameObjectCache);
         combatHandler.handleAtkStarting(timeframe, unitManager.getUnitsInState(UnitState.ATK_STARTING));
         combatHandler.handleAtkEnding(timeframe, unitManager.getUnitsInState(UnitState.ATK_ENDING));
         gatheringHandler.handleGatherers(timeframe, unitManager.getGatherersInState(UnitState.GATHERING));
-        destructionHandler.handleGameObjectDestruction(gameObjectManager.getGameObjectsToBeDestroyed());
+        destructionHandler.handleGameObjectDestruction(gameObjectCache.getGameObjectsToBeDestroyed());
         productionHandler.handleRunningProductions(timeframe, productionManager.getRunningProductionTasks());
         buildingManager.update(timeframe);
     }

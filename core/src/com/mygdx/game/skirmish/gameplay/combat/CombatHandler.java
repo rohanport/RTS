@@ -22,7 +22,7 @@ public class CombatHandler {
         for (UnitBase unit : units) {
             unit.curAtkStartup += delta;
             if (unit.curAtkStartup > unit.getTotalAtkStartup()) {
-                GameObject atkTarget = world.getGameObjectManager().getGameObjectByID(unit.getAtkTargetID());
+                GameObject atkTarget = world.getGameObjectCache().getGameObjectByID(unit.getAtkTargetID());
                 if (atkTarget != null) {
                     atkTarget.applyDamage(unit.atk);
                 }
@@ -38,7 +38,7 @@ public class CombatHandler {
         for (UnitBase unit : units){
             unit.curAtkEnd += delta;
             if (unit.curAtkEnd > unit.getTotalAtkEnd()) {
-                GameObject atkTarget = world.getGameObjectManager().getGameObjectByID(unit.getAtkTargetID());
+                GameObject atkTarget = world.getGameObjectCache().getGameObjectByID(unit.getAtkTargetID());
                 unit.state = atkTarget != null ? UnitState.MOVING_TO_ATK : UnitState.NONE;
                 unit.curAtkEnd = 0f;
             }

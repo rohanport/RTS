@@ -8,12 +8,13 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
-import com.mygdx.game.skirmish.gameobjects.buildings.BuildingBase;
-import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
+import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
 import com.mygdx.game.skirmish.gameobjects.GameObjectsObserver;
+import com.mygdx.game.skirmish.gameobjects.buildings.BuildingBase;
 import com.mygdx.game.skirmish.gameobjects.units.UnitBase;
+import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.util.MapUtils;
 import com.mygdx.game.skirmish.util.Settings;
 
@@ -141,16 +142,15 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
         isSelecting = true;
 
         newSelection.clear();
-        newSelection.addAll(screen.getUnitManager().getIntersectingUnits(MapUtils.screenCoords2MapCoords(
-                screen.getCam(),
-                screenX,
-                screenY
-        )));
-        newSelection.addAll(screen.getBuildingManager().getIntersectingBuildings(MapUtils.screenCoords2MapCoords(
-                screen.getCam(),
-                screenX,
-                screenY
-        )));
+        screen.getGameObjectManagers().forEach(gameObjectManager ->
+                newSelection.addAll(gameObjectManager.getIntersectingCommandables(
+                        MapUtils.screenCoords2MapCoords(
+                                screen.getCam(),
+                                screenX,
+                                screenY
+                        ))
+                )
+        );
     }
 
     private void handleSelectionEnd() {
@@ -179,16 +179,26 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
                     mapD.x, mapD.y
             });
 
-            List<UnitBase> intersectingUnits = screen.getUnitManager().getIntersectingUnits(selectionPolygon);
-            List<BuildingBase> intersectingBuildings = screen.getBuildingManager().getIntersectingBuildings(selectionPolygon);
-
             newSelection.clear();
-            newSelection.addAll(intersectingUnits);
-            newSelection.addAll(intersectingBuildings);
+            screen.getGameObjectManagers().forEach(gameObjectManager ->
+                    newSelection.addAll(gameObjectManager.getIntersectingCommandables(selectionPolygon)));
         }
     }
 
     private void handleRightClick(float screenX, float screenY) {
+
+        for (GameObjectManager gameObjectManager : screen.getGameObjectManagers()) {
+            List<GameObject> intersectingObjects = gameObjectManager.getIntersecting(MapUtils.screenCoords2MapCoords(
+                    screen.getCam(),
+                    screenX,
+                    screenY
+            ));
+            if (intersectingObjects.size() > 0) {
+                selection.forEach( commandable -> commandable.processRightClickOn(intersectingObjects.get(0)));
+                return;
+            }
+        }
+
         Vector2 mapCords = MapUtils.screenCoords2NodeCoords(screen.getCam(), screenX, screenY);
         int mapX = Math.round(mapCords.x);
         int mapY = Math.round(mapCords.y);
@@ -220,7 +230,7 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
         if (minX <= mapX && mapX <= maxX &&
                 minY <= mapY && mapY <= maxY) {
             for (Commandable moveable : moveables) {
-                moveable.processRightClick(mapX, mapY);
+                moveable.processMoveCommand(mapX, mapY);
             }
         } else {
             int centerX = (minX + maxX) / 2;
@@ -229,13 +239,13 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
             int diffY = mapY - centerY;
 
             for (Commandable moveable : moveables) {
-                moveable.processRightClick(moveable.getMapCenterX() + diffX, moveable.getMapCenterY() + diffY);
+                moveable.processMoveCommand(moveable.getMapCenterX() + diffX, moveable.getMapCenterY() + diffY);
             }
         }
     }
 
     private void handleAtkCommand(int screenX, int screenY) {
-        List<BuildingBase> targetBuildings = screen.getBuildingManager().getIntersectingBuildings(MapUtils.screenCoords2MapCoords(
+        List<BuildingBase> targetBuildings = screen.getBuildingManager().getIntersecting(MapUtils.screenCoords2MapCoords(
                 screen.getCam(),
                 screenX,
                 screenY
@@ -247,7 +257,7 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
             return;
         }
 
-        List<UnitBase> targetedUnits = screen.getUnitManager().getIntersectingUnits(MapUtils.screenCoords2MapCoords(
+        List<UnitBase> targetedUnits = screen.getUnitManager().getIntersecting(MapUtils.screenCoords2MapCoords(
                 screen.getCam(),
                 screenX,
                 screenY

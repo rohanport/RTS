@@ -24,7 +24,7 @@ public class GatheringHandler {
                 continue;
             }
 
-            Resource resource = (Resource) world.getGameObjectManager().getGameObjectByID(gatherer.getGatherSourceID());
+            Resource resource = (Resource) world.getGameObjectCache().getGameObjectByID(gatherer.getGatherSourceID());
             if (resource == null) {
                 gatherer.stopGathering();
                 continue;

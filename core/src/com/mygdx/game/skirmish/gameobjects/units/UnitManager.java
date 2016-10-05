@@ -8,8 +8,10 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
+import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
 import com.mygdx.game.skirmish.gameobjects.GameObjectsObserver;
+import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
 import com.mygdx.game.skirmish.ui.HealthBar;
 import com.mygdx.game.skirmish.util.GameMathUtils;
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
  *
  * Manages units in skirmish mode
  */
-public class UnitManager implements GameObjectsObserver {
+public class UnitManager implements GameObjectsObserver, GameObjectManager<UnitBase> {
 
     private final SkirmishScreen screen;
 
@@ -48,15 +50,23 @@ public class UnitManager implements GameObjectsObserver {
         units = new ArrayList<>();
     }
 
-    public void addUnit(UnitBase unit) {
+    @Override
+    public void add(UnitBase unit) {
         units.add(unit);
     }
 
-    public void removeUnit(UnitBase unit) {
+    @Override
+    public void remove(UnitBase unit) {
         units.remove(unit);
     }
 
-    public void renderUnits(boolean debug) {
+    @Override
+    public GameObjectType getObjectType() {
+        return GameObjectType.UNIT;
+    }
+
+    @Override
+    public void render(boolean debug) {
         if (debug) {
             renderUnitsDebug();
         } else {
@@ -126,15 +136,31 @@ public class UnitManager implements GameObjectsObserver {
                 .collect(Collectors.toList());
     }
 
-    public List<UnitBase> getIntersectingUnits(Vector2 point) {
+    @Override
+    public List<UnitBase> getIntersecting(Vector2 point) {
         return units.stream()
                 .filter(unit -> unit.circle.contains(point))
                 .collect(Collectors.toList());
     }
 
-    public List<UnitBase> getIntersectingUnits(Polygon box) {
+    @Override
+    public List<UnitBase> getIntersecting(Polygon box) {
         return units.stream()
                 .filter(unit -> GameMathUtils.isCircleIntersectQuadrilateral(unit.circle, box))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Commandable> getIntersectingCommandables(Vector2 point) {
+        return getIntersecting(point).stream()
+                .map(Commandable.class::cast)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Commandable> getIntersectingCommandables(Polygon box) {
+        return getIntersecting(box).stream()
+                .map(Commandable.class::cast)
                 .collect(Collectors.toList());
     }
 
@@ -144,7 +170,8 @@ public class UnitManager implements GameObjectsObserver {
                 .collect(Collectors.toList());
     }
 
-    public List<UnitBase> getUnitsAtNode(GroundNode node) {
+    @Override
+    public List<UnitBase> getAtNode(GroundNode node) {
         return units.stream()
                 .filter(unit -> isUnitAtNode(unit, node))
                 .collect(Collectors.toList());
@@ -163,10 +190,10 @@ public class UnitManager implements GameObjectsObserver {
 
         switch (notification) {
             case CREATE:
-                addUnit((UnitBase) gameObject);
+                add((UnitBase) gameObject);
                 break;
             case DESTROY:
-                removeUnit((UnitBase) gameObject);
+                remove((UnitBase) gameObject);
                 break;
             default:
                 throw new RuntimeException("Unknown notification " + notification);

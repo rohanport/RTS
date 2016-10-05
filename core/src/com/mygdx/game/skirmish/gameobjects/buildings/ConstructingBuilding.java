@@ -37,7 +37,7 @@ public class ConstructingBuilding extends BuildingBase implements ProductionTask
     public void update(float delta) {
         super.update(delta);
 
-        isConstructing = world.getGameObjectManager().getGameObjectByID(constructingUnitID) != null;
+        isConstructing = world.getGameObjectCache().getGameObjectByID(constructingUnitID) != null;
 
         if (isConstructing) {
             curHp = Math.min(curHp + hp * (delta / duration), hp);
@@ -84,7 +84,7 @@ public class ConstructingBuilding extends BuildingBase implements ProductionTask
                 throw new RuntimeException("Attempting to build unknown unit type " + finBuildingType);
         }
 
-        world.getGameObjectManager().add(building);
+        world.getGameObjectCache().add(building);
 
         isComplete = true;
     }

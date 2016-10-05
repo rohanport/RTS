@@ -4,11 +4,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.GameData;
 import com.mygdx.game.skirmish.World;
+import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingBase;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingType;
 import com.mygdx.game.skirmish.gameobjects.buildings.ConstructingBuilding;
 import com.mygdx.game.skirmish.player.Player;
-import com.mygdx.game.skirmish.resources.Resource;
 import com.mygdx.game.skirmish.ui.SelectionInputState;
 import com.mygdx.game.skirmish.util.GameMathUtils;
 
@@ -114,20 +114,27 @@ public class Soldier1 extends UnitBase implements Builder, Gatherer {
     }
 
     @Override
-    public boolean processRightClick(int x, int y) {
-        List<Resource> resourcesAtNode = world.getResourceManager().getResourcesAtNode(world.getGroundGraph().getNodeByCoords(x, y));
-        if (resourcesAtNode.size() > 0) {
-            Resource resource = resourcesAtNode.get(0);
-            gatherSourceID = resource.getID();
-            state = UnitState.MOVING_TO_GATHER;
-            return false;
-        }
-
+    public boolean processMoveCommand(int x, int y) {
         destNodeX = x;
         destNodeY = y;
         state = UnitState.MOVING;
 
         return false;
+    }
+
+    @Override
+    public boolean processRightClickOn(GameObject gameObject) {
+        switch (gameObject.getGameObjectType()) {
+            case UNIT:
+            case BUILDING:
+                return processMoveCommand(gameObject.getMapCenterX(), gameObject.getMapCenterY());
+            case RESOURCE:
+                gatherSourceID = gameObject.getID();
+                state = UnitState.MOVING_TO_GATHER;
+                return false;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -170,7 +177,7 @@ public class Soldier1 extends UnitBase implements Builder, Gatherer {
                 buildLocationY,
                 getID()
         );
-        world.getGameObjectManager().add(constructingBuilding);
+        world.getGameObjectCache().add(constructingBuilding);
         world.getProductionManager().add(constructingBuilding);
 
         targetBuildingType = null;

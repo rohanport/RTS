@@ -33,7 +33,7 @@ public class Building1 extends BuildingBase {
                 UnitProductionTask soldierBuildingTask = world.getUnitProductionTaskFactory()
                         .getUnitProducerFor(this, UnitType.SOLDIER1, getPlayerID(), getMapCenterX(), getMapCenterY(), 1.0f);
                 addToProductionQueue(soldierBuildingTask);
-                return true;
+                return false;
             default:
                 return false;
         }

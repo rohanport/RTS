@@ -43,6 +43,6 @@ public class UnitProductionTaskFactory {
                 throw new RuntimeException("Attempting to build unknown unit type " + unitType);
         }
 
-        world.getGameObjectManager().add(unit);
+        world.getGameObjectCache().add(unit);
     }
 }

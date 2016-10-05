@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.DefaultScreen;
 import com.mygdx.game.GameData;
+import com.mygdx.game.skirmish.gameobjects.GameObjectCache;
 import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
 import com.mygdx.game.skirmish.gameobjects.buildings.Building1;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingManager;
@@ -26,6 +27,9 @@ import com.mygdx.game.skirmish.ui.SelectionManager;
 import com.mygdx.game.skirmish.util.MapUtils;
 import com.mygdx.game.skirmish.util.Settings;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by paddlefish on 17-Sep-16.
  */
@@ -34,7 +38,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     //--------- Managers -------
     private final World world;
     private final InputMultiplexer inputHandler;
-    private final GameObjectManager gameObjectManager;
+    private final GameObjectCache gameObjectCache;
     private final UnitManager unitManager;
     private final BuildingManager buildingManager;
     private final ProductionManager productionManager;
@@ -43,6 +47,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     private final ResourceManager resourceManager;
     private final DragBoxRenderer dragBoxRenderer;
     private final GUI gui;
+    private final List<GameObjectManager> gameObjectManagers;
 
     //-------- Sprites --------
     private Sprite background;
@@ -59,8 +64,8 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
 
     //------- Getters and Setters --------
-    public GameObjectManager getGameObjectManager() {
-        return gameObjectManager;
+    public GameObjectCache getGameObjectCache() {
+        return gameObjectCache;
     }
 
     public UnitManager getUnitManager() {
@@ -87,6 +92,10 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         return resourceManager;
     }
 
+    public List<GameObjectManager> getGameObjectManagers() {
+        return gameObjectManagers;
+    }
+
     public MapCamera getCam() {
         return cam;
     }
@@ -95,16 +104,16 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     public SkirmishScreen(Game game) {
         super(game);
 
-        gameObjectManager = new GameObjectManager(this);
+        gameObjectCache = new GameObjectCache(this);
         unitManager = new UnitManager(this);
         buildingManager = new BuildingManager(this);
         productionManager = new ProductionManager(this);
         selectionManager = new SelectionManager(this);
         resourceManager = new ResourceManager(this);
-        gameObjectManager.addObserver(unitManager);
-        gameObjectManager.addObserver(buildingManager);
-        gameObjectManager.addObserver(selectionManager);
-        gameObjectManager.addObserver(resourceManager);
+        gameObjectCache.addObserver(unitManager);
+        gameObjectCache.addObserver(buildingManager);
+        gameObjectCache.addObserver(selectionManager);
+        gameObjectCache.addObserver(resourceManager);
         playerManager = new PlayerManager(this);
         dragBoxRenderer = new DragBoxRenderer();
         inputHandler = new InputMultiplexer();
@@ -115,6 +124,10 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         inputHandler.addProcessor(selectionManager);
 
         world = new World(this, MapUtils.MAP_WIDTH, MapUtils.MAP_HEIGHT);
+        gameObjectManagers = new ArrayList<>();
+        gameObjectManagers.add(unitManager);
+        gameObjectManagers.add(buildingManager);
+        gameObjectManagers.add(resourceManager);
     }
 
     @Override
@@ -143,9 +156,9 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
             world.renderNodesDebug();
         }
 
-        unitManager.renderUnits(Settings.DEBUG_MODE);
-        buildingManager.renderBuildings(Settings.DEBUG_MODE);
-        resourceManager.renderResources(Settings.DEBUG_MODE);
+        unitManager.render(Settings.DEBUG_MODE);
+        buildingManager.render(Settings.DEBUG_MODE);
+        resourceManager.render(Settings.DEBUG_MODE);
         selectionManager.renderSelectionMarkers(cam);
 
         gui.render(Settings.DEBUG_MODE);
@@ -176,7 +189,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
             }
             Vector2 middleOfScreen = MapUtils.screenCoords2NodeCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
             Building1 test = new Building1(world, playerManager.getPlayerByID(0).id, Math.round(middleOfScreen.x), Math.round(middleOfScreen.y));
-            gameObjectManager.add(test);
+            gameObjectCache.add(test);
             selectionManager.addToSelection(test);
         }
 
@@ -189,7 +202,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
                     Math.round(middleOfScreen.y + 60f * ((float) Math.random() - 0.5f)),
                     3
             );
-            gameObjectManager.add(test);
+            gameObjectCache.add(test);
         }
 
         return false;

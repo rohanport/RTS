@@ -2,21 +2,26 @@ package com.mygdx.game.skirmish.resources;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
-import com.mygdx.game.skirmish.gameobjects.GameObject;
+import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
 import com.mygdx.game.skirmish.gameobjects.GameObjectsObserver;
+import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
+import com.mygdx.game.skirmish.util.GameMathUtils;
 import com.mygdx.game.skirmish.util.MapUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Created by paddlefish on 04-Oct-16.
  */
-public class ResourceManager implements GameObjectsObserver {
+public class ResourceManager implements GameObjectsObserver, GameObjectManager<Resource> {
     private final SkirmishScreen screen;
     private final List<Resource> resources;
     private final ShapeRenderer debugRenderer;
@@ -27,7 +32,13 @@ public class ResourceManager implements GameObjectsObserver {
         debugRenderer = new ShapeRenderer();
     }
 
-    public void renderResources(boolean debug) {
+    @Override
+    public GameObjectType getObjectType() {
+        return GameObjectType.RESOURCE;
+    }
+
+    @Override
+    public void render(boolean debug) {
         if (debug) {
             renderDebug();
         } else {
@@ -58,33 +69,60 @@ public class ResourceManager implements GameObjectsObserver {
         //Not finished yet
     }
 
-    public void addResource(Resource resource) {
+    @Override
+    public void add(Resource resource) {
         resources.add(resource);
     }
 
-    public void removeResource(Resource resource) {
+    @Override
+    public void remove(Resource resource) {
         resources.remove(resource);
     }
 
     @Override
-    public void notify(GameObject gameObject, Notification notification) {
+    public List<Resource> getIntersecting(Vector2 point) {
+        return resources.stream()
+                .filter(resource -> resource.rect.contains(point))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Resource> getIntersecting(Polygon box) {
+        return resources.stream()
+                .filter(resource -> GameMathUtils.isRectangleIntersectQuadrilateral(resource.rect, box))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Commandable> getIntersectingCommandables(Vector2 point) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Commandable> getIntersectingCommandables(Polygon box) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void notify(com.mygdx.game.skirmish.gameobjects.GameObject gameObject, Notification notification) {
         if (gameObject.getGameObjectType() != GameObjectType.RESOURCE) {
             return;
         }
 
         switch (notification) {
             case CREATE:
-                addResource((Resource) gameObject);
+                add((Resource) gameObject);
                 break;
             case DESTROY:
-                removeResource((Resource) gameObject);
+                remove((Resource) gameObject);
                 break;
             default:
                 throw new RuntimeException("Unknown notification " + notification);
         }
     }
 
-    public List<Resource> getResourcesAtNode(GroundNode node) {
+    @Override
+    public List<Resource> getAtNode(GroundNode node) {
         return resources.stream()
                 .filter(resource -> isResourceAtNode(resource, node))
                 .collect(Collectors.toList());

@@ -66,19 +66,19 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
     }
 
     public void update(GroundNode node) {
-        List<Resource> resources = world.getResourceManager().getResourcesAtNode(node);
+        List<Resource> resources = world.getResourceManager().getAtNode(node);
         if (resources.size() > 0) {
             node.setOccupant(NodeOccupant.RESOURCE);
             return;
         }
 
-        List<BuildingBase> buildings = world.getBuildingManager().getBuildingsAtNode(node);
+        List<BuildingBase> buildings = world.getBuildingManager().getAtNode(node);
         if (buildings.size() > 0) {
             node.setOccupant(NodeOccupant.BUILDING);
             return;
         }
 
-        List<UnitBase> units = world.getUnitManager().getUnitsAtNode(node);
+        List<UnitBase> units = world.getUnitManager().getAtNode(node);
 
         node.setOccupant(NodeOccupant.NONE);
         for (UnitBase unit : units) {

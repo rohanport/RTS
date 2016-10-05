@@ -17,6 +17,6 @@ public class DestructionHandler {
     }
 
     public void handleGameObjectDestruction(List<GameObject> gameObjects) {
-        gameObjects.forEach(gameObject -> world.getGameObjectManager().removeGameObjectByID(gameObject.getID()));
+        gameObjects.forEach(gameObject -> world.getGameObjectCache().removeGameObjectByID(gameObject.getID()));
     }
 }

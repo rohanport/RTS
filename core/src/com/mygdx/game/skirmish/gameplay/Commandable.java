@@ -2,6 +2,7 @@ package com.mygdx.game.skirmish.gameplay;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.game.skirmish.gameobjects.GameObject;
 
 /**
  * Created by paddlefish on 19-Sep-16.
@@ -11,7 +12,9 @@ public interface Commandable {
 
     boolean processKeyStroke(int keycode);
 
-    boolean processRightClick(int x, int y);
+    boolean processMoveCommand(int x, int y);
+
+    boolean processRightClickOn(GameObject gameObject);
 
     boolean processAtkCommand(int targetID);
 

@@ -7,8 +7,7 @@ import com.badlogic.gdx.ai.pfa.PathFinder;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.World;
-import com.mygdx.game.skirmish.gameobjects.GameObject;
-import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
+import com.mygdx.game.skirmish.gameobjects.GameObjectCache;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingBase;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingUtils;
 import com.mygdx.game.skirmish.gameobjects.units.Builder;
@@ -62,13 +61,13 @@ public class MovementHandler {
         }
     }
 
-    public void handleGroundUnitMovingToAtk(float delta, List<UnitBase> units, GameObjectManager gameObjectManager) {
-        GameObject atkTarget;
+    public void handleGroundUnitMovingToAtk(float delta, List<UnitBase> units, GameObjectCache gameObjectCache) {
+        com.mygdx.game.skirmish.gameobjects.GameObject atkTarget;
         GroundNode curNode;
         GroundNode finNode;
         groundGraph.newUpdateFrame();
         for (UnitBase unit : units) {
-            atkTarget = gameObjectManager.getGameObjectByID(unit.getAtkTargetID());
+            atkTarget = gameObjectCache.getGameObjectByID(unit.getAtkTargetID());
             curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
             if (atkTarget == null) {
                 unit.state = UnitState.NONE;
@@ -122,14 +121,14 @@ public class MovementHandler {
         }
     }
 
-    public void handleGroundUnitMovingToGather(float delta, List<Gatherer> units, GameObjectManager gameObjectManager) {
-        GameObject gatherTarget;
+    public void handleGroundUnitMovingToGather(float delta, List<Gatherer> units, GameObjectCache gameObjectCache) {
+        com.mygdx.game.skirmish.gameobjects.GameObject gatherTarget;
         GroundNode curNode;
         GroundNode resourceNode;
         GroundNode finNode;
         groundGraph.newUpdateFrame();
         for (Gatherer unit : units) {
-            gatherTarget = gameObjectManager.getGameObjectByID(unit.getGatherSourceID());
+            gatherTarget = gameObjectCache.getGameObjectByID(unit.getGatherSourceID());
             curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
             if (gatherTarget == null) {
                 unit.stopGathering();
@@ -153,14 +152,14 @@ public class MovementHandler {
         }
     }
 
-    public void handleGroundUnitMovingToReturnResources(float delta, List<Gatherer> units, GameObjectManager gameObjectManager) {
-        GameObject dropOffTarget;
+    public void handleGroundUnitMovingToReturnResources(float delta, List<Gatherer> units, GameObjectCache gameObjectCache) {
+        com.mygdx.game.skirmish.gameobjects.GameObject dropOffTarget;
         GroundNode curNode;
         GroundNode dropOffNode;
         GroundNode finNode;
         groundGraph.newUpdateFrame();
         for (Gatherer unit : units) {
-            dropOffTarget = gameObjectManager.getGameObjectByID(unit.getDropOffTargetID());
+            dropOffTarget = gameObjectCache.getGameObjectByID(unit.getDropOffTargetID());
             curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
             if (dropOffTarget == null) {
                 unit.stopGathering();

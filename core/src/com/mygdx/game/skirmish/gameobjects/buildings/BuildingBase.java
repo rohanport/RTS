@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by paddlefish on 26-Sep-16.
  */
-public abstract class BuildingBase implements Commandable, GameObject, QueueingProducer {
+public abstract class BuildingBase implements Commandable, com.mygdx.game.skirmish.gameobjects.GameObject, QueueingProducer {
 
     public Rectangle rect;
     public float hp;
@@ -90,7 +90,7 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
     }
 
     @Override
-    public boolean processRightClick(int x, int y) {
+    public boolean processMoveCommand(int x, int y) {
         return false;
     }
 
@@ -163,6 +163,11 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
     }
 
     public boolean isResourceDropOff() {
+        return false;
+    }
+
+    @Override
+    public boolean processRightClickOn(GameObject gameObject) {
         return false;
     }
 }

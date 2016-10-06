@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.World;
+import com.mygdx.game.skirmish.gameobjects.Attacker;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
 import com.mygdx.game.skirmish.gameplay.Commandable;
@@ -15,7 +16,7 @@ import com.mygdx.game.skirmish.util.MapUtils;
 /**
  * Created by paddlefish on 18-Sep-16.
  */
-public abstract class UnitBase implements Commandable, GameObject {
+public abstract class UnitBase implements Commandable, GameObject, Attacker {
 
     public Circle circle;
     public int mapX;
@@ -23,14 +24,14 @@ public abstract class UnitBase implements Commandable, GameObject {
     public float size;
     public float hp;
     public float curHp;
-    public float atk;
-    public int range;
+    protected float atk;
+    protected int range;
     public float baseSpeed;
     public float speedMulti = 1f;
     protected float baseAtkStartup;
     protected float baseAtkEnd;
-    public float curAtkStartup;
-    public float curAtkEnd;
+    protected float curAtkStartup;
+    protected float curAtkEnd;
     public float baseAtkSpeedMulti = 1f;
     private int atkTargetID;
 
@@ -70,13 +71,40 @@ public abstract class UnitBase implements Commandable, GameObject {
         return circle.y;
     }
 
+    @Override
+    public float getAtk() {
+        return atk;
+    }
+    @Override
+    public int getRange() {
+        return range;
+    }
+    @Override
     public float getTotalAtkStartup() {
         return baseAtkStartup / baseAtkSpeedMulti;
     }
+    @Override
     public float getTotalAtkEnd() {
         return baseAtkEnd / baseAtkSpeedMulti;
     }
+    @Override
+    public float getCurAtkStartup() {
+        return curAtkStartup;
+    }
+    @Override
+    public void setCurAtkStartup(float curAtkStartup) {
+        this.curAtkStartup = curAtkStartup;
+    }
+    @Override
+    public float getCurAtkEnd() {
+        return curAtkEnd;
+    }
+    @Override
+    public void setCurAtkEnd(float curAtkEnd) {
+        this.curAtkEnd = curAtkEnd;
+    }
 
+    @Override
     public int getAtkTargetID() {
         return atkTargetID;
     }
@@ -158,5 +186,30 @@ public abstract class UnitBase implements Commandable, GameObject {
     @Override
     public boolean isToBeDestroyed() {
         return curHp <= 0;
+    }
+
+    @Override
+    public void startMovingToAttack() {
+        state = UnitState.MOVING_TO_ATK;
+    }
+
+    @Override
+    public void startAttacking() {
+        state = UnitState.ATK_STARTING;
+    }
+
+    @Override
+    public void startEndOfAttack() {
+        state = UnitState.ATK_ENDING;
+    }
+
+    @Override
+    public void stopAttacking() {
+        state = UnitState.NONE;
+    }
+
+    @Override
+    public boolean canMove() {
+        return true;
     }
 }

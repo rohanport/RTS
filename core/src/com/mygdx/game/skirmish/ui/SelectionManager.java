@@ -67,16 +67,20 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
                 state = SelectionInputState.ATK;
                 break;
             default:
-                boolean keyPressProccssed = false;
-                Iterator<Commandable> selectionIterator = selection.iterator();
-                while (!keyPressProccssed && selectionIterator.hasNext()) {
-                    Commandable commandable = selectionIterator.next();
-                    keyPressProccssed = commandable.processKeyStroke(keycode);
-                }
+                passKeyPressToSelection(keycode);
                 break;
         }
 
         return false;
+    }
+
+    private void passKeyPressToSelection(int keycode) {
+        boolean keyPressProccssed = false;
+        Iterator<Commandable> selectionIterator = selection.iterator();
+        while (!keyPressProccssed && selectionIterator.hasNext()) {
+            Commandable commandable = selectionIterator.next();
+            keyPressProccssed = commandable.processKeyStroke(keycode);
+        }
     }
 
     @Override

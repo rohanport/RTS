@@ -7,14 +7,15 @@ import com.badlogic.gdx.ai.pfa.PathFinder;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.World;
+import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectCache;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingBase;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingUtils;
 import com.mygdx.game.skirmish.gameobjects.units.Builder;
 import com.mygdx.game.skirmish.gameobjects.units.Gatherer;
-import com.mygdx.game.skirmish.gameplay.pathfinding.*;
 import com.mygdx.game.skirmish.gameobjects.units.UnitBase;
 import com.mygdx.game.skirmish.gameobjects.units.UnitState;
+import com.mygdx.game.skirmish.gameplay.pathfinding.*;
 import com.mygdx.game.skirmish.resources.Resource;
 import com.mygdx.game.skirmish.util.GameMathUtils;
 import com.mygdx.game.skirmish.util.MapUtils;
@@ -62,7 +63,7 @@ public class MovementHandler {
     }
 
     public void handleGroundUnitMovingToAtk(float delta, List<UnitBase> units, GameObjectCache gameObjectCache) {
-        com.mygdx.game.skirmish.gameobjects.GameObject atkTarget;
+        GameObject atkTarget;
         GroundNode curNode;
         GroundNode finNode;
         groundGraph.newUpdateFrame();
@@ -70,7 +71,7 @@ public class MovementHandler {
             atkTarget = gameObjectCache.getGameObjectByID(unit.getAtkTargetID());
             curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
             if (atkTarget == null) {
-                unit.state = UnitState.NONE;
+                unit.stopAttacking();
                 groundGraph.update(curNode);
                 continue;
             }
@@ -80,8 +81,8 @@ public class MovementHandler {
                     unit.getCenterY() / MapUtils.NODE_HEIGHT_PX,
                     atkTarget.getCenterX() / MapUtils.NODE_WIDTH_PX,
                     atkTarget.getCenterY() / MapUtils.NODE_HEIGHT_PX
-                    ) < unit.range) {
-                unit.state = UnitState.ATK_STARTING;
+                    ) < unit.getRange()) {
+                unit.startAttacking();
                 groundGraph.update(curNode);
                 continue;
             } else {
@@ -89,7 +90,7 @@ public class MovementHandler {
                         curNode,
                         atkTarget.getCenterX() / MapUtils.NODE_WIDTH_PX,
                         atkTarget.getCenterY() / MapUtils.NODE_HEIGHT_PX,
-                        unit.range
+                        unit.getRange()
                 );
             }
 
@@ -122,7 +123,7 @@ public class MovementHandler {
     }
 
     public void handleGroundUnitMovingToGather(float delta, List<Gatherer> units, GameObjectCache gameObjectCache) {
-        com.mygdx.game.skirmish.gameobjects.GameObject gatherTarget;
+        GameObject gatherTarget;
         GroundNode curNode;
         GroundNode resourceNode;
         GroundNode finNode;
@@ -153,7 +154,7 @@ public class MovementHandler {
     }
 
     public void handleGroundUnitMovingToReturnResources(float delta, List<Gatherer> units, GameObjectCache gameObjectCache) {
-        com.mygdx.game.skirmish.gameobjects.GameObject dropOffTarget;
+        GameObject dropOffTarget;
         GroundNode curNode;
         GroundNode dropOffNode;
         GroundNode finNode;

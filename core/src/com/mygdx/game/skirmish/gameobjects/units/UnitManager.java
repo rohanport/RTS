@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
-import com.mygdx.game.skirmish.gameobjects.GameObject;
-import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
-import com.mygdx.game.skirmish.gameobjects.GameObjectType;
-import com.mygdx.game.skirmish.gameobjects.GameObjectsObserver;
+import com.mygdx.game.skirmish.gameobjects.*;
 import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundNode;
 import com.mygdx.game.skirmish.ui.HealthBar;
@@ -117,6 +114,13 @@ public class UnitManager implements GameObjectsObserver, GameObjectManager<UnitB
         return units.stream()
                 .filter(unit -> unit instanceof Builder)
                 .map(Builder.class::cast)
+                .collect(Collectors.toList());
+    }
+
+    public List<Attacker> getAttackerUnitsInState(UnitState state) {
+        return units.stream()
+                .filter(unit -> unit.state == state)
+                .map(Attacker.class::cast)
                 .collect(Collectors.toList());
     }
 

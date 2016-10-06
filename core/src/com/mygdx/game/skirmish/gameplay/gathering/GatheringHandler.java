@@ -17,7 +17,7 @@ public class GatheringHandler {
         this.world = world;
     }
 
-    public void handleGatherers(float delta, List<Gatherer> gatherers) {
+    public void handleGatherers(float delta, List<? extends Gatherer> gatherers) {
         for (Gatherer gatherer : gatherers) {
             if (gatherer.getCurrentFood() >= gatherer.getMaxCarryFood()) {
                 gatherer.startDropOff();

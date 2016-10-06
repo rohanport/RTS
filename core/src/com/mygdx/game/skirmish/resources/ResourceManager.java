@@ -128,6 +128,11 @@ public class ResourceManager implements GameObjectsObserver, GameObjectManager<R
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Resource> getEnemiesInRange(int playerID, float x, float y, float radius) {
+        return Collections.emptyList();
+    }
+
     private boolean isResourceAtNode(Resource resource, GroundNode node) {
         int mapX = Math.round(resource.rect.x / MapUtils.NODE_WIDTH_PX);
         int mapY = Math.round(resource.rect.y / MapUtils.NODE_WIDTH_PX);

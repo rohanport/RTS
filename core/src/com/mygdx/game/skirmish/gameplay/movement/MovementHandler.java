@@ -98,7 +98,7 @@ public class MovementHandler {
         }
     }
 
-    public void handleGroundUnitMovingToBuild(float delta, List<Builder> buildingUnits) {
+    public void handleGroundUnitMovingToBuild(float delta, List<? extends Builder> buildingUnits) {
         GroundNode curNode;
         GroundNode buildingNode;
         GroundNode finNode;
@@ -122,7 +122,7 @@ public class MovementHandler {
         }
     }
 
-    public void handleGroundUnitMovingToGather(float delta, List<Gatherer> units, GameObjectCache gameObjectCache) {
+    public void handleGroundUnitMovingToGather(float delta, List<? extends Gatherer> units, GameObjectCache gameObjectCache) {
         GameObject gatherTarget;
         GroundNode curNode;
         GroundNode resourceNode;
@@ -153,7 +153,7 @@ public class MovementHandler {
         }
     }
 
-    public void handleGroundUnitMovingToReturnResources(float delta, List<Gatherer> units, GameObjectCache gameObjectCache) {
+    public void handleGroundUnitMovingToReturnResources(float delta, List<? extends Gatherer> units, GameObjectCache gameObjectCache) {
         GameObject dropOffTarget;
         GroundNode curNode;
         GroundNode dropOffNode;

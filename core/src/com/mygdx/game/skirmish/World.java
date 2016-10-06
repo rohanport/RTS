@@ -109,11 +109,12 @@ public class World implements Disposable {
         movementHandler.handleGroundUnitMovingToBuild(timeframe, unitManager.getBuilderUnitsInState(UnitState.MOVING_TO_BUILD));
         movementHandler.handleGroundUnitMovingToGather(timeframe, unitManager.getGatherersInState(UnitState.MOVING_TO_GATHER), gameObjectCache);
         movementHandler.handleGroundUnitMovingToReturnResources(timeframe, unitManager.getGatherersInState(UnitState.MOVING_TO_RETURN_RESOURCES), gameObjectCache);
-        combatHandler.handleAtkStarting(timeframe, unitManager.getAttackerUnitsInState(UnitState.ATK_STARTING));
-        combatHandler.handleAtkEnding(timeframe, unitManager.getAttackerUnitsInState(UnitState.ATK_ENDING));
+        combatHandler.handleAtkStarting(timeframe, unitManager.getUnitsInState(UnitState.ATK_STARTING));
+        combatHandler.handleAtkEnding(timeframe, unitManager.getUnitsInState(UnitState.ATK_ENDING));
         gatheringHandler.handleGatherers(timeframe, unitManager.getGatherersInState(UnitState.GATHERING));
         destructionHandler.handleGameObjectDestruction(gameObjectCache.getGameObjectsToBeDestroyed());
         productionHandler.handleRunningProductions(timeframe, productionManager.getRunningProductionTasks());
+        unitManager.update(timeframe);
         buildingManager.update(timeframe);
     }
 

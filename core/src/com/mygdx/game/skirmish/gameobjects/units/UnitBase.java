@@ -11,7 +11,10 @@ import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
 import com.mygdx.game.skirmish.gameplay.Commandable;
 import com.mygdx.game.skirmish.ui.HealthBar;
+import com.mygdx.game.skirmish.util.GameMathUtils;
 import com.mygdx.game.skirmish.util.MapUtils;
+
+import java.util.List;
 
 /**
  * Created by paddlefish on 18-Sep-16.
@@ -26,6 +29,7 @@ public abstract class UnitBase implements Commandable, GameObject, Attacker {
     public float curHp;
     protected float atk;
     protected int range;
+    public int LOS;
     public float baseSpeed;
     public float speedMulti = 1f;
     protected float baseAtkStartup;
@@ -133,6 +137,20 @@ public abstract class UnitBase implements Commandable, GameObject, Attacker {
         healthBar = new HealthBar(this);
     }
 
+    public void update(float delta) {
+        if (state == UnitState.NONE && isAggressive()) {
+            handleIdleAggressiveUnit();
+        }
+    }
+
+    private void handleIdleAggressiveUnit() {
+        List<UnitBase> unitsInLos = world.getUnitManager().getEnemiesInRange(playerID, circle.x, circle.y, LOS * MapUtils.NODE_WIDTH_PX);
+        if (unitsInLos.size() > 0) {
+            GameMathUtils.sortListByDistFrom(this, unitsInLos);
+            processAtkCommand(unitsInLos.get(0).getID());
+        }
+    }
+
     public void translate(Vector2 translation) {
         circle.setX(circle.x + translation.x);
         circle.setY(circle.y + translation.y);
@@ -211,5 +229,9 @@ public abstract class UnitBase implements Commandable, GameObject, Attacker {
     @Override
     public boolean canMove() {
         return true;
+    }
+
+    public boolean isAggressive() {
+        return false;
     }
 }

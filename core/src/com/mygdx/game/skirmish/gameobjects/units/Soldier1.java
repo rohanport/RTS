@@ -92,6 +92,7 @@ public class Soldier1 extends UnitBase implements Builder, Gatherer {
 
         atk = 10f;
         range = 6;
+        LOS = 10;
 
         baseSpeed = 100f;
 
@@ -199,13 +200,7 @@ public class Soldier1 extends UnitBase implements Builder, Gatherer {
     public void startDropOff() {
         curGatherTime = 0.0f;
         List<BuildingBase> dropOffBuildings = world.getBuildingManager().getDropOffBuildings();
-        dropOffBuildings.sort((o1, o2) ->
-                Math.round(Math.signum(
-                        GameMathUtils.distBetween(circle.x, circle.y, o1.getCenterX(), o1.getCenterY()) -
-                                GameMathUtils.distBetween(circle.x, circle.y, o2.getCenterX(), o2.getCenterY())
-                ))
-        );
-
+        GameMathUtils.sortListByDistFrom(this, dropOffBuildings);
         dropOffTargetID = dropOffBuildings.get(0).getID();
         state = UnitState.MOVING_TO_RETURN_RESOURCES;
     }
@@ -216,5 +211,10 @@ public class Soldier1 extends UnitBase implements Builder, Gatherer {
         player.food += curFood;
         curFood = 0;
         state = UnitState.MOVING_TO_GATHER;
+    }
+
+    @Override
+    public boolean isAggressive() {
+        return true;
     }
 }

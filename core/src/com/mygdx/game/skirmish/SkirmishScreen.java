@@ -188,7 +188,18 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
                 playerManager.addPlayer(player1);
             }
             Vector2 middleOfScreen = MapUtils.screenCoords2NodeCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
-            Building1 test = new Building1(world, playerManager.getPlayerByID(0).id, Math.round(middleOfScreen.x), Math.round(middleOfScreen.y));
+            Building1 test = new Building1(world, playerManager.getPlayerByID(0).id, Math.round(middleOfScreen.x - 20), Math.round(middleOfScreen.y));
+            gameObjectCache.add(test);
+            selectionManager.addToSelection(test);
+        }
+
+        if (keycode == Input.Keys.ENTER) {
+            if (playerManager.getNumPlayers() <= 1) {
+                Player player1 = new Player(1, Color.YELLOW);
+                playerManager.addPlayer(player1);
+            }
+            Vector2 middleOfScreen = MapUtils.screenCoords2NodeCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
+            Building1 test = new Building1(world, playerManager.getPlayerByID(1).id, Math.round(middleOfScreen.x + 20), Math.round(middleOfScreen.y));
             gameObjectCache.add(test);
             selectionManager.addToSelection(test);
         }

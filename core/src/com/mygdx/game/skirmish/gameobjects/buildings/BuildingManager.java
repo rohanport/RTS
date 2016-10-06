@@ -3,6 +3,7 @@ package com.mygdx.game.skirmish.gameobjects.buildings;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
@@ -131,6 +132,15 @@ public class BuildingManager implements GameObjectsObserver, GameObjectManager<B
     public List<BuildingBase> getAtNode(GroundNode node) {
         return buildings.stream()
                 .filter(building -> isBuildingAtNode(building, node))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BuildingBase> getEnemiesInRange(int playerID, float x, float y, float radius) {
+        Circle range = new Circle(x, y, radius);
+        return buildings.stream()
+                .filter(building -> range.contains(building.getCenterX(), building.getCenterY()))
+                .filter(unit -> screen.getPlayerManager().areEnemies(playerID, unit.getPlayerID()))
                 .collect(Collectors.toList());
     }
 

@@ -28,4 +28,8 @@ public class PlayerManager {
     public int getNumPlayers() {
         return players.size();
     }
+
+    public boolean areEnemies(int player1, int player2) {
+        return player1 != player2;
+    }
 }

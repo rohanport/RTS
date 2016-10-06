@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.skirmish.SkirmishScreen;
@@ -45,6 +46,10 @@ public class UnitManager implements GameObjectsObserver, GameObjectManager<UnitB
         unitShapeRenderer = new ShapeRenderer();
 
         units = new ArrayList<>();
+    }
+
+    public void update(float delta) {
+        units.forEach(unit -> unit.update(delta));
     }
 
     @Override
@@ -110,20 +115,6 @@ public class UnitManager implements GameObjectsObserver, GameObjectManager<UnitB
         unitShapeRenderer.end();
     }
 
-    public List<Builder> getBuilderUnits() {
-        return units.stream()
-                .filter(unit -> unit instanceof Builder)
-                .map(Builder.class::cast)
-                .collect(Collectors.toList());
-    }
-
-    public List<Attacker> getAttackerUnitsInState(UnitState state) {
-        return units.stream()
-                .filter(unit -> unit.state == state)
-                .map(Attacker.class::cast)
-                .collect(Collectors.toList());
-    }
-
     public List<Builder> getBuilderUnitsInState(UnitState state) {
         return units.stream()
                 .filter(unit -> unit instanceof Builder)
@@ -178,6 +169,15 @@ public class UnitManager implements GameObjectsObserver, GameObjectManager<UnitB
     public List<UnitBase> getAtNode(GroundNode node) {
         return units.stream()
                 .filter(unit -> isUnitAtNode(unit, node))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UnitBase> getEnemiesInRange(int playerID, float x, float y, float radius) {
+        Circle range = new Circle(x, y, radius);
+        return units.stream()
+                .filter(unit -> range.contains(unit.getCenterX(), unit.getCenterY()))
+                .filter(unit -> screen.getPlayerManager().areEnemies(playerID, unit.getPlayerID()))
                 .collect(Collectors.toList());
     }
 

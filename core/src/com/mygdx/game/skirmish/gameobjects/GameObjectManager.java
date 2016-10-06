@@ -22,4 +22,5 @@ public interface GameObjectManager<N> {
     List<Commandable> getIntersectingCommandables(Vector2 point);
     List<Commandable> getIntersectingCommandables(Polygon box);
     List<N> getAtNode(GroundNode node);
+    List<N> getEnemiesInRange(int playerID, float x, float y, float radius);
 }

@@ -19,7 +19,7 @@ public class CombatHandler {
         this.world = world;
     }
 
-    public void handleAtkStarting(float delta, List<Attacker> attackers) {
+    public void handleAtkStarting(float delta, List<? extends Attacker> attackers) {
         for (Attacker attacker : attackers) {
             attacker.setCurAtkStartup(attacker.getCurAtkStartup() + delta);
             if (attacker.getCurAtkStartup() > attacker.getTotalAtkStartup()) {
@@ -35,7 +35,7 @@ public class CombatHandler {
         }
     }
 
-    public void handleAtkEnding(float delta, List<Attacker> attackers) {
+    public void handleAtkEnding(float delta, List<? extends Attacker> attackers) {
         for (Attacker attacker : attackers){
             attacker.setCurAtkEnd(attacker.getCurAtkEnd() + delta);
             if (attacker.getCurAtkEnd() > attacker.getTotalAtkEnd()) {

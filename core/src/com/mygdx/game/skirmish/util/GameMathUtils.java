@@ -1,6 +1,9 @@
 package com.mygdx.game.skirmish.util;
 
 import com.badlogic.gdx.math.*;
+import com.mygdx.game.skirmish.gameobjects.GameObject;
+
+import java.util.List;
 
 /**
  * Created by paddlefish on 21-Sep-16.
@@ -54,5 +57,14 @@ public class GameMathUtils {
 
     public static float distBetween(float x1, float y1, float x2, float y2) {
         return ((float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
+    }
+
+    public static void sortListByDistFrom(GameObject gameObject, List<? extends GameObject> gameObjectsToSort) {
+        gameObjectsToSort.sort((o1, o2) ->
+                Math.round(Math.signum(
+                        GameMathUtils.distBetween(gameObject.getCenterX(), gameObject.getCenterY(), o1.getCenterX(), o1.getCenterY()) -
+                                GameMathUtils.distBetween(gameObject.getCenterX(), gameObject.getCenterY(), o2.getCenterX(), o2.getCenterY())
+                ))
+        );
     }
 }

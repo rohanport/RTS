@@ -9,6 +9,7 @@ import com.mygdx.game.skirmish.gameobjects.buildings.BuildingBase;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingType;
 import com.mygdx.game.skirmish.gameobjects.buildings.ConstructingBuilding;
 import com.mygdx.game.skirmish.player.Player;
+import com.mygdx.game.skirmish.resources.Resource;
 import com.mygdx.game.skirmish.ui.SelectionInputState;
 import com.mygdx.game.skirmish.util.GameMathUtils;
 
@@ -92,7 +93,7 @@ public class Soldier1 extends UnitBase implements Builder, Gatherer {
 
         atk = 10f;
         range = 6;
-        LOS = 10;
+        LOS = 15;
 
         baseSpeed = 100f;
 
@@ -104,7 +105,7 @@ public class Soldier1 extends UnitBase implements Builder, Gatherer {
     }
 
     @Override
-    public boolean processKeyStroke(int keycode) {
+    public boolean processKeyStroke(boolean chain, int keycode) {
         switch (keycode) {
             case Input.Keys.B:
                 world.getScreen().getSelectionManager().setState(SelectionInputState.BUILD);
@@ -115,36 +116,37 @@ public class Soldier1 extends UnitBase implements Builder, Gatherer {
     }
 
     @Override
-    public boolean processMoveCommand(int x, int y) {
-        destNodeX = x;
-        destNodeY = y;
-        state = UnitState.MOVING;
-
-        return false;
-    }
-
-    @Override
-    public boolean processRightClickOn(GameObject gameObject) {
+    public boolean processRightClickOn(boolean chain, GameObject gameObject) {
         switch (gameObject.getGameObjectType()) {
             case UNIT:
             case BUILDING:
-                return processMoveCommand(gameObject.getMapCenterX(), gameObject.getMapCenterY());
+                return processMoveCommand(chain, gameObject.getMapCenterX(), gameObject.getMapCenterY());
             case RESOURCE:
-                gatherSourceID = gameObject.getID();
-                state = UnitState.MOVING_TO_GATHER;
-                return false;
+                return processGatherCommand(chain, (Resource) gameObject);
             default:
                 return false;
         }
     }
 
     @Override
-    public boolean processBuildCommand(int x, int y) {
-        buildLocationX = x;
-        buildLocationY = y;
-        targetBuildingType = BuildingType.BUILDING1;
-        state = UnitState.MOVING_TO_BUILD;
+    public boolean processBuildCommand(boolean chain, int x, int y) {
+        Runnable action = () -> {
+            buildLocationX = x;
+            buildLocationY = y;
+            targetBuildingType = BuildingType.BUILDING1;
+            state = UnitState.MOVING_TO_BUILD;
+        };
+        handleAddingToCommandQueue(chain, action);
         return true;
+    }
+
+    public boolean processGatherCommand(boolean chain, Resource resource) {
+        Runnable action = () -> {
+            gatherSourceID = resource.getID();
+            state = UnitState.MOVING_TO_GATHER;
+        };
+        handleAddingToCommandQueue(chain, action);
+        return false;
     }
 
     @Override

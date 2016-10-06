@@ -27,7 +27,7 @@ public class Building1 extends BuildingBase {
     }
 
     @Override
-    public boolean processKeyStroke(int keycode) {
+    public boolean processKeyStroke(boolean chain, int keycode) {
         switch (keycode) {
             case Input.Keys.S:
                 UnitProductionTask soldierBuildingTask = world.getUnitProductionTaskFactory()

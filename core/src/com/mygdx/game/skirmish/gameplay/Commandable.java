@@ -10,15 +10,17 @@ import com.mygdx.game.skirmish.gameobjects.GameObject;
  */
 public interface Commandable {
 
-    boolean processKeyStroke(int keycode);
+    boolean processKeyStroke(boolean chain, int keycode);
 
-    boolean processMoveCommand(int x, int y);
+    boolean processMoveCommand(boolean chain, int x, int y);
 
-    boolean processRightClickOn(GameObject gameObject);
+    boolean processRightClickOn(boolean chain, GameObject gameObject);
 
-    boolean processAtkCommand(int targetID);
+    boolean processAtkCommand(boolean chain, int targetID);
 
-    boolean processBuildCommand(int x, int y);
+    boolean processAtkMoveCommand(boolean chain, int x, int y);
+
+    boolean processBuildCommand(boolean chain, int x, int y);
 
     void renderSelectionMarker(ShapeRenderer shapeRenderer);
 

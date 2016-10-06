@@ -85,12 +85,12 @@ public abstract class BuildingBase implements Commandable, com.mygdx.game.skirmi
     }
 
     @Override
-    public boolean processKeyStroke(int keycode) {
+    public boolean processKeyStroke(boolean chain, int keycode) {
         return false;
     }
 
     @Override
-    public boolean processMoveCommand(int x, int y) {
+    public boolean processMoveCommand(boolean chain, int x, int y) {
         return false;
     }
 
@@ -128,7 +128,7 @@ public abstract class BuildingBase implements Commandable, com.mygdx.game.skirmi
     }
 
     @Override
-    public boolean processAtkCommand(int targetID) {
+    public boolean processAtkCommand(boolean chain, int targetID) {
         return false;
     }
 
@@ -158,7 +158,7 @@ public abstract class BuildingBase implements Commandable, com.mygdx.game.skirmi
     }
 
     @Override
-    public boolean processBuildCommand(int x, int y) {
+    public boolean processBuildCommand(boolean chain, int x, int y) {
         return false;
     }
 
@@ -167,7 +167,7 @@ public abstract class BuildingBase implements Commandable, com.mygdx.game.skirmi
     }
 
     @Override
-    public boolean processRightClickOn(GameObject gameObject) {
+    public boolean processRightClickOn(boolean chain, GameObject gameObject) {
         return false;
     }
 }

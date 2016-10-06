@@ -104,6 +104,7 @@ public class World implements Disposable {
     }
 
     private void step(float timeframe) {
+        groundGraph.newUpdateFrame();
         movementHandler.handleGroundUnitMoving(timeframe, unitManager.getUnitsInState(UnitState.MOVING));
         movementHandler.handleGroundUnitMovingToAtk(timeframe, unitManager.getUnitsInState(UnitState.MOVING_TO_ATK), gameObjectCache);
         movementHandler.handleGroundUnitMovingToBuild(timeframe, unitManager.getBuilderUnitsInState(UnitState.MOVING_TO_BUILD));

@@ -14,6 +14,7 @@ import com.mygdx.game.skirmish.ui.HealthBar;
 import com.mygdx.game.skirmish.util.GameMathUtils;
 import com.mygdx.game.skirmish.util.MapUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,6 +51,8 @@ public abstract class UnitBase implements Commandable, GameObject, Attacker {
     protected Sprite sprite;
     protected Sprite portrait;
     private final HealthBar healthBar;
+
+    protected final List<Runnable> commandQueue;
 
     //----------- Getters and Setters ------------
     @Override
@@ -135,19 +138,37 @@ public abstract class UnitBase implements Commandable, GameObject, Attacker {
         circle.setRadius(size * MapUtils.NODE_WIDTH_PX / 2f);
 
         healthBar = new HealthBar(this);
+        commandQueue = new ArrayList<>();
     }
 
     public void update(float delta) {
-        if (state == UnitState.NONE && isAggressive()) {
-            handleIdleAggressiveUnit();
+        if (state == UnitState.NONE) {
+            if (commandQueue.size() > 0) {
+                Runnable action = commandQueue.get(0);
+                commandQueue.remove(0);
+                action.run();
+                return;
+            }
+
+            if (isAggressive()) {
+                handleIdleAggressiveUnit();
+            }
         }
     }
 
     private void handleIdleAggressiveUnit() {
-        List<UnitBase> unitsInLos = world.getUnitManager().getEnemiesInRange(playerID, circle.x, circle.y, LOS * MapUtils.NODE_WIDTH_PX);
-        if (unitsInLos.size() > 0) {
-            GameMathUtils.sortListByDistFrom(this, unitsInLos);
-            processAtkCommand(unitsInLos.get(0).getID());
+        List<? extends GameObject> enemiesInRange = world.getUnitManager().getEnemiesInRange(playerID, circle.x, circle.y, LOS * MapUtils.NODE_WIDTH_PX);
+        if (enemiesInRange.size() > 0) {
+            GameMathUtils.sortListByDistFrom(this, enemiesInRange);
+            processAtkCommand(false, enemiesInRange.get(0).getID());
+            return;
+        }
+
+        enemiesInRange = world.getBuildingManager().getEnemiesInRange(playerID, circle.x, circle.y, LOS * MapUtils.NODE_WIDTH_PX);
+        if (enemiesInRange.size() > 0) {
+            GameMathUtils.sortListByDistFrom(this, enemiesInRange);
+            processAtkCommand(false, enemiesInRange.get(0).getID());
+            return;
         }
     }
 
@@ -195,9 +216,49 @@ public abstract class UnitBase implements Commandable, GameObject, Attacker {
     }
 
     @Override
-    public boolean processAtkCommand(int targetID) {
-        this.atkTargetID = targetID;
-        this.state = UnitState.MOVING_TO_ATK;
+    public boolean processAtkCommand(boolean chain, int targetID) {
+        Runnable action = () -> {
+            this.atkTargetID = targetID;
+            this.state = UnitState.MOVING_TO_ATK;
+        };
+        handleAddingToCommandQueue(chain, action);
+        return false;
+    }
+
+    @Override
+    public boolean processMoveCommand(boolean chain, int x, int y) {
+        Runnable action = () -> {
+            destNodeX = x;
+            destNodeY = y;
+            state = UnitState.MOVING;
+        };
+        handleAddingToCommandQueue(chain, action);
+        return false;
+    }
+
+    @Override
+    public boolean processAtkMoveCommand(boolean chain, int x, int y) {
+        Runnable action = () -> {
+            destNodeX = x;
+            destNodeY = y;
+            state = UnitState.ATTACK_MOVING;
+        };
+        handleAddingToCommandQueue(chain, action);
+        return false;
+    }
+
+    @Override
+    public boolean processKeyStroke(boolean chain, int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean processRightClickOn(boolean chain, GameObject gameObject) {
+        return false;
+    }
+
+    @Override
+    public boolean processBuildCommand(boolean chain, int x, int y) {
         return false;
     }
 
@@ -233,5 +294,14 @@ public abstract class UnitBase implements Commandable, GameObject, Attacker {
 
     public boolean isAggressive() {
         return false;
+    }
+
+    protected void handleAddingToCommandQueue(boolean chain, Runnable command) {
+        if (chain) {
+            commandQueue.add(command);
+        } else {
+            commandQueue.clear();
+            command.run();
+        }
     }
 }

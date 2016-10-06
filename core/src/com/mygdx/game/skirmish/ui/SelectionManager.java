@@ -1,5 +1,7 @@
 package com.mygdx.game.skirmish.ui;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -79,7 +81,7 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
         Iterator<Commandable> selectionIterator = selection.iterator();
         while (!keyPressProccssed && selectionIterator.hasNext()) {
             Commandable commandable = selectionIterator.next();
-            keyPressProccssed = commandable.processKeyStroke(keycode);
+            keyPressProccssed = commandable.processKeyStroke(isChaining(), keycode);
         }
     }
 
@@ -198,53 +200,26 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
                     screenY
             ));
             if (intersectingObjects.size() > 0) {
-                selection.forEach( commandable -> commandable.processRightClickOn(intersectingObjects.get(0)));
+                selection.forEach( commandable -> commandable.processRightClickOn(isChaining(), intersectingObjects.get(0)));
                 return;
             }
         }
 
+        List<Commandable> moveables = selection.stream().filter(Commandable::isMoveable).collect(Collectors.toList());
         Vector2 mapCords = MapUtils.screenCoords2NodeCoords(screen.getCam(), screenX, screenY);
         int mapX = Math.round(mapCords.x);
         int mapY = Math.round(mapCords.y);
 
-        List<Commandable> moveables = selection.stream().filter(Commandable::isMoveable).collect(Collectors.toList());
+        Vector2 diffCords = SelectionUtils.getDiffFromSelectionCenterAndClick(mapX, mapY, moveables);
 
-        int minX = Integer.MAX_VALUE;
-        int minY = Integer.MAX_VALUE;
-        int maxX = Integer.MIN_VALUE;
-        int maxY = Integer.MIN_VALUE;
-        for (Commandable moveable : moveables) {
-            if (moveable.getMapCenterX() < minX) {
-                minX = moveable.getMapCenterX();
-            }
-
-            if (moveable.getMapCenterX() > maxX) {
-                maxX = moveable.getMapCenterX();
-            }
-
-            if (moveable.getMapCenterY() < minY) {
-                minY = moveable.getMapCenterY();
-            }
-
-            if (moveable.getMapCenterY() > maxY) {
-                maxY = moveable.getMapCenterY();
-            }
-        }
-
-        if (minX <= mapX && mapX <= maxX &&
-                minY <= mapY && mapY <= maxY) {
-            for (Commandable moveable : moveables) {
-                moveable.processMoveCommand(mapX, mapY);
-            }
+        if (diffCords == null) {
+            moveables.forEach(moveable -> moveable.processMoveCommand(isChaining(), mapX, mapY));
         } else {
-            int centerX = (minX + maxX) / 2;
-            int centerY = (minY + maxY) / 2;
-            int diffX = mapX - centerX;
-            int diffY = mapY - centerY;
-
-            for (Commandable moveable : moveables) {
-                moveable.processMoveCommand(moveable.getMapCenterX() + diffX, moveable.getMapCenterY() + diffY);
-            }
+            moveables.forEach(moveable -> moveable.processMoveCommand(
+                    isChaining(),
+                    moveable.getMapCenterX() + (int) diffCords.x,
+                    moveable.getMapCenterY() + (int) diffCords.y)
+            );
         }
     }
 
@@ -257,7 +232,7 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
 
         if (targetBuildings.size() > 0) {
             int targetID =  targetBuildings.get(0).getID();
-            selection.forEach(commandable -> commandable.processAtkCommand(targetID));
+            selection.forEach(commandable -> commandable.processAtkCommand(isChaining(), targetID));
             return;
         }
 
@@ -269,7 +244,25 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
 
         if (targetedUnits.size() > 0) {
             int targetID =  targetedUnits.get(0).getID();
-            selection.forEach(commandable -> commandable.processAtkCommand(targetID));
+            selection.forEach(commandable -> commandable.processAtkCommand(isChaining(), targetID));
+            return;
+        }
+
+        List<Commandable> moveables = selection.stream().filter(Commandable::isMoveable).collect(Collectors.toList());
+        Vector2 mapCords = MapUtils.screenCoords2NodeCoords(screen.getCam(), screenX, screenY);
+        int mapX = Math.round(mapCords.x);
+        int mapY = Math.round(mapCords.y);
+
+        Vector2 diffCords = SelectionUtils.getDiffFromSelectionCenterAndClick(mapX, mapY, moveables);
+
+        if (diffCords == null) {
+            moveables.forEach(moveable -> moveable.processAtkMoveCommand(isChaining(), mapX, mapY));
+        } else {
+            moveables.forEach(moveable -> moveable.processAtkMoveCommand(
+                    isChaining(),
+                    moveable.getMapCenterX() + (int) diffCords.x,
+                    moveable.getMapCenterY() + (int) diffCords.y)
+            );
         }
     }
 
@@ -279,7 +272,7 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
         boolean commandProccessed = false;
         int i = 0;
         while (!commandProccessed && i < selection.size()) {
-            commandProccessed = selection.get(i).processBuildCommand(Math.round(buildDestCoords.x), Math.round(buildDestCoords.y));
+            commandProccessed = selection.get(i).processBuildCommand(isChaining(), Math.round(buildDestCoords.x), Math.round(buildDestCoords.y));
         }
     }
 
@@ -311,5 +304,10 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
             default:
                 throw new RuntimeException("Unknown notification " + notification);
         }
+    }
+
+    private boolean isChaining() {
+        return Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
+                Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
     }
 }

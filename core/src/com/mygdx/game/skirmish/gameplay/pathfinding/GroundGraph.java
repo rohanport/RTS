@@ -12,7 +12,6 @@ import com.mygdx.game.skirmish.gameobjects.units.UnitBase;
 import com.mygdx.game.skirmish.resources.Resource;
 import com.mygdx.game.skirmish.util.MapUtils;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -231,14 +230,12 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
 
     public GroundNode getClosestFreeNodeEuclidean(GroundNode curNode, float destX, float destY, int radius) {
         List<GroundNode> openNodesAtDist = GroundGraphUtils.getFreeNodesAtDistEuclidean(this, destX, destY, radius);
-        renderer.addToNodesToRenderBlue(openNodesAtDist);
 
         if (openNodesAtDist.size() > 0) {
             openNodesAtDist.sort((node1, node2) ->
                     Math.round(Math.signum(heuristic.estimate(node1, curNode) - heuristic.estimate(node2, curNode)))
             );
 
-            renderer.addToNodesToRenderBlack(Collections.singletonList(openNodesAtDist.get(0)));
             return openNodesAtDist.get(0);
         }
 

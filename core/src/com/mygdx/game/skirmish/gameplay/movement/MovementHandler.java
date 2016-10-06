@@ -46,7 +46,6 @@ public class MovementHandler {
     public void handleGroundUnitMoving(float delta, List<UnitBase> units) {
         GroundNode curNode;
         GroundNode finNode;
-        groundGraph.newUpdateFrame();
         for (UnitBase unit : units) {
             curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
             finNode = groundGraph.getNodeByCoords(unit.destNodeX, unit.destNodeY);
@@ -66,7 +65,6 @@ public class MovementHandler {
         GameObject atkTarget;
         GroundNode curNode;
         GroundNode finNode;
-        groundGraph.newUpdateFrame();
         for (UnitBase unit : units) {
             atkTarget = gameObjectCache.getGameObjectByID(unit.getAtkTargetID());
             curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
@@ -102,7 +100,6 @@ public class MovementHandler {
         GroundNode curNode;
         GroundNode buildingNode;
         GroundNode finNode;
-        groundGraph.newUpdateFrame();
         for (Builder unit : buildingUnits) {
             curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
             buildingNode = groundGraph.getNodeByCoords(unit.getBuildLocationX(), unit.getBuildLocationY());
@@ -127,7 +124,6 @@ public class MovementHandler {
         GroundNode curNode;
         GroundNode resourceNode;
         GroundNode finNode;
-        groundGraph.newUpdateFrame();
         for (Gatherer unit : units) {
             gatherTarget = gameObjectCache.getGameObjectByID(unit.getGatherSourceID());
             curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
@@ -158,7 +154,6 @@ public class MovementHandler {
         GroundNode curNode;
         GroundNode dropOffNode;
         GroundNode finNode;
-        groundGraph.newUpdateFrame();
         for (Gatherer unit : units) {
             dropOffTarget = gameObjectCache.getGameObjectByID(unit.getDropOffTargetID());
             curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());

@@ -11,6 +11,7 @@ public enum UnitState {
 
     GATHERING,
 
+    ATTACK_MOVING,
     MOVING_TO_ATK,
     MOVING_TO_BUILD,
     MOVING_TO_GATHER,

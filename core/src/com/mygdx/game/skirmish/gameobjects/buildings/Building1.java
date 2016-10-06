@@ -40,6 +40,11 @@ public class Building1 extends BuildingBase {
     }
 
     @Override
+    public boolean processAtkMoveCommand(boolean chain, int x, int y) {
+        return false;
+    }
+
+    @Override
     public boolean isResourceDropOff() {
         return true;
     }

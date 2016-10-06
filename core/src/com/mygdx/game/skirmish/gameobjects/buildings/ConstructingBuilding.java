@@ -45,6 +45,11 @@ public class ConstructingBuilding extends BuildingBase implements ProductionTask
     }
 
     @Override
+    public boolean processAtkMoveCommand(boolean chain, int x, int y) {
+        return false;
+    }
+
+    @Override
     public Sprite getPortrait() {
         return null;
     }

@@ -142,6 +142,10 @@ public abstract class UnitBase implements Commandable, GameObject, Attacker {
     }
 
     public void update(float delta) {
+        if (state == UnitState.ATTACK_MOVING) {
+            handleAttackMoving();
+        }
+
         if (state == UnitState.NONE) {
             if (commandQueue.size() > 0) {
                 Runnable action = commandQueue.get(0);
@@ -168,6 +172,24 @@ public abstract class UnitBase implements Commandable, GameObject, Attacker {
         if (enemiesInRange.size() > 0) {
             GameMathUtils.sortListByDistFrom(this, enemiesInRange);
             processAtkCommand(false, enemiesInRange.get(0).getID());
+            return;
+        }
+    }
+
+    private void handleAttackMoving() {
+        List<? extends GameObject> enemiesInRange = world.getUnitManager().getEnemiesInRange(playerID, circle.x, circle.y, LOS * MapUtils.NODE_WIDTH_PX);
+        if (enemiesInRange.size() > 0) {
+            GameMathUtils.sortListByDistFrom(this, enemiesInRange);
+            commandQueue.add(0, getAtkMoveAction(destNodeX, destNodeY));
+            getAtkAction(enemiesInRange.get(0).getID()).run();
+            return;
+        }
+
+        enemiesInRange = world.getBuildingManager().getEnemiesInRange(playerID, circle.x, circle.y, LOS * MapUtils.NODE_WIDTH_PX);
+        if (enemiesInRange.size() > 0) {
+            GameMathUtils.sortListByDistFrom(this, enemiesInRange);
+            commandQueue.add(0, getAtkMoveAction(destNodeX, destNodeY));
+            getAtkAction(enemiesInRange.get(0).getID()).run();
             return;
         }
     }
@@ -217,34 +239,46 @@ public abstract class UnitBase implements Commandable, GameObject, Attacker {
 
     @Override
     public boolean processAtkCommand(boolean chain, int targetID) {
-        Runnable action = () -> {
+        Runnable action = getAtkAction(targetID);
+        handleAddingToCommandQueue(chain, action);
+        return false;
+    }
+
+    protected Runnable getAtkAction(int targetID) {
+        return () -> {
             this.atkTargetID = targetID;
             this.state = UnitState.MOVING_TO_ATK;
         };
-        handleAddingToCommandQueue(chain, action);
-        return false;
     }
 
     @Override
     public boolean processMoveCommand(boolean chain, int x, int y) {
-        Runnable action = () -> {
-            destNodeX = x;
-            destNodeY = y;
-            state = UnitState.MOVING;
-        };
+        Runnable action = getMoveAction(x, y);
         handleAddingToCommandQueue(chain, action);
         return false;
     }
 
+    protected Runnable getMoveAction(int x, int y) {
+        return () -> {
+            destNodeX = x;
+            destNodeY = y;
+            state = UnitState.MOVING;
+        };
+    }
+
     @Override
     public boolean processAtkMoveCommand(boolean chain, int x, int y) {
-        Runnable action = () -> {
+        Runnable action = getAtkMoveAction(x, y);
+        handleAddingToCommandQueue(chain, action);
+        return false;
+    }
+
+    protected Runnable getAtkMoveAction(int x, int y) {
+        return () -> {
             destNodeX = x;
             destNodeY = y;
             state = UnitState.ATTACK_MOVING;
         };
-        handleAddingToCommandQueue(chain, action);
-        return false;
     }
 
     @Override

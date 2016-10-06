@@ -130,23 +130,31 @@ public class Soldier1 extends UnitBase implements Builder, Gatherer {
 
     @Override
     public boolean processBuildCommand(boolean chain, int x, int y) {
-        Runnable action = () -> {
+        Runnable action = getBuildAction(x, y);
+        handleAddingToCommandQueue(chain, action);
+        return true;
+    }
+
+    private Runnable getBuildAction(int x, int y) {
+        return () -> {
             buildLocationX = x;
             buildLocationY = y;
             targetBuildingType = BuildingType.BUILDING1;
             state = UnitState.MOVING_TO_BUILD;
         };
-        handleAddingToCommandQueue(chain, action);
-        return true;
     }
 
     public boolean processGatherCommand(boolean chain, Resource resource) {
-        Runnable action = () -> {
+        Runnable action = getGatherAction(resource);
+        handleAddingToCommandQueue(chain, action);
+        return false;
+    }
+
+    private Runnable getGatherAction(Resource resource) {
+        return () -> {
             gatherSourceID = resource.getID();
             state = UnitState.MOVING_TO_GATHER;
         };
-        handleAddingToCommandQueue(chain, action);
-        return false;
     }
 
     @Override

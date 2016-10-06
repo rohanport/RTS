@@ -87,6 +87,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
                 case MOVING_TO_BUILD:
                 case MOVING_TO_GATHER:
                 case MOVING_TO_RETURN_RESOURCES:
+                case ATTACK_MOVING:
                     node.setOccupant(NodeOccupant.MOVING_UNIT);
                     break;
                 case ATK_STARTING:

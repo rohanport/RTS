@@ -143,7 +143,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
     @Override
     public void render(float delta) {
-        cam.update(delta);
+        cam.update(delta); //Move the camera
         backgroundBatch.setProjectionMatrix(cam.combined);
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

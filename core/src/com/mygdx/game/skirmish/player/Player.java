@@ -9,7 +9,7 @@ public class Player {
     public final Color color;
     public final int id;
 
-    public int food;
+    public int food = 200;
 
     public Player(int id, Color color) {
         this.color = color;

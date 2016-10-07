@@ -174,16 +174,7 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
             selector.setWidth(screenX - selector.getX());
             selector.setHeight(screenY - selector.getY());
 
-            Vector2 mapA = MapUtils.screenCoords2MapCoords(screen.getCam(), selector.getX(), selector.getY());
-            Vector2 mapB = MapUtils.screenCoords2MapCoords(screen.getCam(), selector.getX() + selector.getWidth(), selector.getY());
-            Vector2 mapC = MapUtils.screenCoords2MapCoords(screen.getCam(), selector.getX() + selector.getWidth(), selector.getY() + selector.getHeight());
-            Vector2 mapD = MapUtils.screenCoords2MapCoords(screen.getCam(), selector.getX(), selector.getY() + selector.getHeight());
-
-            Polygon selectionPolygon = new Polygon(new float[]{mapA.x, mapA.y,
-                    mapB.x, mapB.y,
-                    mapC.x, mapC.y,
-                    mapD.x, mapD.y
-            });
+            Polygon selectionPolygon = SelectionUtils.getSelectingPolygon(screen.getCam(), selector);
 
             newSelection.clear();
             screen.getGameObjectManagers().forEach(gameObjectManager ->
@@ -192,7 +183,7 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
     }
 
     private void handleRightClick(float screenX, float screenY) {
-
+        // Checking if a GameObject has been clicked on
         for (GameObjectManager gameObjectManager : screen.getGameObjectManagers()) {
             List<GameObject> intersectingObjects = gameObjectManager.getIntersecting(MapUtils.screenCoords2MapCoords(
                     screen.getCam(),
@@ -200,27 +191,37 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
                     screenY
             ));
             if (intersectingObjects.size() > 0) {
+                //If a game object is clicked on, pass to each commandable for them handle
                 selection.forEach( commandable -> commandable.processRightClickOn(isChaining(), intersectingObjects.get(0)));
                 return;
             }
         }
 
         List<Commandable> moveables = selection.stream().filter(Commandable::isMoveable).collect(Collectors.toList());
+        List<Commandable> nonMoveables = selection.stream().filter(commandable -> !commandable.isMoveable()).collect(Collectors.toList());
+
         Vector2 mapCords = MapUtils.screenCoords2NodeCoords(screen.getCam(), screenX, screenY);
         int mapX = Math.round(mapCords.x);
         int mapY = Math.round(mapCords.y);
 
+        // diffCords are used to determine whether the units should move as a pack and keep formation or try and converge on one location
         Vector2 diffCords = SelectionUtils.getDiffFromSelectionCenterAndClick(mapX, mapY, moveables);
 
         if (diffCords == null) {
+            //Diff cords are null if the click is inside the contaning rectangle of all the movables
+            //This means all moveables should try and converge on this one location
             moveables.forEach(moveable -> moveable.processMoveCommand(isChaining(), mapX, mapY));
         } else {
+            //Click is outside of the containing rectangle, so movables should try and move in formation towards that point
             moveables.forEach(moveable -> moveable.processMoveCommand(
                     isChaining(),
                     moveable.getMapCenterX() + (int) diffCords.x,
                     moveable.getMapCenterY() + (int) diffCords.y)
             );
         }
+
+        //For non moveables, handle the right click by themselves
+        nonMoveables.forEach(nonMoveable -> nonMoveable.processRightClick(isChaining(), mapX, mapY));
     }
 
     private void handleAtkCommand(int screenX, int screenY) {
@@ -248,6 +249,10 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
             return;
         }
 
+        handleAtkMoveCommand(screenX, screenY);
+    }
+
+    private void handleAtkMoveCommand(int screenX, int screenY) {
         List<Commandable> moveables = selection.stream().filter(Commandable::isMoveable).collect(Collectors.toList());
         Vector2 mapCords = MapUtils.screenCoords2NodeCoords(screen.getCam(), screenX, screenY);
         int mapX = Math.round(mapCords.x);

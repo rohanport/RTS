@@ -16,6 +16,8 @@ public interface Commandable {
 
     boolean processRightClickOn(boolean chain, GameObject gameObject);
 
+    boolean processRightClick(boolean chain, int x, int y);
+
     boolean processAtkCommand(boolean chain, int targetID);
 
     boolean processAtkMoveCommand(boolean chain, int x, int y);

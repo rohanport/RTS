@@ -9,4 +9,7 @@ public interface QueueingProducer {
     ProductionTask getFirstInQueue();
     void addToProductionQueue(ProductionTask productionTask);
     void removeFromProductionQueue(ProductionTask productionTask);
+    boolean hasRallyPoint();
+    int getRallyX();
+    int getRallyY();
 }

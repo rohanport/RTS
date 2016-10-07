@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.GameData;
 import com.mygdx.game.skirmish.World;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
+import com.mygdx.game.skirmish.gameobjects.buildings.Building1;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingBase;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingType;
 import com.mygdx.game.skirmish.gameobjects.buildings.ConstructingBuilding;
@@ -19,6 +20,7 @@ import java.util.List;
  * Created by paddlefish on 18-Sep-16.
  */
 public class Soldier1 extends UnitBase implements Builder, Gatherer {
+    public static final int COST = 50;
 
     private int buildLocationX;
     private int buildLocationY;
@@ -108,11 +110,20 @@ public class Soldier1 extends UnitBase implements Builder, Gatherer {
     public boolean processKeyStroke(boolean chain, int keycode) {
         switch (keycode) {
             case Input.Keys.B:
-                world.getScreen().getSelectionManager().setState(SelectionInputState.BUILD);
-                return true;
+                return handleBuildHotkeyPressed();
             default:
                 return false;
         }
+    }
+
+    public boolean handleBuildHotkeyPressed() {
+        Player player = world.getPlayerManager().getPlayerByID(getPlayerID());
+        if (player.food >= Building1.COST) {
+            world.getScreen().getSelectionManager().setState(SelectionInputState.BUILD);
+            player.food -= Building1.COST;
+        }
+
+        return true;
     }
 
     @Override

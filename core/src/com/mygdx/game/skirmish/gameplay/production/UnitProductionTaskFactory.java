@@ -23,14 +23,21 @@ public class UnitProductionTaskFactory {
                                                  int x,
                                                  int y,
                                                  float duration) {
+        Runnable action = () -> {
+            UnitBase unit = produceUnit(unitType, playerID, x, y);
+            if (queueingProducer.hasRallyPoint()) {
+                unit.processMoveCommand(false, queueingProducer.getRallyX(), queueingProducer.getRallyY());
+            }
+        };
+
         return new UnitProductionTask(
                 queueingProducer,
-                () -> produceUnit(unitType, playerID, x, y),
+                action,
                 duration
         );
     }
 
-    private void produceUnit(UnitType unitType, int playerID, int x, int y) {
+    private UnitBase produceUnit(UnitType unitType, int playerID, int x, int y) {
         GroundGraph graph = world.getGroundGraph();
         GroundNode sourceNode = graph.getNodeByCoords(x, y);
 
@@ -44,5 +51,6 @@ public class UnitProductionTaskFactory {
         }
 
         world.getGameObjectCache().add(unit);
+        return unit;
     }
 }

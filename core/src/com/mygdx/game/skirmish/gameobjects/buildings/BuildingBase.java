@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by paddlefish on 26-Sep-16.
  */
-public abstract class BuildingBase implements Commandable, com.mygdx.game.skirmish.gameobjects.GameObject, QueueingProducer {
+public abstract class BuildingBase implements Commandable, GameObject, QueueingProducer {
 
     public Rectangle rect;
     public float hp;
@@ -33,6 +33,10 @@ public abstract class BuildingBase implements Commandable, com.mygdx.game.skirmi
     protected final World world;
     protected final List<ProductionTask> productionQueue;
     private final HealthBar healthBar;
+
+    protected boolean hasRallyPoint;
+    protected int rallyX;
+    protected int rallyY;
 
     //----------- Getters and Setters ---------------
     @Override
@@ -58,6 +62,22 @@ public abstract class BuildingBase implements Commandable, com.mygdx.game.skirmi
     public int getPlayerID() {
         return playerID;
     }
+
+    @Override
+    public boolean hasRallyPoint() {
+        return hasRallyPoint;
+    }
+
+    @Override
+    public int getRallyX() {
+        return rallyX;
+    }
+
+    @Override
+    public int getRallyY() {
+        return rallyY;
+    }
+
     //--------------------------------------------
 
     public BuildingBase(World world, int playerID, int x, int y, int size) {
@@ -168,6 +188,19 @@ public abstract class BuildingBase implements Commandable, com.mygdx.game.skirmi
 
     @Override
     public boolean processRightClickOn(boolean chain, GameObject gameObject) {
+        return false;
+    }
+
+    @Override
+    public boolean processRightClick(boolean chain, int x, int y) {
+        rallyX = x;
+        rallyY = y;
+        hasRallyPoint = true;
+        return false;
+    }
+
+    @Override
+    public boolean processAtkMoveCommand(boolean chain, int x, int y) {
         return false;
     }
 }

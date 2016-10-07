@@ -13,6 +13,7 @@ import com.mygdx.game.skirmish.gameplay.pathfinding.GroundGraph;
 import com.mygdx.game.skirmish.gameplay.production.ProductionHandler;
 import com.mygdx.game.skirmish.gameplay.production.ProductionManager;
 import com.mygdx.game.skirmish.gameplay.production.UnitProductionTaskFactory;
+import com.mygdx.game.skirmish.player.PlayerManager;
 import com.mygdx.game.skirmish.resources.ResourceManager;
 import com.mygdx.game.skirmish.util.Settings;
 
@@ -27,6 +28,7 @@ public class World implements Disposable {
     private final BuildingManager buildingManager;
     private final ProductionManager productionManager;
     private final ResourceManager resourceManager;
+    private final PlayerManager playerManager;
     private final ProductionHandler productionHandler;
     private final UnitProductionTaskFactory unitProductionTaskFactory;
     private final MovementHandler movementHandler;
@@ -59,6 +61,9 @@ public class World implements Disposable {
     public ResourceManager getResourceManager() {
         return resourceManager;
     }
+    public PlayerManager getPlayerManager() {
+        return playerManager;
+    }
     public GroundGraph getGroundGraph() {
         return groundGraph;
     }
@@ -77,8 +82,9 @@ public class World implements Disposable {
         buildingManager = this.screen.getBuildingManager();
         productionManager = this.screen.getProductionManager();
         resourceManager = this.screen.getResourceManager();
+        playerManager = this.screen.getPlayerManager();
 
-        this.groundGraph = new GroundGraph(this);
+        groundGraph = new GroundGraph(this);
         groundGraph.newUpdateFrame();
 
         movementHandler = new MovementHandler(this);

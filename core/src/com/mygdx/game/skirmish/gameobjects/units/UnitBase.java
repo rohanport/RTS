@@ -258,6 +258,11 @@ public abstract class UnitBase implements Commandable, GameObject, Attacker {
         return false;
     }
 
+    @Override
+    public boolean processRightClick(boolean chain, int x, int y) {
+        return processMoveCommand(chain, x, y);
+    }
+
     protected Runnable getMoveAction(int x, int y) {
         return () -> {
             destNodeX = x;

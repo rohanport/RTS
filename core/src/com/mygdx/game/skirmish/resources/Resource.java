@@ -1,13 +1,14 @@
 package com.mygdx.game.skirmish.resources;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.mygdx.game.skirmish.gameobjects.GameObject;
 import com.mygdx.game.skirmish.gameobjects.GameObjectType;
 import com.mygdx.game.skirmish.util.MapUtils;
 
 /**
  * Created by paddlefish on 04-Oct-16.
  */
-public class Resource implements com.mygdx.game.skirmish.gameobjects.GameObject {
+public class Resource implements GameObject {
 
     public final ResourceType type;
     public final int totalAmount;

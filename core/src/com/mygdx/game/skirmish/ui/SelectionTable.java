@@ -1,10 +1,10 @@
 package com.mygdx.game.skirmish.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.mygdx.game.GameData;
+import com.mygdx.game.skirmish.SkirmishScreen;
 import com.mygdx.game.skirmish.gameplay.Commandable;
 
 import java.util.ArrayList;
@@ -16,8 +16,9 @@ import java.util.List;
 public class SelectionTable {
     public static final int MAX_SELECTED_RENDERED = 16;
 
+    private final SkirmishScreen screen;
     private final Table table;
-    private final List<Button> selectedButtons;
+    private final List<SelectedButton> selectedButtons;
 
 
 
@@ -28,7 +29,8 @@ public class SelectionTable {
 
     //---------------------------------------------
 
-    public SelectionTable() {
+    public SelectionTable(SkirmishScreen screen) {
+        this.screen = screen;
         table = new Table();
         selectedButtons = new ArrayList<>();
 
@@ -38,12 +40,12 @@ public class SelectionTable {
         table.setHeight(Gdx.graphics.getHeight() / 4f);
         table.pad(20f, 20f, 20f, 20f);
 
-        Button button;
+        SelectedButton button;
         for (int i = 0; i < MAX_SELECTED_RENDERED; i++) {
             if (i == MAX_SELECTED_RENDERED / 2) {
                 table.row();
             }
-            button = new Button(new Button.ButtonStyle());
+            button = new SelectedButton(screen);
             table.add(button)
                     .width((table.getWidth() - table.getPadX()) / (MAX_SELECTED_RENDERED / 2f))
                     .height((table.getHeight() - table.getPadY()) / 2f);
@@ -55,13 +57,9 @@ public class SelectionTable {
 
     public void setSelection(List<Commandable> selection) {
         for (int i = 0; i < MAX_SELECTED_RENDERED; i++) {
-            if (i >= selection.size()) {
-                // If selection isn't large enough to fill all buttons, set button to have empty portrait
-                selectedButtons.get(i).setStyle(new Button.ButtonStyle());
-            } else {
-                SpriteDrawable portrait = new SpriteDrawable(selection.get(i).getPortrait());
-                selectedButtons.get(i).setStyle(new Button.ButtonStyle(portrait, portrait, portrait));
-            }
+            selectedButtons.get(i).setSelectedItem(
+                    i < selection.size() ? selection.get(i) : null
+            );
         }
     }
 }

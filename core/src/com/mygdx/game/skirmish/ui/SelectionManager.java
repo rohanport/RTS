@@ -21,6 +21,7 @@ import com.mygdx.game.skirmish.util.MapUtils;
 import com.mygdx.game.skirmish.util.Settings;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,6 +61,10 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
 
     public void addToSelection(Commandable commandable) {
         selection.add(commandable);
+    }
+    public void setSelection(Collection<Commandable> commandables) {
+        selection.clear();
+        selection.addAll(commandables);
     }
 
     @Override

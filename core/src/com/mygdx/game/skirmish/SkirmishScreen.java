@@ -100,6 +100,9 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         return cam;
     }
 
+    public InputMultiplexer getInputHandler() {
+        return inputHandler;
+    }
     //---------------------------------------------------------------------
     public SkirmishScreen(Game game) {
         super(game);

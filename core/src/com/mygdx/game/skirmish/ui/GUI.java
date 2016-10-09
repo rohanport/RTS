@@ -16,8 +16,9 @@ public class GUI {
         this.screen = screen;
         playerResourcesRenderer = new PlayerResourcesRenderer();
         stage = new Stage();
-        selectionTable = new SelectionTable();
+        selectionTable = new SelectionTable(screen);
         stage.addActor(selectionTable.getTable());
+        screen.getInputHandler().addProcessor(stage);
     }
 
     public void render(boolean debug) {
@@ -31,7 +32,6 @@ public class GUI {
     private void renderDebug() {
         selectionTable.setSelection(screen.getSelectionManager().getSelection());
         stage.draw();
-//        selectionRenderer.renderDebug(screen.getSelectionManager().getSelection());
         if (screen.getPlayerManager().getNumPlayers() > 0) {
             playerResourcesRenderer.renderDebug(screen.getPlayerManager().getPlayerByID(0));
         }

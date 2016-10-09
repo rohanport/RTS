@@ -5,10 +5,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.GameData;
 import com.mygdx.game.skirmish.World;
 import com.mygdx.game.skirmish.gameobjects.GameObject;
-import com.mygdx.game.skirmish.gameobjects.buildings.Building1;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingBase;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingType;
 import com.mygdx.game.skirmish.gameobjects.buildings.ConstructingBuilding;
+import com.mygdx.game.skirmish.gameplay.production.TransactionHandler;
 import com.mygdx.game.skirmish.player.Player;
 import com.mygdx.game.skirmish.resources.Resource;
 import com.mygdx.game.skirmish.ui.SelectionInputState;
@@ -20,8 +20,6 @@ import java.util.List;
  * Created by paddlefish on 18-Sep-16.
  */
 public class Soldier1 extends UnitBase implements Builder, Gatherer {
-    public static final int COST = 50;
-
     private int buildLocationX;
     private int buildLocationY;
     private BuildingType targetBuildingType;
@@ -117,11 +115,13 @@ public class Soldier1 extends UnitBase implements Builder, Gatherer {
     }
 
     public boolean handleBuildHotkeyPressed() {
-        Player player = world.getPlayerManager().getPlayerByID(getPlayerID());
-        if (player.food >= Building1.COST) {
-            world.getScreen().getSelectionManager().setState(SelectionInputState.BUILD);
-            player.food -= Building1.COST;
-        }
+        Runnable action = () -> world.getScreen().getSelectionManager().setState(SelectionInputState.BUILD);
+        TransactionHandler transactionHandler = world.getTransactionHandler();
+        transactionHandler.processTransaction(
+                getPlayerID(),
+                transactionHandler.SOLDIER1_BUILDING1,
+                action
+        );
 
         return true;
     }

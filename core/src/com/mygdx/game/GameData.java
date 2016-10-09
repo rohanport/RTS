@@ -17,6 +17,7 @@ public class GameData {
 
     //--------- UI -----------------------
     public Sprite healthBar = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/ui/healthBar.png")));
+    public Sprite selectionBackGround = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/ui/selectionTableBackground.png")));
 
 
     //--------- Map ------------------------
@@ -26,6 +27,9 @@ public class GameData {
     //--------- Units ----------------------
     public Sprite soldier1 = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/units/soldier1_portrait2.png")));
     public Sprite soldier1Portrait = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/units/soldier1_portrait2.png")));
+
+    //--------- Buildings ----------------------
+    public Sprite building1Portrait = new Sprite(new Texture(Gdx.files.internal("sprites/skirmish/buildings/building1_portrait.png")));
 
     private static GameData instance;
 

@@ -30,6 +30,7 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
     private int playerID;
 
     protected Sprite sprite;
+    protected Sprite portrait;
     protected final World world;
     protected final List<ProductionTask> productionQueue;
     private final HealthBar healthBar;
@@ -76,6 +77,11 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
     @Override
     public int getRallyY() {
         return rallyY;
+    }
+
+    @Override
+    public Sprite getPortrait() {
+        return portrait;
     }
 
     //--------------------------------------------

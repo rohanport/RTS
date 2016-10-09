@@ -12,6 +12,7 @@ import com.mygdx.game.skirmish.gameplay.movement.MovementHandler;
 import com.mygdx.game.skirmish.gameplay.pathfinding.GroundGraph;
 import com.mygdx.game.skirmish.gameplay.production.ProductionHandler;
 import com.mygdx.game.skirmish.gameplay.production.ProductionManager;
+import com.mygdx.game.skirmish.gameplay.production.TransactionHandler;
 import com.mygdx.game.skirmish.gameplay.production.UnitProductionTaskFactory;
 import com.mygdx.game.skirmish.player.PlayerManager;
 import com.mygdx.game.skirmish.resources.ResourceManager;
@@ -35,6 +36,7 @@ public class World implements Disposable {
     private final CombatHandler combatHandler;
     private final DestructionHandler destructionHandler;
     private final GatheringHandler gatheringHandler;
+    private final TransactionHandler transactionHandler;
     private final GroundGraph groundGraph;
 
     public final int width;
@@ -63,6 +65,9 @@ public class World implements Disposable {
     }
     public PlayerManager getPlayerManager() {
         return playerManager;
+    }
+    public TransactionHandler getTransactionHandler() {
+        return transactionHandler;
     }
     public GroundGraph getGroundGraph() {
         return groundGraph;
@@ -93,6 +98,7 @@ public class World implements Disposable {
         productionHandler = new ProductionHandler(this);
         unitProductionTaskFactory = new UnitProductionTaskFactory(this);
         gatheringHandler = new GatheringHandler(this);
+        transactionHandler = new TransactionHandler(this);
     }
 
     // Update to be called after rendering

@@ -135,11 +135,20 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         gameObjectManagers.add(resourceManager);
 
         map = new TmxMapLoader().load("maps/desert.tmx");
+
+        float ratio = (float)(MapUtils.NODE_WIDTH_PX * MapUtils.MAP_WIDTH) /
+                ((int) map.getProperties().get("width") * (int) map.getProperties().get("tilewidth"));
+        map.getTileSets().getTileSet(0).forEach(tiledMapTile -> {
+            tiledMapTile.setOffsetX(-MapUtils.NODE_WIDTH_PX  / (ratio * 2f));
+            tiledMapTile.setOffsetY(-MapUtils.NODE_HEIGHT_PX / (ratio * 2f));
+        });
+
         mapRenderer = new OrthogonalTiledMapRenderer(
                 map,
-                (float)(MapUtils.NODE_WIDTH_PX * MapUtils.MAP_WIDTH) /
-                        ((int) map.getProperties().get("width") * (int) map.getProperties().get("tilewidth"))
+                ratio
         );
+
+        world.loadMap(map);
     }
 
     @Override
@@ -149,13 +158,10 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
                 -1000,
                 1000
         );
-        cam.normalizeUp();
         cam.lookAt(MapUtils.MAP_WIDTH * MapUtils.NODE_WIDTH_PX, 0, 0);
         cam.rotate(-60, -1, 1, -1);
         cam.near = 0;
         cam.far = 10000;
-        cam.normalizeUp();
-        cam.update();
     }
 
     @Override

@@ -11,5 +11,7 @@ public enum NodeOccupant {
 
     RESOURCE,
 
+    TERRAIN,
+
     NONE
 }

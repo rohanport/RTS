@@ -21,6 +21,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
     private final World world;
     private final UnitCollisionHandlingGroundGraph unitCollisionHandlingGroundGraph;
 
+    private final NodeOccupant[][] baseNodes;
     private final GroundNode[][] nodes;
     private final GroundHeuristic heuristic;
 
@@ -46,9 +47,11 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
         this.height = world.height;
 
         nodes = new GroundNode[height][width];
+        baseNodes = new NodeOccupant[height][width];
         for(int i = 0; i < width; i++) {
             for(int j = 0; j < height; j++) {
                 nodes[i][j] = new GroundNode(this, i, j);
+                baseNodes[i][j] = NodeOccupant.NONE;
             }
         }
         heuristic = new GroundHeuristic();
@@ -65,6 +68,11 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
     }
 
     public void update(GroundNode node) {
+        if (baseNodes[node.x][node.y] == NodeOccupant.TERRAIN) {
+            node.setOccupant(NodeOccupant.TERRAIN);
+            return;
+        }
+
         List<Resource> resources = world.getResourceManager().getAtNode(node);
         if (resources.size() > 0) {
             node.setOccupant(NodeOccupant.RESOURCE);
@@ -101,6 +109,10 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
                     throw new RuntimeException("Unknown unit state when updating node: " + unit.state);
             }
         }
+    }
+
+    public void setTerrainNode(int x, int y) {
+        baseNodes[x][y] = NodeOccupant.TERRAIN;
     }
 
     @Override
@@ -184,7 +196,8 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
     }
 
     public boolean nodeIsAvailable(GroundNode node) {
-        return node.getOccupant() != NodeOccupant.BUILDING;
+        return node.getOccupant() != NodeOccupant.BUILDING &&
+                node.getOccupant() != NodeOccupant.TERRAIN;
     }
 
     public GroundNode getClosestFreeNode(GroundNode destNode) {

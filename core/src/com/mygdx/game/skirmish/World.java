@@ -1,5 +1,6 @@
 package com.mygdx.game.skirmish;
 
+import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.game.skirmish.gameobjects.GameObjectCache;
 import com.mygdx.game.skirmish.gameobjects.buildings.BuildingManager;
@@ -14,6 +15,7 @@ import com.mygdx.game.skirmish.gameplay.production.ProductionHandler;
 import com.mygdx.game.skirmish.gameplay.production.ProductionManager;
 import com.mygdx.game.skirmish.gameplay.production.TransactionHandler;
 import com.mygdx.game.skirmish.gameplay.production.UnitProductionTaskFactory;
+import com.mygdx.game.skirmish.map.TiledMapLoader;
 import com.mygdx.game.skirmish.player.PlayerManager;
 import com.mygdx.game.skirmish.resources.ResourceManager;
 import com.mygdx.game.skirmish.util.Settings;
@@ -38,6 +40,7 @@ public class World implements Disposable {
     private final GatheringHandler gatheringHandler;
     private final TransactionHandler transactionHandler;
     private final GroundGraph groundGraph;
+    private final TiledMapLoader tiledMapLoader;
 
     public final int width;
     public final int height;
@@ -99,6 +102,7 @@ public class World implements Disposable {
         unitProductionTaskFactory = new UnitProductionTaskFactory(this);
         gatheringHandler = new GatheringHandler(this);
         transactionHandler = new TransactionHandler(this);
+        tiledMapLoader = new TiledMapLoader(this);
     }
 
     // Update to be called after rendering
@@ -137,5 +141,9 @@ public class World implements Disposable {
     @Override
     public void dispose() {
 
+    }
+
+    public void loadMap(Map map) {
+        tiledMapLoader.loadMap(map);
     }
 }

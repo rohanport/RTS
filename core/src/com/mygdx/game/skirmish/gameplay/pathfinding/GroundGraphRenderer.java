@@ -34,15 +34,15 @@ public class GroundGraphRenderer {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         debugRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        int startNodeLeft = Math.max(Math.round((cam.position.x - cam.viewportWidth / 2f) / MapUtils.NODE_WIDTH_PX) - 2, 0);
-        int startNodeTop = Math.max(Math.round((cam.position.y - cam.viewportHeight / 2f) / MapUtils.NODE_HEIGHT_PX) - 2, 0);
-        int startNodeRight = Math.min(Math.round(startNodeLeft + cam.viewportWidth / MapUtils.NODE_WIDTH_PX) + 4, MapUtils.MAP_WIDTH);
-        int startNodeBottom = Math.min(Math.round(startNodeTop + cam.viewportHeight / MapUtils.NODE_HEIGHT_PX) + 4, MapUtils.MAP_HEIGHT);
+        int startNodeLeft = Math.max(Math.round(MapUtils.screenCoords2NodeCoords(cam, 0, 0).x) - 2, 0);
+        int startNodeTop = Math.min(Math.round(MapUtils.screenCoords2NodeCoords(cam, Gdx.graphics.getWidth(), 0).y) + 2, MapUtils.MAP_HEIGHT);
+        int startNodeRight = Math.min(Math.round(MapUtils.screenCoords2NodeCoords(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()).x) + 2, MapUtils.MAP_WIDTH);
+        int startNodeBottom = Math.max(Math.round(MapUtils.screenCoords2NodeCoords(cam, 0, Gdx.graphics.getHeight()).y) - 2, 0);
         float xOffset = MapUtils.NODE_WIDTH_PX / 2f;
         float yOffset = MapUtils.NODE_HEIGHT_PX / 2f;
 
         for (int i = startNodeLeft; i < startNodeRight; i++) {
-            for (int j = startNodeTop; j < startNodeBottom; j++) {
+            for (int j = startNodeBottom; j < startNodeTop; j++) {
                 GroundNode node = graph.getNodeByCoords(i, j);
                 if (!graph.nodeIsOpen(node)) {
                     debugRenderer.setColor(Color.RED.r, Color.RED.g, Color.RED.b, 0.5f);
@@ -89,7 +89,7 @@ public class GroundGraphRenderer {
                     startNodeBottom * MapUtils.NODE_HEIGHT_PX - yOffset
             );
         }
-        for (int i = startNodeTop; i < startNodeBottom; i++) {
+        for (int i = startNodeBottom; i < startNodeTop; i++) {
             debugRenderer.line(startNodeLeft * MapUtils.NODE_WIDTH_PX - xOffset,
                     i * MapUtils.NODE_HEIGHT_PX - yOffset,
                     startNodeRight * MapUtils.NODE_WIDTH_PX - xOffset,

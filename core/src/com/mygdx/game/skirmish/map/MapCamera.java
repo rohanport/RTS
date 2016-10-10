@@ -1,6 +1,7 @@
 package com.mygdx.game.skirmish.map;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector3;
 
 /**
  * Created by paddlefish on 18-Sep-16.
@@ -56,10 +57,25 @@ public class MapCamera extends OrthographicCamera {
     }
 
     public void update(float delta) {
-        translate(calculateTransX(delta), calculateTransY(delta));
+        translate(calculateTranslation(delta));
 
         super.update();
     }
+
+    private Vector3 calculateTranslation(float delta) {
+        Vector3 translation = new Vector3(0, 0, 0);
+
+        if (isMovingUp() || isMovingDown()) {
+            translation.add((new Vector3(-0.5f, 0.5f, 0)).scl(calculateCurrentYSpeed(delta)));
+        }
+
+        if (isMovingLeft() || isMovingRight()) {
+            translation.add((new Vector3(0.5f, 0.5f, 0)).scl(calculateCurrentXSpeed(delta)));
+        }
+
+        return translation;
+    }
+
 
     private float calculateCurrentXSpeed(float delta) {
         float currSpeed = 0;
@@ -80,7 +96,7 @@ public class MapCamera extends OrthographicCamera {
             currSpeed = (Math.abs(ySpeed) < MAX_Y_SPEED) ? Math.min(ySpeed + (delta * Y_ACCELERATION), MAX_Y_SPEED) :
                     MAX_Y_SPEED;
         } else if (isMovingDown()) {
-            currSpeed = (Math.abs(ySpeed) < MAX_Y_SPEED) ? Math.max(ySpeed - (delta * Y_ACCELERATION), MAX_Y_SPEED) :
+            currSpeed = (Math.abs(ySpeed) < MAX_Y_SPEED) ? Math.max(ySpeed - (delta * Y_ACCELERATION), -MAX_Y_SPEED) :
                     -MAX_Y_SPEED;
         }
 
@@ -93,9 +109,9 @@ public class MapCamera extends OrthographicCamera {
         float distFromMapRight = mapWidth - position.x;
 
         if (transX < 0) {
-            transX = Math.abs(transX) < Math.abs(position.x) ? transX : -position.x;
+            transX = Math.abs(transX) < Math.abs(position.x) ? transX : transX;
         } else if (transX > 0) {
-            transX = Math.abs(transX) < Math.abs(distFromMapRight) ? transX : distFromMapRight;
+            transX = Math.abs(transX) < Math.abs(distFromMapRight) ? transX : transX;
         }
 
         return transX;
@@ -107,9 +123,9 @@ public class MapCamera extends OrthographicCamera {
         float distFromMapTop = mapHeight - position.y;
 
         if (transY < 0) {
-            transY = Math.abs(transY) < Math.abs(position.y) ? transY : -position.y;
+            transY = Math.abs(transY) < Math.abs(position.y) ? transY : transY;
         } else if (transY > 0) {
-            transY = Math.abs(transY) < Math.abs(distFromMapTop) ? transY : distFromMapTop;
+            transY = Math.abs(transY) < Math.abs(distFromMapTop) ? transY : transY;
         }
 
         return transY;

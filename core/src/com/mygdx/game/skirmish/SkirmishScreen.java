@@ -3,12 +3,12 @@ package com.mygdx.game.skirmish;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.DefaultScreen;
-import com.mygdx.game.GameData;
 import com.mygdx.game.skirmish.gameobjects.GameObjectCache;
 import com.mygdx.game.skirmish.gameobjects.GameObjectManager;
 import com.mygdx.game.skirmish.gameobjects.buildings.Building1;
@@ -49,15 +49,14 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     private final GUI gui;
     private final List<GameObjectManager> gameObjectManagers;
 
-    //-------- Sprites --------
-    private Sprite background;
-
-    private SpriteBatch backgroundBatch;
+    //-------- Map --------
+    private final TiledMap map;
+    private final TiledMapRenderer mapRenderer;
 
     //-------- Camera ---------
     private MapCamera cam = new MapCamera(
-            Gdx.graphics.getWidth(),
-            Gdx.graphics.getHeight(),
+            700,
+            700 * (Gdx.graphics.getHeight() / (float)Gdx.graphics.getWidth()),
             MapUtils.MAP_WIDTH * MapUtils.NODE_WIDTH_PX,
             MapUtils.MAP_HEIGHT * MapUtils.NODE_HEIGHT_PX
     );
@@ -103,6 +102,9 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
     public InputMultiplexer getInputHandler() {
         return inputHandler;
     }
+    public World getWorld() {
+        return world;
+    }
     //---------------------------------------------------------------------
     public SkirmishScreen(Game game) {
         super(game);
@@ -131,29 +133,43 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         gameObjectManagers.add(unitManager);
         gameObjectManagers.add(buildingManager);
         gameObjectManagers.add(resourceManager);
+
+        map = new TmxMapLoader().load("maps/desert.tmx");
+        mapRenderer = new OrthogonalTiledMapRenderer(
+                map,
+                (float)(MapUtils.NODE_WIDTH_PX * MapUtils.MAP_WIDTH) /
+                        ((int) map.getProperties().get("width") * (int) map.getProperties().get("tilewidth"))
+        );
     }
 
     @Override
     public void show() {
-        background = GameData.getInstance().bgGrass01;
-        background.setPosition(0, 0);
-        background.setSize(MapUtils.MAP_WIDTH * MapUtils.NODE_WIDTH_PX, MapUtils.MAP_HEIGHT * MapUtils.NODE_HEIGHT_PX);
-        background.getTexture().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-
-        backgroundBatch = new SpriteBatch();
-
+        cam.position.set(
+                MapUtils.MAP_WIDTH * MapUtils.NODE_WIDTH_PX + 1000,
+                -1000,
+                1000
+        );
+        cam.normalizeUp();
+        cam.lookAt(MapUtils.MAP_WIDTH * MapUtils.NODE_WIDTH_PX, 0, 0);
+        cam.rotate(-60, -1, 1, -1);
+        cam.near = 0;
+        cam.far = 10000;
+        cam.normalizeUp();
+        cam.update();
     }
 
     @Override
     public void render(float delta) {
         cam.update(delta); //Move the camera
-        backgroundBatch.setProjectionMatrix(cam.combined);
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        backgroundBatch.begin();
-        background.draw(backgroundBatch);
-        backgroundBatch.end();
+        float left = MapUtils.screenCoords2MapCoords(cam, 0, 0).x;
+        float top = MapUtils.screenCoords2MapCoords(cam, Gdx.graphics.getWidth(), 0).y;
+        float right = MapUtils.screenCoords2MapCoords(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()).x;
+        float bottom = MapUtils.screenCoords2MapCoords(cam, 0, Gdx.graphics.getHeight()).y;
+        mapRenderer.setView(cam.combined, left, bottom, right - left, top - bottom);
+        mapRenderer.render();
 
         if (Settings.DEBUG_MODE) {
             world.renderNodesDebug();
@@ -177,8 +193,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
     @Override
     public void dispose() {
-        background.getTexture().dispose();
-        backgroundBatch.dispose();
+        map.dispose();
     }
 
 
@@ -191,7 +206,7 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
                 playerManager.addPlayer(player1);
             }
             Vector2 middleOfScreen = MapUtils.screenCoords2NodeCoords(cam, cam.viewportWidth / 2f, cam.viewportHeight / 2f);
-            Building1 test = new Building1(world, playerManager.getPlayerByID(0).id, Math.round(middleOfScreen.x - 20), Math.round(middleOfScreen.y));
+            Building1 test = new Building1(world, playerManager.getPlayerByID(0).id, Math.round(middleOfScreen.x), Math.round(middleOfScreen.y));
             gameObjectCache.add(test);
             selectionManager.addToSelection(test);
         }
@@ -272,31 +287,31 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
         int distFromScreenRight = Gdx.graphics.getWidth() - screenX;
         int distFromScreenBottom = Gdx.graphics.getHeight() - screenY;
 
-        if (screenX < 2 && !cam.isMovingLeft()) {
+        if (screenX < 5 && !cam.isMovingLeft()) {
             cam.setMovingLeft(true);
         }
-        if (screenX > 2 && cam.isMovingLeft()) {
+        if (screenX > 5 && cam.isMovingLeft()) {
             cam.setMovingLeft(false);
         }
 
-        if (distFromScreenRight < 2 && !cam.isMovingRight()) {
+        if (distFromScreenRight < 5 && !cam.isMovingRight()) {
             cam.setMovingRight(true);
         }
-        if (distFromScreenRight > 2 && cam.isMovingRight()) {
+        if (distFromScreenRight > 5 && cam.isMovingRight()) {
             cam.setMovingRight(false);
         }
 
-        if (screenY < 2 && !cam.isMovingUp()) {
+        if (screenY < 5 && !cam.isMovingUp()) {
             cam.setMovingUp(true);
         }
-        if (screenY > 2 && cam.isMovingUp()) {
+        if (screenY > 5 && cam.isMovingUp()) {
             cam.setMovingUp(false);
         }
 
-        if (distFromScreenBottom < 2 && !cam.isMovingDown()) {
+        if (distFromScreenBottom < 5 && !cam.isMovingDown()) {
             cam.setMovingDown(true);
         }
-        if (distFromScreenBottom > 2 && cam.isMovingDown()) {
+        if (distFromScreenBottom > 5 && cam.isMovingDown()) {
             cam.setMovingDown(false);
         }
     }

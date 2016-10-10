@@ -3,12 +3,10 @@ package com.mygdx.game.menu;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.badlogic.gdx.math.collision.Ray;
 import com.mygdx.game.DefaultScreen;
 import com.mygdx.game.GameData;
 import com.mygdx.game.ScreenOption;
@@ -25,8 +23,6 @@ public class MenuScreen extends DefaultScreen implements InputProcessor {
     private BoundingBox collisionTitle = new BoundingBox();
 
     private SpriteBatch titleBatch;
-
-    private OrthographicCamera cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
     private ScreenOption nextScreen = ScreenOption.MENU;
 
@@ -90,7 +86,6 @@ public class MenuScreen extends DefaultScreen implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Ray collisionRay = cam.getPickRay(screenX, screenY);
 
         if ((Gdx.graphics.getWidth() / 4 < screenX) && (screenX < 3 * Gdx.graphics.getWidth() / 4) &&
                 (Gdx.graphics.getHeight() / 4 < screenY) && (screenY < 3 * Gdx.graphics.getHeight() / 4)) {

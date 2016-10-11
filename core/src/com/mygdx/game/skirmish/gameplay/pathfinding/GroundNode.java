@@ -34,6 +34,12 @@ public class GroundNode {
         setOccupant(NodeOccupant.NONE);
     }
 
+    /**
+     * Returns euclidean distance between nodes
+     * @param node
+     * @param endNode
+     * @return
+     */
     public static float dist(GroundNode node, GroundNode endNode) {
         return ((float) Math.sqrt(Math.pow(endNode.x - node.x, 2) + Math.pow(endNode.y - node.y, 2)));
     }

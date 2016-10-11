@@ -35,6 +35,7 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
     protected final List<ProductionTask> productionQueue;
     private final HealthBar healthBar;
 
+    protected int rallyObjectID;
     protected boolean hasRallyPoint;
     protected int rallyX;
     protected int rallyY;
@@ -62,6 +63,11 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
     @Override
     public int getPlayerID() {
         return playerID;
+    }
+
+    @Override
+    public GameObject getRallyObject() {
+        return world.getGameObjectCache().getGameObjectByID(rallyObjectID);
     }
 
     @Override
@@ -194,6 +200,7 @@ public abstract class BuildingBase implements Commandable, GameObject, QueueingP
 
     @Override
     public boolean processRightClickOn(boolean chain, GameObject gameObject) {
+        rallyObjectID = gameObject.getID();
         return false;
     }
 

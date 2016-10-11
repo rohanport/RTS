@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 
 /**
  * Created by paddlefish on 28-Sep-16.
+ *
+ * Stores references to all GameObjects in the Game
+ * Is observed by a number of GameObjectManagers who manage each added GameObject
  */
 public class GameObjectCache {
 

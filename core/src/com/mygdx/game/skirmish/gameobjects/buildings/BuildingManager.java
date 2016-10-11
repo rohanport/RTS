@@ -28,7 +28,7 @@ public class BuildingManager implements GameObjectsObserver, GameObjectManager<B
     private final SkirmishScreen screen;
 
     private SpriteBatch buildingRenderer;
-    private ShapeRenderer buildingShapeRenderer;
+    private ShapeRenderer debugRenderer;
 
     private List<BuildingBase> buildings;
     
@@ -40,7 +40,7 @@ public class BuildingManager implements GameObjectsObserver, GameObjectManager<B
         this.screen = screen;
 
         buildingRenderer = new SpriteBatch();
-        buildingShapeRenderer = new ShapeRenderer();
+        debugRenderer = new ShapeRenderer();
 
         buildings = new ArrayList<>();
     }
@@ -85,19 +85,22 @@ public class BuildingManager implements GameObjectsObserver, GameObjectManager<B
         buildingRenderer.end();
     }
 
+    /**
+     * Buildings are rendered as squares using a ShapeRenderer instead of using sprites
+     */
     private void renderBuildingsDebug() {
-        buildingShapeRenderer.setProjectionMatrix(screen.getCam().combined);
+        debugRenderer.setProjectionMatrix(screen.getCam().combined);
 
-        buildingShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        debugRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (BuildingBase building : buildings) {
-            buildingShapeRenderer.setColor(screen.getPlayerManager().getPlayerByID(building.getPlayerID()).color);
-            buildingShapeRenderer.rect(building.rect.x,
+            debugRenderer.setColor(screen.getPlayerManager().getPlayerByID(building.getPlayerID()).color);
+            debugRenderer.rect(building.rect.x,
                     building.rect.y,
                     building.rect.getWidth(),
                     building.rect.getHeight()
             );
         }
-        buildingShapeRenderer.end();
+        debugRenderer.end();
     }
 
     @Override

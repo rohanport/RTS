@@ -17,6 +17,11 @@ public class ProductionHandler {
         this.world = world;
     }
 
+    /**
+     * Updates the remaining time of productions and runs them if they have completed
+     * @param delta
+     * @param productions
+     */
     public void handleRunningProductions(float delta, List<? extends ProductionTask> productions) {
         List<ProductionTask> completedProductions = new ArrayList<>();
 

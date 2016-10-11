@@ -22,6 +22,8 @@ import com.mygdx.game.skirmish.util.Settings;
 
 /**
  * Created by paddlefish on 22-Sep-16.
+ *
+ * Responsible for controlling the stepping through of each gameplay frame.
  */
 public class World implements Disposable {
 
@@ -105,13 +107,18 @@ public class World implements Disposable {
         tiledMapLoader = new TiledMapLoader(this);
     }
 
-    // Update to be called after rendering
+    /**
+     * Call this method before rendering
+     * @param delta
+     */
     public void update(float delta) {
-        delta = Math.min(delta, Settings.MIN_DELTA);
+        delta = Math.min(delta, Settings.MIN_DELTA); //This step allows for the game to slow under heavy lag
         accumulatedDelta += delta;
 
-        for (; accumulatedDelta >= Settings.TIMEFRAME; accumulatedDelta -= Settings.TIMEFRAME) {
+        //Performs a gameplay step for each frame within delta
+        while (accumulatedDelta >= Settings.TIMEFRAME) {
             step(Settings.TIMEFRAME);
+            accumulatedDelta -= Settings.TIMEFRAME;
         }
     }
 
@@ -119,19 +126,31 @@ public class World implements Disposable {
         groundGraph.debugRender(screen.getCam());
     }
 
+    /**
+     * Performs a single gameplay frame and updates all GameObjects
+     * @param timeframe
+     */
     private void step(float timeframe) {
-        groundGraph.newUpdateFrame();
+        groundGraph.newUpdateFrame(); //Refreshes the graph nodes
+
+        //Handlers handle interactions between GameObjects and their environment
         movementHandler.handleGroundUnitMoving(timeframe, unitManager.getUnitsInState(UnitState.MOVING));
         movementHandler.handleGroundUnitMoving(timeframe, unitManager.getUnitsInState(UnitState.ATTACK_MOVING));
         movementHandler.handleGroundUnitMovingToAtk(timeframe, unitManager.getUnitsInState(UnitState.MOVING_TO_ATK), gameObjectCache);
         movementHandler.handleGroundUnitMovingToBuild(timeframe, unitManager.getBuilderUnitsInState(UnitState.MOVING_TO_BUILD));
         movementHandler.handleGroundUnitMovingToGather(timeframe, unitManager.getGatherersInState(UnitState.MOVING_TO_GATHER), gameObjectCache);
         movementHandler.handleGroundUnitMovingToReturnResources(timeframe, unitManager.getGatherersInState(UnitState.MOVING_TO_RETURN_RESOURCES), gameObjectCache);
+
         combatHandler.handleAtkStarting(timeframe, unitManager.getUnitsInState(UnitState.ATK_STARTING));
         combatHandler.handleAtkEnding(timeframe, unitManager.getUnitsInState(UnitState.ATK_ENDING));
+
         gatheringHandler.handleGatherers(timeframe, unitManager.getGatherersInState(UnitState.GATHERING));
+
         destructionHandler.handleGameObjectDestruction(gameObjectCache.getGameObjectsToBeDestroyed());
+
         productionHandler.handleRunningProductions(timeframe, productionManager.getRunningProductionTasks());
+
+        //GameObject updates handle internal state of GameObjects
         unitManager.update(timeframe);
         buildingManager.update(timeframe);
     }
@@ -143,6 +162,10 @@ public class World implements Disposable {
 
     }
 
+    /**
+     * Loads information stored in a Map into the Graph and GameObjectManagers
+     * @param map
+     */
     public void loadMap(Map map) {
         tiledMapLoader.loadMap(map);
     }

@@ -16,6 +16,8 @@ import java.util.List;
 
 /**
  * Created by paddlefish on 21-Sep-16.
+ *
+ * Graph for the group map. Used for AStar pathing for ground units
  */
 public class GroundGraph implements IndexedGraph<GroundNode> {
     private final World world;
@@ -68,6 +70,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
     }
 
     public void update(GroundNode node) {
+        //This is here to ensure that terrain nodes never get overridden
         if (baseNodes[node.x][node.y] == NodeOccupant.TERRAIN) {
             node.setOccupant(NodeOccupant.TERRAIN);
             return;
@@ -97,7 +100,7 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
                 case MOVING_TO_RETURN_RESOURCES:
                 case ATTACK_MOVING:
                     node.setOccupant(NodeOccupant.MOVING_UNIT);
-                    break;
+                    break; // Only breaks here because STOPPED_UNIT overrides MOVING_UNIT
                 case ATK_STARTING:
                 case ATK_ENDING:
                 case BUILDING:
@@ -111,6 +114,12 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
         }
     }
 
+    /**
+     * Sets a node index as a Terrain node, which can never be overridden
+     * Use when initializing terrain nodes from a tile map
+     * @param x
+     * @param y
+     */
     public void setTerrainNode(int x, int y) {
         baseNodes[x][y] = NodeOccupant.TERRAIN;
     }
@@ -130,6 +139,13 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
         return getConnections(fromNode, false);
     }
 
+    /**
+     * Returns a different set of connections depending on whether the nodes must be open (ie. not containing a STOPPED_UNIT)
+     * The nodesMustBeOpen flag is set to true when calculating a collision handling path
+     * @param fromNode
+     * @param nodeMustBeOpen
+     * @return
+     */
     public Array<Connection<GroundNode>> getConnections(GroundNode fromNode, boolean nodeMustBeOpen) {
         Array<Connection<GroundNode>> connections = new Array<>();
 
@@ -200,6 +216,11 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
                 node.getOccupant() != NodeOccupant.TERRAIN;
     }
 
+    /**
+     * Returns the closest open node to the dest Node using manhattan distance
+     * @param destNode
+     * @return
+     */
     public GroundNode getClosestFreeNode(GroundNode destNode) {
         if (nodeIsOpen(destNode)) {
             return destNode;
@@ -219,6 +240,12 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
         throw new RuntimeException("Couldn't find open node in the whole world");
     }
 
+    /**
+     * Returns the closet node to the cur node, of the closest open nodes to the dest node, in manhattan distance
+     * @param curNode
+     * @param destNode
+     * @return
+     */
     public GroundNode getClosestFreeNode(GroundNode curNode, GroundNode destNode) {
         if (nodeIsOpen(destNode)) {
             return destNode;
@@ -242,6 +269,14 @@ public class GroundGraph implements IndexedGraph<GroundNode> {
         throw new RuntimeException("Couldn't find open node in the whole world");
     }
 
+    /**
+     * Returns the closet node to the cur node, of the closest open nodes to the point (destX, destY), in euclidean distance
+     * @param curNode
+     * @param destX
+     * @param destY
+     * @param radius
+     * @return
+     */
     public GroundNode getClosestFreeNodeEuclidean(GroundNode curNode, float destX, float destY, int radius) {
         List<GroundNode> openNodesAtDist = GroundGraphUtils.getFreeNodesAtDistEuclidean(this, destX, destY, radius);
 

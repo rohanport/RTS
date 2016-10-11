@@ -23,6 +23,7 @@ public class CombatHandler {
         for (Attacker attacker : attackers) {
             attacker.setCurAtkStartup(attacker.getCurAtkStartup() + delta);
             if (attacker.getCurAtkStartup() > attacker.getTotalAtkStartup()) {
+                // The attack is reading to launch
                 GameObject atkTarget = world.getGameObjectCache().getGameObjectByID(attacker.getAtkTargetID());
                 if (atkTarget != null) {
                     atkTarget.applyDamage(attacker.getAtk());

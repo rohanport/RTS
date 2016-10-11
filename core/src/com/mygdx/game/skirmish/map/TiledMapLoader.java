@@ -14,6 +14,8 @@ import com.mygdx.game.skirmish.util.MapUtils;
 
 /**
  * Created by paddlefish on 10-Oct-16.
+ *
+ * Loads information from a tiled map into the world
  */
 public class TiledMapLoader {
 
@@ -35,13 +37,20 @@ public class TiledMapLoader {
         }
     }
 
+    /**
+     * Initializes terrain nodes for the ground graph from a tile layer
+     * @param tileLayer
+     */
     private void initializeGraphFromTileLayer(TiledMapTileLayer tileLayer) {
         for(int i = 0; i < MapUtils.TILED_MAP_WIDTH; i++) {
             for (int j = 0; j < MapUtils.TILED_MAP_HEIGHT; j++) {
                 TiledMapTileLayer.Cell cell = tileLayer.getCell(i, j);
                 int startingX = i * MapUtils.nodesPerTileHorizontal();
                 int startingY = j * MapUtils.nodesPerTileVertical();
+
+                // Terrains are stored as a comma separated string of indexes, eg "0,0,1,0"
                 String[] tileTerrains = ((String) cell.getTile().getProperties().get("terrain")).split(",");
+
                 for (int y = startingY; y < startingY + MapUtils.nodesPerTileVertical(); y++) {
                     for (int x = startingX; x < startingX + MapUtils.nodesPerTileHorizontal(); x++) {
                         if (!TileSetData.getDesertTerrainAccess(Integer.parseInt(tileTerrains[getQuadrant(x, y, startingX, startingY)]))) {
@@ -53,6 +62,17 @@ public class TiledMapLoader {
         }
     }
 
+    /**
+     * Finds the quadrant index for the given nodes within a tile
+     *
+     * Nodes are indexed from:            left->right, bottom->top
+     * Tile quadrants are indexed from:   left->right, top->bottom
+     * @param x
+     * @param y
+     * @param startX
+     * @param startY
+     * @return
+     */
     private int getQuadrant(int x, int y, int startX, int startY) {
         int diffX = x - startX;
         int diffY = y - startY;
@@ -72,6 +92,10 @@ public class TiledMapLoader {
         }
     }
 
+    /**
+     * Adds gameObjects to GameObjectCache from the object layer
+     * @param objectLayer
+     */
     private void addObjectsFromObjectLayer(MapLayer objectLayer) {
         for (MapObject mapObject : objectLayer.getObjects()) {
             MapProperties objectProperties = mapObject.getProperties();

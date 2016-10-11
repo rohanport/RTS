@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 
 /**
  * Created by paddlefish on 04-Oct-16.
+ *
+ * Manages ResourceObjects, eg. Food
  */
 public class ResourceManager implements GameObjectsObserver, GameObjectManager<Resource> {
     private final SkirmishScreen screen;
@@ -46,6 +48,9 @@ public class ResourceManager implements GameObjectsObserver, GameObjectManager<R
         }
     }
 
+    /**
+     * Renders resources as squares using a ShapeRenderer instead of using sprites
+     */
     private void renderDebug() {
         debugRenderer.setProjectionMatrix(screen.getCam().combined);
 
@@ -95,11 +100,13 @@ public class ResourceManager implements GameObjectsObserver, GameObjectManager<R
 
     @Override
     public List<Commandable> getIntersectingCommandables(Vector2 point) {
+        //Resources are not commandable
         return Collections.emptyList();
     }
 
     @Override
     public List<Commandable> getIntersectingCommandables(Polygon box) {
+        //Resources are not commandable
         return Collections.emptyList();
     }
 
@@ -130,6 +137,7 @@ public class ResourceManager implements GameObjectsObserver, GameObjectManager<R
 
     @Override
     public List<Resource> getEnemiesInRange(int playerID, float x, float y, float radius) {
+        // Resources have no enemies
         return Collections.emptyList();
     }
 

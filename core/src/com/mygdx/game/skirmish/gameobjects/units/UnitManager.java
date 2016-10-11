@@ -28,7 +28,7 @@ public class UnitManager implements GameObjectsObserver, GameObjectManager<UnitB
     private final SkirmishScreen screen;
 
     private SpriteBatch unitRenderer;
-    private ShapeRenderer unitShapeRenderer;
+    private ShapeRenderer debugRenderer;
 
     private List<UnitBase> units;
 
@@ -43,7 +43,7 @@ public class UnitManager implements GameObjectsObserver, GameObjectManager<UnitB
         this.screen = screen;
 
         unitRenderer = new SpriteBatch();
-        unitShapeRenderer = new ShapeRenderer();
+        debugRenderer = new ShapeRenderer();
 
         units = new ArrayList<>();
     }
@@ -88,31 +88,34 @@ public class UnitManager implements GameObjectsObserver, GameObjectManager<UnitB
         unitRenderer.end();
     }
 
+    /**
+     * Units are rendered as circles using a ShapeRenderer instead of using sprites
+     */
     private void renderUnitsDebug() {
-        unitShapeRenderer.setProjectionMatrix(screen.getCam().combined);
+        debugRenderer.setProjectionMatrix(screen.getCam().combined);
 
-        unitShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        debugRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (UnitBase unit : units) {
-            unitShapeRenderer.setColor(screen.getPlayerManager().getPlayerByID(unit.getPlayerID()).color);
-            unitShapeRenderer.circle(unit.circle.x, unit.circle.y, unit.circle.radius);
+            debugRenderer.setColor(screen.getPlayerManager().getPlayerByID(unit.getPlayerID()).color);
+            debugRenderer.circle(unit.circle.x, unit.circle.y, unit.circle.radius);
         }
-        unitShapeRenderer.setColor(Color.GREEN);
+        debugRenderer.setColor(Color.GREEN);
         for (UnitBase unit : units) {
-            unitShapeRenderer.rect(
+            debugRenderer.rect(
                     unit.circle.x - unit.circle.radius,
                     unit.circle.y + unit.circle.radius + HealthBar.BUFFER_ABOVE_OWNER,
                     2 * unit.circle.radius * (unit.curHp / unit.hp),
                     HealthBar.DEBUG_HEALTH_BAR_HEIGHT);
         }
-        unitShapeRenderer.setColor(Color.BLACK);
+        debugRenderer.setColor(Color.BLACK);
         for (UnitBase unit : units) {
-            unitShapeRenderer.rect(
+            debugRenderer.rect(
                     unit.circle.x - unit.circle.radius + 2 * unit.circle.radius * (unit.curHp / unit.hp),
                     unit.circle.y + unit.circle.radius + HealthBar.BUFFER_ABOVE_OWNER,
                     2 * unit.circle.radius * (1 - (unit.curHp / unit.hp)),
                     HealthBar.DEBUG_HEALTH_BAR_HEIGHT);
         }
-        unitShapeRenderer.end();
+        debugRenderer.end();
     }
 
     public List<Builder> getBuilderUnitsInState(UnitState state) {

@@ -10,17 +10,13 @@ import java.util.stream.Collectors;
 
 /**
  * Created by paddlefish on 03-Oct-16.
+ *
+ * Handles production items, eg. units being constructed, upgrades being researched, etc.
  */
 public class ProductionManager {
 
     private final SkirmishScreen screen;
     private final List<ProductionTask> productions;
-
-    //------------- Getters and Setters -----------
-    public List<ProductionTask> getProductions() {
-        return productions;
-    }
-    //------------------------------------------
 
     public ProductionManager(SkirmishScreen screen) {
         this.screen = screen;
@@ -33,10 +29,6 @@ public class ProductionManager {
 
     public void removeAll(Collection<ProductionTask> toRemove) {
         productions.removeAll(toRemove);
-    }
-
-    public boolean has(ProductionTask productionTask) {
-        return productions.contains(productionTask);
     }
 
     public List<ProductionTask> getRunningProductionTasks() {

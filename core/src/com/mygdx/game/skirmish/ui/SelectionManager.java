@@ -155,7 +155,7 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
         newSelection.clear();
         screen.getGameObjectManagers().forEach(gameObjectManager ->
                 newSelection.addAll(gameObjectManager.getIntersectingCommandables(
-                        MapUtils.screenCoords2MapCoords(
+                        MapUtils.screenCoords2PxCoords(
                                 screen.getCam(),
                                 screenX,
                                 screenY
@@ -190,7 +190,7 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
     private void handleRightClick(float screenX, float screenY) {
         // Checking if a GameObject has been clicked on
         for (GameObjectManager gameObjectManager : screen.getGameObjectManagers()) {
-            List<GameObject> intersectingObjects = gameObjectManager.getIntersecting(MapUtils.screenCoords2MapCoords(
+            List<GameObject> intersectingObjects = gameObjectManager.getIntersecting(MapUtils.screenCoords2PxCoords(
                     screen.getCam(),
                     screenX,
                     screenY
@@ -230,7 +230,7 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
     }
 
     private void handleAtkCommand(int screenX, int screenY) {
-        List<BuildingBase> targetBuildings = screen.getBuildingManager().getIntersecting(MapUtils.screenCoords2MapCoords(
+        List<BuildingBase> targetBuildings = screen.getBuildingManager().getIntersecting(MapUtils.screenCoords2PxCoords(
                 screen.getCam(),
                 screenX,
                 screenY
@@ -242,7 +242,7 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
             return;
         }
 
-        List<UnitBase> targetedUnits = screen.getUnitManager().getIntersecting(MapUtils.screenCoords2MapCoords(
+        List<UnitBase> targetedUnits = screen.getUnitManager().getIntersecting(MapUtils.screenCoords2PxCoords(
                 screen.getCam(),
                 screenX,
                 screenY

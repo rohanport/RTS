@@ -52,10 +52,10 @@ public class SelectionUtils {
     }
 
     public static Polygon getSelectingPolygon(Camera cam, Rectangle selector) {
-        Vector2 mapA = MapUtils.screenCoords2MapCoords(cam, selector.getX(), selector.getY());
-        Vector2 mapB = MapUtils.screenCoords2MapCoords(cam, selector.getX() + selector.getWidth(), selector.getY());
-        Vector2 mapC = MapUtils.screenCoords2MapCoords(cam, selector.getX() + selector.getWidth(), selector.getY() + selector.getHeight());
-        Vector2 mapD = MapUtils.screenCoords2MapCoords(cam, selector.getX(), selector.getY() + selector.getHeight());
+        Vector2 mapA = MapUtils.screenCoords2PxCoords(cam, selector.getX(), selector.getY());
+        Vector2 mapB = MapUtils.screenCoords2PxCoords(cam, selector.getX() + selector.getWidth(), selector.getY());
+        Vector2 mapC = MapUtils.screenCoords2PxCoords(cam, selector.getX() + selector.getWidth(), selector.getY() + selector.getHeight());
+        Vector2 mapD = MapUtils.screenCoords2PxCoords(cam, selector.getX(), selector.getY() + selector.getHeight());
 
         return new Polygon(new float[]{mapA.x, mapA.y,
                 mapB.x, mapB.y,

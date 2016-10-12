@@ -1,7 +1,9 @@
 package com.mygdx.game.skirmish.map;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.skirmish.util.MapUtils;
 
 /**
  * Created by paddlefish on 18-Sep-16.
@@ -10,10 +12,14 @@ public class MapCamera extends OrthographicCamera {
     private final int mapWidth;
     private final int mapHeight;
 
-    private static final float MAX_X_SPEED = 400f;
-    private static final float MAX_Y_SPEED = 400f;
-    private static final float X_ACCELERATION = 400f;
-    private static final float Y_ACCELERATION = 400f;
+    private static final int X_OFFSET = 1000;  // x distance from the point that the camera is looking at
+    private static final int Y_OFFSET = -1000; // y distance from the point that the camera is looking at
+    private static final int Z_OFFSET = 1000;  // z distance from the point that the camera is looking at
+
+    private static final float MAX_X_SPEED = 10f;
+    private static final float MAX_Y_SPEED = 10f;
+    private static final float X_ACCELERATION = 40f;
+    private static final float Y_ACCELERATION = 40f;
 
     private float xSpeed;
     private float ySpeed;
@@ -52,8 +58,20 @@ public class MapCamera extends OrthographicCamera {
         super(viewportWidth, viewportHeight);
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
-        translate(mapWidth / 2f, mapHeight / 2f
+
+        //These operations set the camera into an isometric view
+        float centerX = mapWidth / 2f;
+        float centerY = mapHeight / 2f;
+
+        position.set(
+                centerX + X_OFFSET,
+                centerY + Y_OFFSET,
+                Z_OFFSET
         );
+        lookAt(centerX, centerY, 0);
+        rotate(-60, -1, 1, -1);
+        near = 0;
+        far = 10000;
     }
 
     public void update(float delta) {
@@ -62,18 +80,22 @@ public class MapCamera extends OrthographicCamera {
         super.update();
     }
 
-    private Vector3 calculateTranslation(float delta) {
-        Vector3 translation = new Vector3(0, 0, 0);
+    private Vector2 calculateTranslation(float delta) {
+        Vector2 translation = new Vector2(0, 0);
 
         if (isMovingUp() || isMovingDown()) {
-            translation.add((new Vector3(-0.5f, 0.5f, 0)).scl(calculateCurrentYSpeed(delta)));
+            // Since the map is rotated, Up is the original top left corner
+            ySpeed = calculateCurrentYSpeed(delta);
+            translation.add((new Vector2(-0.5f, 0.5f)).scl(ySpeed));
         }
 
         if (isMovingLeft() || isMovingRight()) {
-            translation.add((new Vector3(0.5f, 0.5f, 0)).scl(calculateCurrentXSpeed(delta)));
+            // Since the map is rotated, Right is the original top right corner
+            xSpeed = calculateCurrentXSpeed(delta);
+            translation.add((new Vector2(0.5f, 0.5f)).scl(xSpeed));
         }
 
-        return translation;
+        return keepWithinBounds(translation);
     }
 
 
@@ -103,31 +125,28 @@ public class MapCamera extends OrthographicCamera {
         return currSpeed;
     }
 
-    private float calculateTransX(float delta) {
-        xSpeed = calculateCurrentXSpeed(delta);
-        float transX = xSpeed * delta;
-        float distFromMapRight = mapWidth - position.x;
+    private Vector2 keepWithinBounds(Vector2 translation) {
+        // Calculate the point on the map that is in the center of the screen
+        Vector2 lookAtPoint = MapUtils.screenCoords2PxCoordsUnSafe(this, Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f);
 
-        if (transX < 0) {
-            transX = Math.abs(transX) < Math.abs(position.x) ? transX : transX;
-        } else if (transX > 0) {
-            transX = Math.abs(transX) < Math.abs(distFromMapRight) ? transX : transX;
+        float distFromMapRight = mapWidth - lookAtPoint.x;
+        if (translation.x < 0) {
+            // If going left, ensure that it can't go below 0
+            translation.x = Math.abs(translation.x) < Math.abs(lookAtPoint.x) ? translation.x : -lookAtPoint.x;
+        } else if (translation.x > 0) {
+            // If going right, ensure that it can't go below mapRight
+            translation.x = Math.abs(translation.x) < Math.abs(distFromMapRight) ? translation.x : distFromMapRight;
         }
 
-        return transX;
-    }
-
-    private float calculateTransY(float delta) {
-        ySpeed = calculateCurrentYSpeed(delta);
-        float transY = ySpeed * delta;
-        float distFromMapTop = mapHeight - position.y;
-
-        if (transY < 0) {
-            transY = Math.abs(transY) < Math.abs(position.y) ? transY : transY;
-        } else if (transY > 0) {
-            transY = Math.abs(transY) < Math.abs(distFromMapTop) ? transY : transY;
+        float distFromMapTop = mapHeight - lookAtPoint.y;
+        if (translation.y < 0) {
+            // If going downwards, ensure it can't go below 0
+            translation.y = Math.abs(translation.y) < Math.abs(lookAtPoint.y) ? translation.y : -lookAtPoint.y;
+        } else if (translation.y > 0) {
+            // If going up, ensure that it can't go below mapTop
+            translation.y = Math.abs(translation.y) < Math.abs(distFromMapTop) ? translation.y : distFromMapTop;
         }
 
-        return transY;
+        return translation;
     }
 }

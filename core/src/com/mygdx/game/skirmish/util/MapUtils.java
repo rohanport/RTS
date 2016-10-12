@@ -23,6 +23,13 @@ public class MapUtils {
     public static final int TILE_WIDTH_PX = 32;
     public static final int TILE_HEIGHT_PX = 32;
 
+    /**
+     * Returns the node coordinates of a given point on the screen
+     * @param cam
+     * @param screenX
+     * @param screenY
+     * @return
+     */
     public static Vector2 screenCoords2NodeCoords(Camera cam, float screenX, float screenY) {
         Vector3 worldCordsInPix = new Vector3();
         Ray pickRay = cam.getPickRay(screenX, screenY);
@@ -33,7 +40,14 @@ public class MapUtils {
         );
     }
 
-    public static Vector2 screenCoords2MapCoords(Camera cam, float screenX, float screenY) {
+    /**
+     * Returns the map pixel coordinates of a given point on the screen
+     * @param cam
+     * @param screenX
+     * @param screenY
+     * @return
+     */
+    public static Vector2 screenCoords2PxCoords(Camera cam, float screenX, float screenY) {
         Vector3 worldCordsInPix = new Vector3();
         Ray pickRay = cam.getPickRay(screenX, screenY);
         Intersector.intersectRayPlane(pickRay, new Plane(new Vector3(0, 0, 1), 0), worldCordsInPix);
@@ -43,14 +57,41 @@ public class MapUtils {
         );
     }
 
-    public static Vector2 tileCoords2MapCoords(float x, float y) {
+    /**
+     * Returns the map pixel coordinates of a given point on the screen
+     * Unsafe because it does not ensure that the returned coordinates are within the bounds of of the map
+     * @param cam
+     * @param screenX
+     * @param screenY
+     * @return
+     */
+    public static Vector2 screenCoords2PxCoordsUnSafe(Camera cam, float screenX, float screenY) {
+        Vector3 worldCordsInPix = new Vector3();
+        Ray pickRay = cam.getPickRay(screenX, screenY);
+        Intersector.intersectRayPlane(pickRay, new Plane(new Vector3(0, 0, 1), 0), worldCordsInPix);
+        return new Vector2(worldCordsInPix.x, worldCordsInPix.y);
+    }
+
+    /**
+     * Returns the pixel coordinates of a given pixel coordinates from a tile map
+     * @param x
+     * @param y
+     * @return
+     */
+    public static Vector2 tilePxCoords2PxCoords(float x, float y) {
         return new Vector2(
                 x * (MAP_WIDTH * NODE_WIDTH_PX) / (float) (TILED_MAP_WIDTH * TILE_WIDTH_PX),
                 y * (MAP_HEIGHT * NODE_HEIGHT_PX) / (float) (TILED_MAP_HEIGHT * TILE_HEIGHT_PX)
         );
     }
 
-    public static Vector2 tileCoords2NodeCoords(float x, float y) {
+    /**
+     * Returns the node coordinates of a given pixel coordinates from a tile map
+     * @param x
+     * @param y
+     * @return
+     */
+    public static Vector2 tilePxCoords2NodeCoords(float x, float y) {
         return new Vector2(
                 Math.round(x * (MAP_WIDTH) / (float) (TILED_MAP_WIDTH * TILE_WIDTH_PX)),
                 Math.round(y * (MAP_HEIGHT) / (float) (TILED_MAP_HEIGHT * TILE_HEIGHT_PX))

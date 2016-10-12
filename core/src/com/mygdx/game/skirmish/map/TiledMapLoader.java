@@ -104,7 +104,7 @@ public class TiledMapLoader {
                 throw new NullPointerException("Game object from tile map must have a type!");
             }
 
-            Vector2 nodeCoords = MapUtils.tileCoords2NodeCoords(
+            Vector2 nodeCoords = MapUtils.tilePxCoords2NodeCoords(
                     (float) objectProperties.get("x"),
                     (float) objectProperties.get("y")
             );

@@ -153,15 +153,6 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
     @Override
     public void show() {
-        cam.position.set(
-                MapUtils.MAP_WIDTH * MapUtils.NODE_WIDTH_PX + 1000,
-                -1000,
-                1000
-        );
-        cam.lookAt(MapUtils.MAP_WIDTH * MapUtils.NODE_WIDTH_PX, 0, 0);
-        cam.rotate(-60, -1, 1, -1);
-        cam.near = 0;
-        cam.far = 10000;
     }
 
     @Override
@@ -170,10 +161,10 @@ public class SkirmishScreen extends DefaultScreen implements InputProcessor {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        float left = MapUtils.screenCoords2MapCoords(cam, 0, 0).x;
-        float top = MapUtils.screenCoords2MapCoords(cam, Gdx.graphics.getWidth(), 0).y;
-        float right = MapUtils.screenCoords2MapCoords(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()).x;
-        float bottom = MapUtils.screenCoords2MapCoords(cam, 0, Gdx.graphics.getHeight()).y;
+        float left = MapUtils.screenCoords2PxCoords(cam, 0, 0).x;
+        float top = MapUtils.screenCoords2PxCoords(cam, Gdx.graphics.getWidth(), 0).y;
+        float right = MapUtils.screenCoords2PxCoords(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()).x;
+        float bottom = MapUtils.screenCoords2PxCoords(cam, 0, Gdx.graphics.getHeight()).y;
         mapRenderer.setView(cam.combined, left, bottom, right - left, top - bottom);
         mapRenderer.render();
 

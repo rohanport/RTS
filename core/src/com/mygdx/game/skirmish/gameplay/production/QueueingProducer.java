@@ -12,6 +12,7 @@ public interface QueueingProducer {
     ProductionTask getFirstInQueue();
     void addToProductionQueue(ProductionTask productionTask);
     void removeFromProductionQueue(ProductionTask productionTask);
+    boolean hasRallyObject();
     GameObject getRallyObject();
     boolean hasRallyPoint();
     int getRallyX();

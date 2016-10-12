@@ -28,10 +28,12 @@ public class UnitProductionTaskFactory {
                                                  float duration) {
         Runnable action = () -> {
             UnitBase unit = produceUnit(unitType, playerID, x, y);
-            GameObject rallyObject = queueingProducer.getRallyObject();
-            if (rallyObject != null) {
-                //If the rally object still exists, the unit processes how to deal with it
-                unit.processRightClickOn(false, rallyObject);
+            if (queueingProducer.hasRallyObject()) {
+                GameObject rallyObject = queueingProducer.getRallyObject();
+                if (rallyObject != null) {
+                    //If the rally object still exists, the unit processes how to deal with it
+                    unit.processRightClickOn(false, rallyObject);
+                }
             } else if (queueingProducer.hasRallyPoint()) {
                 //If a rally point has been set, move towards it
                 unit.processMoveCommand(false, queueingProducer.getRallyX(), queueingProducer.getRallyY());

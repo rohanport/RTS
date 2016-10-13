@@ -49,7 +49,7 @@ public class MovementHandler {
         GroundNode curNode;
         GroundNode finNode;
         for (UnitBase unit : units) {
-            curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
+            curNode = groundGraph.getNodeByCoords(unit.getNodeX(), unit.getNodeY());
             finNode = groundGraph.getNodeByCoords(unit.destNodeX, unit.destNodeY);
             if (GroundGraphUtils.getDist(curNode, finNode) <= GroundGraphUtils.getDistOfClosestFreeNode(groundGraph, finNode)) {
                 // The unit is as close as possible to it's destination, stop moving
@@ -72,7 +72,7 @@ public class MovementHandler {
         GroundNode finNode;
         for (UnitBase unit : units) {
             atkTarget = gameObjectCache.getGameObjectByID(unit.getAtkTargetID());
-            curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
+            curNode = groundGraph.getNodeByCoords(unit.getNodeX(), unit.getNodeY());
             if (atkTarget == null) {
                 // The target no londer exists, stop attacking
                 unit.stopAttacking();
@@ -111,7 +111,7 @@ public class MovementHandler {
         GroundNode buildingNode;
         GroundNode finNode;
         for (Builder unit : buildingUnits) {
-            curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
+            curNode = groundGraph.getNodeByCoords(unit.getNodeX(), unit.getNodeY());
             buildingNode = groundGraph.getNodeByCoords(unit.getBuildLocationX(), unit.getBuildLocationY());
 
             if (GroundGraphUtils.getDist(curNode, buildingNode) <= (1 + BuildingUtils.getSizeFor(unit.getBuildingType())) / 2) {
@@ -140,7 +140,7 @@ public class MovementHandler {
         GroundNode finNode;
         for (Gatherer unit : units) {
             gatherTarget = gameObjectCache.getGameObjectByID(unit.getGatherSourceID());
-            curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
+            curNode = groundGraph.getNodeByCoords(unit.getNodeX(), unit.getNodeY());
             if (gatherTarget == null) {
                 // The resources no londer exists, stop gathering
                 unit.stopGathering();
@@ -149,7 +149,7 @@ public class MovementHandler {
                 continue;
             }
 
-            resourceNode = groundGraph.getNodeByCoords(gatherTarget.getMapCenterX(), gatherTarget.getMapCenterY());
+            resourceNode = groundGraph.getNodeByCoords(gatherTarget.getNodeX(), gatherTarget.getNodeY());
             if (GroundGraphUtils.getDist(curNode, resourceNode) <= (1 + ((Resource) gatherTarget).size / 2)) {
                 // The unit is next to the resource, start gathering
                 unit.startGathering();
@@ -175,7 +175,7 @@ public class MovementHandler {
         GroundNode finNode;
         for (Gatherer unit : units) {
             dropOffTarget = gameObjectCache.getGameObjectByID(unit.getDropOffTargetID());
-            curNode = groundGraph.getNodeByCoords(unit.getMapCenterX(), unit.getMapCenterY());
+            curNode = groundGraph.getNodeByCoords(unit.getNodeX(), unit.getNodeY());
             if (dropOffTarget == null) {
                 // The dropOff target no londer exists, stop gathering
                 unit.stopGathering();
@@ -184,7 +184,7 @@ public class MovementHandler {
                 continue;
             }
 
-            dropOffNode = groundGraph.getNodeByCoords(dropOffTarget.getMapCenterX(), dropOffTarget.getMapCenterY());
+            dropOffNode = groundGraph.getNodeByCoords(dropOffTarget.getNodeX(), dropOffTarget.getNodeY());
             if (GroundGraphUtils.getDist(curNode, dropOffNode) <= (1 + ((BuildingBase) dropOffTarget).size / 2)) {
                 // The unit is next to the dropOff target, perform dropOff
                 unit.performDropOff();

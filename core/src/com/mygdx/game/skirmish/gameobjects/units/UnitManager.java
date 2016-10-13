@@ -185,8 +185,8 @@ public class UnitManager implements GameObjectsObserver, GameObjectManager<UnitB
     }
 
     public boolean isUnitAtNode(UnitBase unit, GroundNode node) {
-        return unit.getMapCenterX() == node.x &&
-                unit.getMapCenterY() == node.y;
+        return unit.getNodeX() == node.x &&
+                unit.getNodeY() == node.y;
     }
 
     @Override

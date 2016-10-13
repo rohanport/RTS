@@ -20,20 +20,20 @@ public class SelectionUtils {
         int maxX = Integer.MIN_VALUE;
         int maxY = Integer.MIN_VALUE;
         for (Commandable moveable : moveables) {
-            if (moveable.getMapCenterX() < minX) {
-                minX = moveable.getMapCenterX();
+            if (moveable.getNodeX() < minX) {
+                minX = moveable.getNodeX();
             }
 
-            if (moveable.getMapCenterX() > maxX) {
-                maxX = moveable.getMapCenterX();
+            if (moveable.getNodeX() > maxX) {
+                maxX = moveable.getNodeX();
             }
 
-            if (moveable.getMapCenterY() < minY) {
-                minY = moveable.getMapCenterY();
+            if (moveable.getNodeY() < minY) {
+                minY = moveable.getNodeY();
             }
 
-            if (moveable.getMapCenterY() > maxY) {
-                maxY = moveable.getMapCenterY();
+            if (moveable.getNodeY() > maxY) {
+                maxY = moveable.getNodeY();
             }
         }
         if (minX <= mapX &&

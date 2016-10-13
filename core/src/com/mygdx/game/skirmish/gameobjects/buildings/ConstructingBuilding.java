@@ -78,7 +78,7 @@ public class ConstructingBuilding extends BuildingBase implements ProductionTask
         BuildingBase building;
         switch (finBuildingType) {
             case BUILDING1:
-                building = new Building1(world, getPlayerID(), getMapCenterX(), getMapCenterY());
+                building = new Building1(world, getPlayerID(), getNodeX(), getNodeY());
                 break;
             default:
                 throw new RuntimeException("Attempting to build unknown unit type " + finBuildingType);

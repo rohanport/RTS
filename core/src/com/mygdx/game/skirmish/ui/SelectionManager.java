@@ -220,8 +220,8 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
             //Click is outside of the containing rectangle, so movables should try and move in formation towards that point
             moveables.forEach(moveable -> moveable.processMoveCommand(
                     isChaining(),
-                    moveable.getMapCenterX() + (int) diffCords.x,
-                    moveable.getMapCenterY() + (int) diffCords.y)
+                    moveable.getNodeX() + (int) diffCords.x,
+                    moveable.getNodeY() + (int) diffCords.y)
             );
         }
 
@@ -270,8 +270,8 @@ public class SelectionManager implements InputProcessor, GameObjectsObserver {
         } else {
             moveables.forEach(moveable -> moveable.processAtkMoveCommand(
                     isChaining(),
-                    moveable.getMapCenterX() + (int) diffCords.x,
-                    moveable.getMapCenterY() + (int) diffCords.y)
+                    moveable.getNodeX() + (int) diffCords.x,
+                    moveable.getNodeY() + (int) diffCords.y)
             );
         }
     }

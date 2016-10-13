@@ -57,12 +57,12 @@ public class Resource implements GameObject {
     }
 
     @Override
-    public int getMapCenterX() {
+    public int getNodeX() {
         return Math.round(getCenterX() / MapUtils.NODE_WIDTH_PX);
     }
 
     @Override
-    public int getMapCenterY() {
+    public int getNodeY() {
         return Math.round(getCenterY() / MapUtils.NODE_HEIGHT_PX);
     }
 

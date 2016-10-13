@@ -11,8 +11,8 @@ public interface GameObject {
     float getCenterX();
     float getCenterY();
 
-    int getMapCenterX();
-    int getMapCenterY();
+    int getNodeX();
+    int getNodeY();
 
     GameObjectType getGameObjectType();
 

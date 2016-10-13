@@ -36,7 +36,7 @@ public class Building1 extends BuildingBase {
     private boolean handleSoldierBuildKeyPressed() {
         Runnable action = () -> {
             UnitProductionTask soldierBuildingTask = world.getUnitProductionTaskFactory()
-                    .getUnitProducerFor(this, UnitType.SOLDIER1, getPlayerID(), getMapCenterX(), getMapCenterY(), 1.0f);
+                    .getUnitProducerFor(this, UnitType.SOLDIER1, getPlayerID(), getNodeX(), getNodeY(), 1.0f);
             addToProductionQueue(soldierBuildingTask);
         };
 

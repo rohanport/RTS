@@ -131,7 +131,7 @@ public class Soldier1 extends UnitBase implements Builder, Gatherer {
         switch (gameObject.getGameObjectType()) {
             case UNIT:
             case BUILDING:
-                return processMoveCommand(chain, gameObject.getMapCenterX(), gameObject.getMapCenterY());
+                return processMoveCommand(chain, gameObject.getNodeX(), gameObject.getNodeY());
             case RESOURCE:
                 return processGatherCommand(chain, (Resource) gameObject);
             default:

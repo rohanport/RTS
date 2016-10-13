@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-up" width="40" height="40" tilewidth="32" tileheight="32" nextobjectid="11">
+ <tileset firstgid="1" source="desert.tsx"/>
+ <layer name="Ground" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztmNtOAjEQhke5UCERD4mIRlxcD+hyev+nc0g62WYcSre0k8HsxRe20E0//k6XCTMAmBXkGhkjN4XXSWEt+L0a8DqV/HZZPSAT5NGAj8QZco4MmHeJtabIUweekStkiIwUspgjb3t4R34cH+69uqDfIuBHLuRBLlOX2RzK+4Xyq93428uscZ/Xyn6f3jX5NCDX40rJb8u89p2PFfytw5J+vOb4OHQ+qC4byOsnnYMFy4+uD/ktWa658vtiY/Lpmp+01zn3l3ty/PMaQ5PB78JxCe1vUYhB5Dzi5Ui/MbT9BX3XEKPIedJ9KX4TaPuLW+TuAPeR86T7StaeNhXIfY4lz0rRJ6U30/Bau9eYZ6ffF9WZ1o8lxm/ntIW2D9Jy2xj043VtzS9lf/3+Qstv08GPZ2ktP2mvLftp5pfSm2n6/RcqAw6nAs/K2n+D/R739BzHL1wXt9I=
+  </data>
+ </layer>
+ <objectgroup name="GameObjects">
+  <object id="6" name="Resource1" type="resource" x="243.272" y="34.625" width="1.95455" height="2.35227"/>
+  <object id="9" name="Resource1" type="resource" x="219.5" y="33.1364" width="3.5" height="4.25"/>
+  <object id="10" name="Resource1" type="resource" x="194.057" y="33.8523" width="3.625" height="2.875"/>
+ </objectgroup>
+</map>

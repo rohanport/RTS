@@ -30,7 +30,7 @@ public interface Commandable {
 
     boolean isMoveable();
 
-    int getMapCenterX();
+    int getNodeX();
 
-    int getMapCenterY();
+    int getNodeY();
 }

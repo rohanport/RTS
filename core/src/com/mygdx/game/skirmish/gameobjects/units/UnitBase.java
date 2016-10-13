@@ -23,8 +23,6 @@ import java.util.List;
 public abstract class UnitBase implements Commandable, GameObject, Attacker {
 
     public Circle circle;
-    public int mapX;
-    public int mapY;
     public float size;
     public float hp;
     public float curHp;
@@ -123,18 +121,16 @@ public abstract class UnitBase implements Commandable, GameObject, Attacker {
 
     //-----------------------------------------
 
-    public UnitBase(World world, int playerID, int mapX, int mapY, int size) {
+    public UnitBase(World world, int playerID, int nodeX, int nodeY, int size) {
         this.world = world;
         this.playerID = playerID;
-        this.mapX = mapX;
-        this.mapY = mapY;
-        this.destNodeX = mapX;
-        this.destNodeY = mapY;
+        this.destNodeX = nodeX;
+        this.destNodeY = nodeY;
         this.size = size;
 
         circle = new Circle();
-        circle.setX(mapX * MapUtils.NODE_WIDTH_PX);
-        circle.setY(mapY * MapUtils.NODE_HEIGHT_PX);
+        circle.setX(nodeX * MapUtils.NODE_WIDTH_PX);
+        circle.setY(nodeY * MapUtils.NODE_HEIGHT_PX);
         circle.setRadius(size * MapUtils.NODE_WIDTH_PX / 2f);
 
         healthBar = new HealthBar(this);
@@ -223,12 +219,12 @@ public abstract class UnitBase implements Commandable, GameObject, Attacker {
     }
 
     @Override
-    public int getMapCenterX() {
+    public int getNodeX() {
         return Math.round(circle.x / MapUtils.NODE_WIDTH_PX);
     }
 
     @Override
-    public int getMapCenterY() {
+    public int getNodeY() {
         return Math.round(circle.y / MapUtils.NODE_HEIGHT_PX);
     }
 

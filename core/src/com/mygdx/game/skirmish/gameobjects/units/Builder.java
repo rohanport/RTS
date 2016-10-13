@@ -13,9 +13,9 @@ public interface Builder {
 
     BuildingType getBuildingType();
 
-    int getMapCenterX();
+    int getNodeX();
 
-    int getMapCenterY();
+    int getNodeY();
 
     void startBuilding();
 }

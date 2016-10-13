@@ -11,8 +11,8 @@ public interface Gatherer {
     float getCurGatherTime();
     void setCurGatherTime(float curGatherTime);
 
-    int getMapCenterX();
-    int getMapCenterY();
+    int getNodeX();
+    int getNodeY();
 
     int getGatherSourceID();
     int getDropOffTargetID();
